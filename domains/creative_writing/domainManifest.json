@@ -8,8 +8,8 @@
   "stem_noun": "poem",
   "human_verb": "written",
   "attention_checks": 1,
-  "labeled_artifacts_per_session": 30,
-  "unlabeled_per_session": 8,
+  "labeled_artifacts_per_session": 4,
+  "unlabeled_per_session": 1,
   "artifacts": {
     "human": {
       "0": "artifacts/ee021d1c176dd0a6.txt",
