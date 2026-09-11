@@ -1,0 +1,20 @@
+{
+  "name": "example",
+  "protocol_version": "v0.1",
+  "domain_version": "v0.1",
+  "wave": 1,
+  "artifact_type": "text",
+  "evaluator_class": "lay",
+  "stem_noun": "poem",
+  "human_verb": "written",
+  "attention_checks": 1,
+  "labeled_artifacts_per_session": 2,
+  "unlabeled_per_session": 1,
+  "artifacts": {
+    "human": { "0": "artifacts/h0.txt", "1": "artifacts/h1.txt" },
+    "ai":    { "0": "artifacts/a0.txt", "1": "artifacts/a1.txt" }
+  },
+  "storage": "datapipe",
+  "curation_criteria": "curationCriteria.md",
+  "osf_study": "REPLACE_WITH_DATAPIPE_EXPERIMENT_ID"
+}

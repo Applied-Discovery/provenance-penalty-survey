@@ -1,0 +1,58 @@
+/* Loaded after jspsych.css (see main.ts), so equal-specificity rules here win. */
+
+body { margin: 0; }
+
+/* Page: a readable column with breathing room at every width. */
+.jspsych-content {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 46rem;
+  padding: 1.5rem 1.25rem 3rem;
+}
+@media (min-width: 40rem) { .jspsych-content { padding: 2.5rem 2rem 4rem; } }
+
+/* Running text reads left-aligned; jsPsych centres everything by default. */
+.consent, .debrief, .artifact { text-align: left; }
+.consent p, .debrief p { line-height: 1.55; }
+
+.artifact {
+  margin: 1rem 0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+.artifact-image { max-width: 100%; height: auto; }
+.artifact-code { overflow-x: auto; }   /* wide code scrolls inside its box; the page never scrolls sideways */
+/* Creative writing keeps the author's whitespace: line breaks, indentation, blank stanza gaps.
+ * pre-wrap still wraps lines that exceed the column; overflow-wrap catches unbroken runs. */
+.artifact-text { white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 4; }
+.label { font-weight: bold; }
+.stem { margin: 1.5rem 0 0.75rem; font-size: 1.05rem; }
+
+/* Stacked choices (rating scale and belief question): one full-width button per row. */
+#jspsych-html-button-response-btngroup.jspsych-btn-group-grid {
+  width: 100%;
+  max-width: 22rem;
+  gap: 0.5rem;
+  grid-auto-columns: auto;
+}
+.jspsych-btn-group-grid .jspsych-btn { width: 100%; margin: 0; box-sizing: border-box; }
+
+/* Rating scale: number and anchor equally prominent, the anchor carrying the meaning. */
+.jspsych-btn.rating-btn {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  min-height: 3rem;              /* comfortable touch target */
+  margin: 0;
+  padding: 0.6rem 1rem;
+  box-sizing: border-box;
+  font-size: 1.05rem;
+  text-align: left;
+}
+.rating-n { flex: 0 0 1.5em; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.rating-anchor { font-weight: 600; }
+
+/* Two-choice and single-button trials keep jsPsych's row layout, but wrap on narrow screens. */
+#jspsych-html-button-response-btngroup:not(.jspsych-btn-group-grid) { display: flex; flex-wrap: wrap; justify-content: center; }
+.jspsych-btn { font-size: 1rem; padding: 0.6rem 1.1rem; min-height: 2.75rem; }

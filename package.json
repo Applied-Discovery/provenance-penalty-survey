@@ -1,0 +1,41 @@
+{
+  "name": "@provenance-penalty/survey-platform",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:datapipe": "vitest run --config vitest.datapipe.config.ts",
+    "test:e2e": "playwright test",
+    "anonymize": "tsx scripts/anonymize-artifacts.ts",
+    "new-domain": "tsx scripts/new-domain.ts",
+    "index-artifacts": "tsx scripts/index-artifacts.ts",
+    "simulate-export": "tsx scripts/simulate-export.ts"
+  },
+  "dependencies": {
+    "@jspsych/plugin-call-function": "2.1.0",
+    "@jspsych/plugin-html-button-response": "2.1.0",
+    "@jspsych/plugin-html-keyboard-response": "2.2.0",
+    "@jspsych/plugin-preload": "2.1.0",
+    "@jspsych/plugin-survey-html-form": "2.1.0",
+    "jspsych": "8.3.0",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@types/node": "24.13.3",
+    "fast-check": "3.23.2",
+    "jsdom": "^30.0.1",
+    "tsx": "4.23.13",
+    "typescript": "5.9.3",
+    "vite": "^8.2.2",
+    "vite-plugin-static-copy": "^4.1.1",
+    "vitest": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}
