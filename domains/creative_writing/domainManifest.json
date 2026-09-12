@@ -59,5 +59,6 @@
   },
   "storage": "datapipe",
   "curation_criteria": "curationCriteria.md",
-  "osf_study": "V06bwSsJL49g"
+  "osf_study": "V06bwSsJL49g",
+  "completion_redirect": "https://app.prolific.com/submissions/complete?cc=CMVYWU9U"
 }
