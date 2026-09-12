@@ -5,7 +5,7 @@ export const COPY = {
   consentTitle: 'Consent',
   consentBody: (expectedMinutes: string) => [
     'You are invited to take part in a study on how people judge the quality of creative and professional work. You will be shown a series of items and asked to rate each one.',
-    `The session takes about ${expectedMinutes} minutes. There are no known risks. You may stop at any time by closing this window; if you stop before the end, your responses will not be used.`,
+    `The session takes about ${expectedMinutes} minutes. You may stop at any time by closing this window; if you stop before the end, your responses will not be used.`,
     'Some aspects of this study cannot be fully described in advance; you will be told everything at the end.',
   ],
   // Shown only when a platform session id was passed in; placed before consentClose.
