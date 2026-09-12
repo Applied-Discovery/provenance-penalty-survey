@@ -1,6 +1,8 @@
 import { readFileSync, writeFileSync, renameSync, existsSync, rmSync, mkdirSync } from 'node:fs';
 import { randomBytes } from 'node:crypto';
-import { resolve, dirname, extname, join } from 'node:path';
+import { resolve, dirname, extname, join, basename } from 'node:path';
+import { parseArgs } from 'node:util';
+import { checkName, curationRoot, CURATION_OPTION, domainsDir } from './curation';
 
 export interface RawManifest { artifacts: { human: Record<string, string>; ai: Record<string, string> }; [k: string]: unknown }
 
@@ -78,25 +80,49 @@ export function applyPlan(domainDir: string, renames: { from: string; to: string
   }
 }
 
-/** Where the rename map is saved: beside the prompts that produced the AI artifacts, so each anonymised file can be
- * traced back to its prompt. The build copies only the manifest and artifacts/, so prompts/ is never deployed. */
-export const MAP_FILE = 'prompts/artifact_map.json';
+/** The rename map, saved in the domain's curation folder (never deployed) so each anonymised file traces back to its
+ * pre-anonymisation name and, through it, to the prompt that produced it. */
+export const MAP_FILE = 'artifact_map.json';
 
-function main(domainDir: string) {
+/**
+ * Step 3 of adding a domain: renames every artifact under domainDir to a random name, rewrites the manifest, and
+ * writes the map to <curationDir>/artifact_map.json. Refuses to run twice: if the map already exists, or if any
+ * artifact no longer carries its human_/ai_ prefix, the domain is already anonymised. The map is written before the
+ * renames so a failure mid-way (which applyPlan rolls back) cannot lose the record; it is removed again on failure.
+ */
+export function anonymizeDomain(domainDir: string, curationDir: string): { from: string; to: string }[] {
   const manifestPath = resolve(domainDir, 'domainManifest.json');
   const raw = JSON.parse(readFileSync(manifestPath, 'utf8')) as RawManifest;
+  const mapPath = resolve(curationDir, MAP_FILE);
+  if (existsSync(mapPath)) throw new Error(`${mapPath} already exists; ${domainDir} looks anonymised already`);
+  const named = [...Object.values(raw.artifacts.human), ...Object.values(raw.artifacts.ai)];
+  const bare = named.filter((p) => !/^(human|ai)_/.test(basename(p)));
+  if (bare.length) throw new Error(`artifacts already anonymised (no human_/ai_ prefix): ${bare.join(', ')}`);
   const { manifest, renames } = anonymizePlan(raw);
-  applyPlan(domainDir, renames, manifest);
-  const mapPath = resolve(domainDir, MAP_FILE);
+  validatePlan(domainDir, renames);
   mkdirSync(dirname(mapPath), { recursive: true });
-  const map = JSON.stringify(renames, null, 2) + '\n';
-  writeFileSync(mapPath, map);
-  process.stdout.write(map);
-  process.stderr.write(`Renamed ${renames.length} artifacts. Map saved to ${join(domainDir, MAP_FILE)} (not deployed).\n`);
+  writeFileSync(mapPath, JSON.stringify(renames, null, 2) + '\n');
+  try {
+    applyPlan(domainDir, renames, manifest);
+  } catch (err) {
+    rmSync(mapPath, { force: true });
+    throw err;
+  }
+  return renames;
+}
+
+function main(argv: string[]) {
+  const { values, positionals } = parseArgs({ args: argv, allowPositionals: true, options: CURATION_OPTION });
+  const name = positionals[0];
+  if (!name) { process.stderr.write('usage: npm run anonymize -- <name> [--curation DIR]\n'); process.exit(1); }
+  checkName(name);
+  const curationDir = join(curationRoot(values.curation), name);
+  if (!existsSync(curationDir)) throw new Error(`no curation folder at ${curationDir}`);
+  const renames = anonymizeDomain(join(domainsDir(), name), curationDir);
+  process.stdout.write(JSON.stringify(renames, null, 2) + '\n');
+  process.stderr.write(`Renamed ${renames.length} artifacts in domains/${name}. Map saved to ${join(curationDir, MAP_FILE)} (not deployed).\n`);
 }
 
 if (process.argv[1] && process.argv[1].endsWith('anonymize-artifacts.ts')) {
-  const dir = process.argv[2];
-  if (!dir) { process.stderr.write('usage: npm run anonymize -- domains/<name>\n'); process.exit(1); }
-  main(dir);
+  try { main(process.argv.slice(2)); } catch (err) { process.stderr.write(`Error: ${(err as Error).message}\n`); process.exit(1); }
 }

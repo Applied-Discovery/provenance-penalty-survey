@@ -11,8 +11,8 @@
     "test:datapipe": "vitest run --config vitest.datapipe.config.ts",
     "test:e2e": "playwright test",
     "anonymize": "tsx scripts/anonymize-artifacts.ts",
+    "scaffold": "tsx scripts/scaffold-domain.ts",
     "new-domain": "tsx scripts/new-domain.ts",
-    "index-artifacts": "tsx scripts/index-artifacts.ts",
     "simulate-export": "tsx scripts/simulate-export.ts"
   },
   "dependencies": {

@@ -46,42 +46,47 @@ npm run build
 
 Type-checks with `tsc --noEmit`, then builds the shared page once per
 `domains/<name>/` into `dist/`. Manifests and artifacts are copied unchanged.
-Curation criteria are not published with the survey; they live in the repo
-and on OSF.
-
-## Anonymize artifacts
-
-```
-npm run anonymize -- domains/<name>
-```
-
-Renames a domain's artifact files to random strings and updates its manifest
-so filenames don't leak provenance. Prints the rename map and saves it to
-`domains/<name>/prompts/artifact_map.json`, beside the prompts that produced
-the AI artifacts, so each anonymised file traces back to its prompt. The build
-copies only the manifest and `artifacts/`, so the map is never deployed.
 
 ## Add a domain
 
+Curation happens in the private study repo, in a curation folder per domain;
+this repo holds only what the survey deploys. The scripts find the curation
+root at `../provenance-penalty/03_run/curation` (a sibling checkout); pass
+`--curation DIR` or set `CURATION_DIR` to point elsewhere. Three steps:
+
 ```
-npm run new-domain -- <name> --type text|image|code --noun <stem noun> [--verb <human verb>] [--class lay|expert] [--labeled N] [--unlabeled N] [--checks N]
+npm run new-domain -- <name>
 ```
 
-Creates `domains/<name>`: an empty `artifacts/` folder, a criteria stub, and a
-manifest with empty pools. The page is shared (see above), so nothing else goes there.
-Defaults: lay evaluators, one attention check, 30 labeled and 8 unlabeled
-artifacts: 39 of the 40-artifact pool, the closest fit to the registered 2:2:1
-ratio once the attention check has taken its artifact. Then:
+Creates the curation folder `<name>/` with a `curationCriteria.md` stub and
+empty `artifacts/` and `prompts/` folders. Curate the pool into `artifacts/`,
+named `human_<n>.<ext>` and `ai_<n>.<ext>`, keep the prompts that produced
+the AI artifacts in `prompts/`, and write the criteria.
 
-1. Drop the artifact files into `domains/<name>/artifacts`, named
-   `human_*.<ext>` and `ai_*.<ext>`.
-2. `npm run index-artifacts -- domains/<name>` fills the manifest's pools in
-   natural name order and refuses to write if the manifest would not validate.
-3. `npm run anonymize -- domains/<name>`, which removes the prefixes.
-4. Set `osf_study` and, for Prolific, `completion_redirect` in the manifest.
-5. Write `curationCriteria.md`, then freeze it with the manifest and artifacts
-   on OSF before data collection begins (see `02_design/BENCHMARK.md`, domain
-   package, and `02_design/OSF_ACTIONS.md` §4.5).
+```
+npm run scaffold -- <name> --type text|image|code --noun <stem noun> [--verb <human verb>] [--class lay|expert] [--minutes <consent duration>] [--labeled N] [--unlabeled N] [--checks N]
+```
+
+Builds `domains/<name>/` from the finished pool: copies the artifacts and
+writes the manifest with its pools filled in natural name order. Validates
+first and writes nothing if the manifest would not validate or the folder
+exists. The page is shared (see above), so nothing else goes there. Defaults:
+lay evaluators, one attention check, 30 labeled and 8 unlabeled artifacts: 39
+of the 40-artifact pool, the closest fit to the registered 2:2:1 ratio once
+the attention check has taken its artifact.
+
+```
+npm run anonymize -- <name>
+```
+
+Renames the domain's artifact files to random strings and updates the manifest
+so filenames don't leak provenance. Saves the rename map to the curation folder
+as `artifact_map.json`, so each anonymised file traces back to its prompt, and
+refuses to run on a domain that is already anonymised. Then set `osf_study`
+and, for Prolific, `completion_redirect` in the manifest, and freeze the
+manifest, artifacts and `curationCriteria.md` on OSF before data collection
+begins (see `02_design/BENCHMARK.md`, domain package, and
+`02_design/OSF_ACTIONS.md` §4.5 in the study repo).
 
 ## Simulate an export
 

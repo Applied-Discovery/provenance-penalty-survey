@@ -156,17 +156,15 @@ DataPipeSink names files `<session|labeled|unlabeled>_<session id>_<start time>.
 
 ## Example Use
 
-An example use would look something like the following, where domain_name.js invokes the package with the domainManifest.
+A deployed domain holds only data; the shared page in `web/` is served at `domains/<name>/` by `vite.config.ts`. The curation criteria, prompts and artifact rename map stay in the study repo's curation folder and on OSF.
 
 ```
-|- domain_name/
-    |- domainManifest.json
-    |- artifacts
-        |- ai_1.txt
-        | ...
-    |- curationCriteria.md
-    |- index.html
-    |- domain_name.js
+|- domains/
+    |- domain_name/
+        |- domainManifest.json
+        |- artifacts/
+            |- 7b1c5d95d5e45878.txt   (anonymised names)
+            | ...
 ```
 
 ## Deferred for now
