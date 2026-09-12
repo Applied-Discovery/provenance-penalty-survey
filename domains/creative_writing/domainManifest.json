@@ -1,7 +1,7 @@
 {
   "name": "creative_writing",
-  "protocol_version": "v0.1",
-  "domain_version": "v0.1",
+  "protocol_version": "protocol-v1",
+  "domain_version": "creative_writing-v1",
   "wave": 1,
   "artifact_type": "text",
   "evaluator_class": "lay",
