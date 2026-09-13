@@ -36,6 +36,18 @@ test('submitWithRetry waits delayMs before the second attempt', async () => {
   await vi.advanceTimersByTimeAsync(1); await p; expect(calls).toHaveLength(2);
   vi.useRealTimers();
 });
+test('the submit trial shows the saving page while the store is in flight', async () => {
+  document.body.innerHTML = '<div id="jspsych-content"></div>';
+  let resolveSubmit: ((ok: boolean) => void) | undefined;
+  const submit = () => new Promise<boolean>((r) => { resolveSubmit = r; });
+  const trial = buildTimeline(m, plan, loaded, ctx, submit).find((t: any) => t.data.trial_kind === 'submit') as any;
+  const done = vi.fn();
+  trial.func(done);
+  expect(document.getElementById('jspsych-content')!.textContent).toContain('Saving your responses');
+  expect(done).not.toHaveBeenCalled();
+  resolveSubmit!(true);
+  await vi.waitFor(() => expect(done).toHaveBeenCalled());
+});
 test('the thank-you trial times out only when there is a redirect to make', () => {
   const kinds = buildTimeline(m, plan, loaded, { ...ctx, redirect: 'https://p.test' }, async () => true);
   expect((kinds[kinds.length - 1] as any).trial_duration).toBe(3000);

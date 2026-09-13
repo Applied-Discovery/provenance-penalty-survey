@@ -136,18 +136,22 @@ Each session writes `session_`, `labeled_` and `unlabeled_` CSVs named
 already exists, so the start time lets a participant who reloads and redoes
 the survey submit again instead of colliding with a half-landed first attempt.
 Every row carries `session_id` and `start_time`, so a file set can be matched
-to its session row from content alone. The analysis keeps the first complete
+to its session row from content alone. The three files are posted at once (DataPipe
+takes several seconds per request, so this is one wait rather than three), behind a
+saving page that asks the participant to keep the tab open; a file that fails is
+re-sent once while the ones that landed are not. The analysis keeps the first complete
 set per session id (see `02_design/ANALYSIS.md`, exclusions).
 
 ## Browser end-to-end tests
 
 `npm run test:e2e` drives the example survey in a headless Chromium browser
 (via Playwright) against the Vite dev server, with the DataPipe endpoint
-stubbed so nothing leaves the machine. The six tests cover: a full session
+stubbed so nothing leaves the machine. The tests cover: a full session
 producing one session/labeled/unlabeled write with correct columns; a failed
 attention check plus withdrawal being recorded; a failed DataPipe write being
-retried once without duplicating files; the same `SESSION_ID` reproducing the
-same artifact order and labels; redirecting to `completion_redirect` after
+retried once without duplicating files; the saving page showing while the
+three posts run concurrently; the same `SESSION_ID` reproducing the same artifact
+order and labels; redirecting to `completion_redirect` after
 the thank-you page; and a manifest that fails validation showing the failure
 page instead of a survey.
 

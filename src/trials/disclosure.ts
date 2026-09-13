@@ -15,6 +15,13 @@ export function disclosureTrial(platformSession: boolean) {
   };
 }
 
+/** Replaces the blank screen jsPsych shows during the async submit trial. `#jspsych-content` is the display
+ * element jsPsych mounts and clears between trials; absent (a bare test DOM) nothing is rendered. */
+export function showSavingPage(doc: Document = document): void {
+  const el = doc.getElementById('jspsych-content');
+  if (el) el.innerHTML = `<div class="saving"><div class="spinner" aria-hidden="true"></div><h1>${COPY.savingTitle}</h1><p>${COPY.savingBody}</p></div>`;
+}
+
 /** With a redirect the page shows for REDIRECT_DELAY_MS and then the timeline's on_finish navigates; without one it stays up. */
 export const REDIRECT_DELAY_MS = 3000;
 

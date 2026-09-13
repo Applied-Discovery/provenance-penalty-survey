@@ -27,6 +27,9 @@ export const COPY = {
   debriefPaid: 'You will be paid either way.',
   withdrawLabel: 'Please withdraw my responses from this study.',
   submitButton: 'Submit',
+  // Shown while the files are posted to DataPipe, which takes several seconds per file; closing the tab here loses the session.
+  savingTitle: 'Saving your responses',
+  savingBody: 'This can take up to a minute. Please keep this page open.',
   thanksTitle: 'Thank you',
   thanksBody: 'Your responses have been recorded. You may now close this window.',
   // Used for both the alert on submit failure and the thank-you page; the session id is appended.

@@ -10,7 +10,7 @@ import { COPY } from './copy';
 import { consentTrial } from './trials/consent';
 import { labeledRatingTrial, attentionTrial } from './trials/rating';
 import { unlabeledTitleTrial, unlabeledRatingTrial, beliefTrial } from './trials/unlabeled';
-import { disclosureTrial, thankYouTrial } from './trials/disclosure';
+import { disclosureTrial, thankYouTrial, showSavingPage } from './trials/disclosure';
 import { buildSubmission, type TrialRecord, type Submission } from './submission';
 import { storeSubmission } from './storage/writeRows';
 import { DataPipeSink } from './storage/datapipe';
@@ -35,7 +35,7 @@ export function buildTimeline(m: DomainManifest, plan: SessionPlan, loaded: Map<
     unlabeledTitleTrial(),
     ...plan.unlabeled.flatMap((it) => [unlabeledRatingTrial(it, get(it.artifact.id), m), beliefTrial(it, get(it.artifact.id), m)]),
     disclosureTrial(ctx.platform_session),
-    { type: callFunction, async: true, func: (done: () => void) => { submit().then((ok) => { submitted = ok; }).finally(done); }, data: { trial_kind: 'submit' } },
+    { type: callFunction, async: true, func: (done: () => void) => { showSavingPage(); submit().then((ok) => { submitted = ok; }).finally(done); }, data: { trial_kind: 'submit' } },
     thankYouTrial(ctx.redirect, ctx.session_id, () => submitted),
   ];
 }

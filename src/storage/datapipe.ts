@@ -21,7 +21,7 @@ export function sessionFileName(prefix: string, sessionId: unknown, startTime?: 
  * first complete set per session id (ANALYSIS.md, exclusions).
  */
 export class DataPipeSink implements Sink {
-  private buffer = new Map<string, Row[]>();      // filename -> rows, replaced (not appended) on each write
+  private buffer = new Map<string, Row[]>();      // filename -> rows, replaced (not appended) on each write; posted together by flush()
   private posted = new Set<string>();             // filenames that landed; a retried submission skips them
   private endpoint: string;
   private fetchFn: typeof fetch;
@@ -33,7 +33,7 @@ export class DataPipeSink implements Sink {
     this.experimentId = opts.experimentId;
     this.endpoint = opts.endpoint ?? 'https://pipe.jspsych.org/api/data/';
     this.fetchFn = opts.fetchFn ?? fetch.bind(globalThis);
-    this.timeoutMs = opts.timeoutMs ?? 60_000;   // DataPipe took 11 to 14 s per file on 2026-09-10; a client-side abort leaves the file on OSF and the retry then collides
+    this.timeoutMs = opts.timeoutMs ?? 60_000;   // DataPipe took 7 to 14 s per file in 2026-09; a client-side abort leaves the file on OSF and the retry then collides
     this.startTime = opts.startTime;
   }
 
@@ -52,7 +52,7 @@ export class DataPipeSink implements Sink {
   }
 
   async writeSessionRows(rows: Row[]): Promise<void> {
-    for (const row of rows) await this.post(this.name('session', row.session_id), toCsv([row]));
+    this.stage('session', rows);
   }
 
   /** Group rows by session and replace any earlier buffer for that key, so a retry never doubles the rows. */
@@ -70,10 +70,16 @@ export class DataPipeSink implements Sink {
     this.stage('unlabeled', rows);
   }
 
+  /**
+   * Posts every buffered file at once: the files are independent and DataPipe's latency is per request, so a session's
+   * three files take one round trip instead of three. Waits for all of them before reporting the first failure, so a
+   * retry never starts while a request from this attempt is still landing (which would duplicate its file name).
+   */
   async flush(): Promise<void> {
-    for (const [name, rows] of this.buffer) {
-      await this.post(name, toCsv(rows));
-      this.buffer.delete(name);
-    }
+    const entries = [...this.buffer];
+    const results = await Promise.allSettled(entries.map(([name, rows]) => this.post(name, toCsv(rows))));
+    results.forEach((r, i) => { if (r.status === 'fulfilled') this.buffer.delete(entries[i][0]); });
+    const failed = results.find((r): r is PromiseRejectedResult => r.status === 'rejected');
+    if (failed) throw failed.reason;
   }
 }

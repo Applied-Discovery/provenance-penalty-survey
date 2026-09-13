@@ -56,6 +56,23 @@ test('submission is retried once after a failed write, without duplicating files
   expect(dp.posts.map((p) => p.filename.replace(/_\d{4}-.*\.csv$/, '')).sort()).toEqual(['labeled_e2e-3', 'session_e2e-3', 'unlabeled_e2e-3']);
 });
 
+test('a saving page with a spinner shows while the files are in flight, and the three posts run concurrently', async ({ page }) => {
+  const started: number[] = []; let release!: () => void;
+  const gate = new Promise<void>((r) => { release = r; });
+  await page.route('https://pipe.jspsych.org/api/data/', async (route) => {
+    started.push(Date.now()); await gate;
+    return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+  });
+  await page.goto(`${EXAMPLE}?SESSION_ID=e2e-spin`);
+  const session = runSession(page, happy);
+  await expect(page.getByRole('heading', { name: 'Saving your responses' })).toBeVisible();
+  await expect(page.locator('.spinner')).toBeVisible();
+  await expect.poll(() => started.length).toBe(3);                              // all three requests open before any answer
+  release();
+  await session;
+  await expect(page.getByRole('heading', { name: 'Thank you' })).toBeVisible();
+});
+
 test('the same SESSION_ID reproduces the same artifact order and labels', async ({ page }) => {
   const a = await interceptDataPipe(page);
   await page.goto(`${EXAMPLE}?SESSION_ID=e2e-4`); await runSession(page, happy);
