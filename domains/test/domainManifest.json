@@ -1,0 +1,30 @@
+{
+  "name": "test",
+  "protocol_version": "v0.1",
+  "domain_version": "v0.1",
+  "wave": 1,
+  "artifact_type": "text",
+  "evaluator_class": "lay",
+  "stem_noun": "poem",
+  "human_verb": "written",
+  "attention_checks": 1,
+  "labeled_artifacts_per_session": 4,
+  "unlabeled_per_session": 2,
+  "artifacts": {
+    "human": {
+      "0": "artifacts/7a1a2f6ccd7cf16c.txt",
+      "1": "artifacts/71b88ceb3f8ef80c.txt",
+      "2": "artifacts/ca5622e061919412.txt",
+      "3": "artifacts/73ee5b84a204fae8.txt"
+    },
+    "ai": {
+      "0": "artifacts/68eec1ac7533dd3d.txt",
+      "1": "artifacts/a9de00cf94aff476.txt",
+      "2": "artifacts/bcd44326772d7cf3.txt",
+      "3": "artifacts/e45de7e013132559.txt"
+    }
+  },
+  "storage": "datapipe",
+  "curation_criteria": "curationCriteria.md",
+  "osf_study": "1mz9PEqd1VT9"
+}

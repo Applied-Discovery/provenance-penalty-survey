@@ -88,6 +88,13 @@ manifest, artifacts and `curationCriteria.md` on OSF before data collection
 begins (see `02_design/BENCHMARK.md`, domain package, and
 `02_design/OSF_ACTIONS.md` §4.5 in the study repo).
 
+## Smoke-test domain
+
+`domains/test/` is a deployed smoke-test domain: eight artifacts that each read
+TEST, a four-labeled, two-unlabeled session, and `osf_study` set to the DataPipe
+e2e test experiment (never the study one). Open `domains/test/` on the live site
+to check the page and the saving screen without touching study data.
+
 ## Simulate an export
 
 ```
