@@ -57,3 +57,11 @@ test('artifact paths must stay inside the domain folder', () => {
     expect(() => validateManifest({ ...base, artifacts: { ...base.artifacts, ai: { '0': bad, '1': 'artifacts/d.txt' } } })).toThrow(/artifact path|min/);
   expect(validateManifest({ ...base, artifacts: { ...base.artifacts, ai: { '0': 'artifacts/sub/x.txt', '1': 'd.txt' } } })).toBeTruthy();
 });
+test('avoid_pairs defaults to false', () => {
+  expect(validateManifest(base).avoid_pairs).toBe(false);
+});
+test('with avoid_pairs the session may draw at most one artifact per pair', () => {
+  // 2 labeled + 1 attention + 1 unlabeled = 4 > 2 pairs
+  expect(() => validateManifest({ ...base, avoid_pairs: true })).toThrow(/needs 4 pairs, pool has 2/);
+  expect(validateManifest({ ...base, avoid_pairs: true, attention_checks: 0, unlabeled_per_session: 0 }).avoid_pairs).toBe(true);
+});

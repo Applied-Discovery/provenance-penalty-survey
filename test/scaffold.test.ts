@@ -91,3 +91,15 @@ test('anonymize renames the scaffolded artifacts, saves the map in the curation 
   rmSync(join(curation, 'haiku', MAP_FILE));
   expect(() => anonymizeDomain(join(domains, 'haiku'), join(curation, 'haiku'))).toThrow(/already anonymised/);
 });
+test('scaffold writes avoid_pairs when asked and checks the session fits the pairs', () => {
+  curate('haiku', tenOfEach);   // 5 pairs
+  scaffoldDomain(curation, domains, { ...opts, labeled: 2, unlabeled: 2, attentionChecks: 1, avoidPairs: true });   // 5 of 5 pairs
+  expect(manifestOf('haiku')).toMatchObject({ avoid_pairs: true });
+  newDomain(curation, 'haiku2'); curate('haiku2', tenOfEach);
+  expect(() => scaffoldDomain(curation, domains, { ...opts, name: 'haiku2', labeled: 4, unlabeled: 2, attentionChecks: 1, avoidPairs: true })).toThrow(/needs 7 pairs, pool has 5/);
+});
+test('scaffold omits avoid_pairs when not asked', () => {
+  curate('haiku', tenOfEach);
+  scaffoldDomain(curation, domains, { ...opts, labeled: 2, unlabeled: 0, attentionChecks: 0 });
+  expect(manifestOf('haiku')).not.toHaveProperty('avoid_pairs');
+});

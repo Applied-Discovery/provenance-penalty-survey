@@ -61,6 +61,21 @@ test('ids follow the spec format', () => {
   expect(labeled(p)[0].artifact.id).toMatch(/^d_v0_(human|ai)_\d+$/);
 });
 
+test('avoid_pairs: a human index and the same ai index never share a session, attention and unlabeled included', () => {
+  // 6 labeled + 2 attention + 4 unlabeled = 12 draws from 12 pairs: every pair contributes exactly one artifact
+  const m = manifest({ avoid_pairs: true, labeled_artifacts_per_session: 6, attention_checks: 2, unlabeled_per_session: 4,
+    artifacts: { human: pool(12, 'h'), ai: pool(12, 'a') } });
+  for (let seed = 0; seed < 50; seed++) {
+    const p = buildSessionPlan(m, new Rng(seed));
+    const idx = [...p.labeled.map((i) => i.artifact.index), ...p.unlabeled.map((i) => i.artifact.index)];
+    expect(idx).toHaveLength(12);
+    expect(new Set(idx).size).toBe(12);
+  }
+});
+test('avoid_pairs off leaves the plan for a seed unchanged', () => {
+  expect(buildSessionPlan(manifest({ avoid_pairs: false }), new Rng(9))).toEqual(buildSessionPlan(manifest(), new Rng(9)));
+});
+
 // Golden value. A fixed session id must map to this exact plan for the life of the protocol version: it is what
 // lets a recorded session be rebuilt from its id. Labeled entries are `<artifact id>:<stated author initial>`;
 // attention checks are `A<check index>:<artifact id>:<expected answer>`. If this fails, the hash, generator, or
@@ -82,6 +97,19 @@ test('golden: session id "golden-session" maps to a fixed plan', () => {
   ]);
 });
 
+// Golden value with avoid_pairs on, same contract as above: 8 labeled + 2 checks + 4 unlabeled from 20 pairs.
+test('golden: session id "golden-session" maps to a fixed plan with avoid_pairs', () => {
+  const m = manifest({ avoid_pairs: true, labeled_artifacts_per_session: 8, attention_checks: 2, unlabeled_per_session: 4 });
+  const p = buildSessionPlan(m, new Rng(hashSeed('golden-session')));
+  const labeledKey = p.labeled.map((i) => i.kind === 'attention'
+    ? `A${i.check_index}:${i.artifact.id}:${i.expected}` : `${i.artifact.id}:${i.stated_author[0]}`);
+  expect(labeledKey).toEqual([
+    'A0:d_v0_ai_0:3', 'd_v0_human_9:a', 'd_v0_human_14:a', 'd_v0_ai_18:a', 'd_v0_human_16:h', 'A1:d_v0_ai_11:9',
+    'd_v0_ai_1:a', 'd_v0_ai_3:h', 'd_v0_ai_4:h', 'd_v0_human_6:h',
+  ]);
+  expect(p.unlabeled.map((i) => i.artifact.id)).toEqual(['d_v0_human_10', 'd_v0_ai_15', 'd_v0_ai_12', 'd_v0_human_5']);
+});
+
 // Property test: every invariant, for any valid manifest shape and any seed.
 import fc from 'fast-check';
 import type { Author } from '../src/manifest';
@@ -90,10 +118,11 @@ const arbManifest = fc.record({
   perAuthor: fc.integer({ min: 1, max: 10 }),  // labeled per author
   attention: fc.integer({ min: 0, max: 3 }),
   unlabeled: fc.integer({ min: 0, max: 6 }),
-}).filter(({ n, perAuthor, attention, unlabeled }) => 2 * perAuthor + attention + unlabeled <= 2 * n)
-  .map(({ n, perAuthor, attention, unlabeled }) => manifest({
+  avoidPairs: fc.boolean(),
+}).filter(({ n, perAuthor, attention, unlabeled, avoidPairs }) => 2 * perAuthor + attention + unlabeled <= (avoidPairs ? n : 2 * n))
+  .map(({ n, perAuthor, attention, unlabeled, avoidPairs }) => manifest({
     labeled_artifacts_per_session: 2 * perAuthor, attention_checks: attention, unlabeled_per_session: unlabeled,
-    artifacts: { human: pool(n, 'h'), ai: pool(n, 'a') },
+    avoid_pairs: avoidPairs, artifacts: { human: pool(n, 'h'), ai: pool(n, 'a') },
   }));
 test('property: plan invariants hold for any valid manifest and seed', () => {
   fc.assert(fc.property(arbManifest, fc.integer(), (m, seed) => {
@@ -104,7 +133,9 @@ test('property: plan invariants hold for any valid manifest and seed', () => {
     const slotIdx = p.labeled.map((i, k) => (i.kind === 'attention' ? k : -1)).filter((k) => k >= 0);
     const wantIdx = C.map((_, k) => Math.floor((k * L.length) / C.length) + k);   // +k for the checks inserted before it
     const pos = [...L.map((i) => i.survey_pos), ...p.unlabeled.map((i) => i.survey_pos)];
+    const idx = [...p.labeled.map((i) => i.artifact.index), ...p.unlabeled.map((i) => i.artifact.index)];
     return L.length === 2 * perAuthor
+      && (!m.avoid_pairs || new Set(idx).size === idx.length)                    // avoid_pairs: one artifact per pair
       && L.filter((i) => i.artifact.author === 'human').length === perAuthor
       && L.filter((i) => i.stated_author === 'human').length === perAuthor
       && Math.abs(cell('human', 'human') - cell('ai', 'human')) <= 1            // crossing balanced to within one
