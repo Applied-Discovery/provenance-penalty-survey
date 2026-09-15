@@ -64,7 +64,7 @@ named `human_<n>.<ext>` and `ai_<n>.<ext>`, keep the prompts that produced
 the AI artifacts in `prompts/`, and write the criteria.
 
 ```
-npm run scaffold -- <name> --type text|image|code --noun <stem noun> [--verb <human verb>] [--class lay|expert] [--minutes <consent duration>] [--labeled N] [--unlabeled N] [--checks N]
+npm run scaffold -- <name> --type text|image|code --noun <stem noun> [--verb <human verb>] [--class lay|expert] [--minutes <consent duration>] [--labeled N] [--unlabeled N] [--checks N] [--avoid-pairs]
 ```
 
 Builds `domains/<name>/` from the finished pool: copies the artifacts and
@@ -73,7 +73,11 @@ first and writes nothing if the manifest would not validate or the folder
 exists. The page is shared (see above), so nothing else goes there. Defaults:
 lay evaluators, one attention check, 30 labeled and 8 unlabeled artifacts: 39
 of the 40-artifact pool, the closest fit to the registered 2:2:1 ratio once
-the attention check has taken its artifact.
+the attention check has taken its artifact. `--avoid-pairs` sets
+`avoid_pairs` in the manifest for domains where `human_<n>` and `ai_<n>` are
+answers to the same prompt: a session then never shows both halves of a pair,
+so it can draw at most one artifact per pair (20 with the standard pool) and
+the session shape must be set smaller.
 
 ```
 npm run anonymize -- <name>
