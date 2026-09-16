@@ -104,3 +104,9 @@ test('prescreener redirect must be an http(s) URL and the artifact path safe', (
 test('a code domain needs a recognised extension on the prescreener artifact too', () => {
   expect(() => validateManifest({ ...codeBase, prescreener: { ...prescreener, artifact: 'artifacts/prescreen.xyz' } })).toThrow(/prescreen\.xyz/);
 });
+
+test('attention_redirect is optional and must be an http(s) URL', () => {
+  expect(validateManifest(base).attention_redirect).toBeUndefined();
+  expect(validateManifest({ ...base, attention_redirect: 'https://app.prolific.com/submissions/complete?cc=ATTN' }).attention_redirect).toBe('https://app.prolific.com/submissions/complete?cc=ATTN');
+  expect(() => validateManifest({ ...base, attention_redirect: 'javascript:alert(1)' })).toThrow(/attention_redirect/);
+});

@@ -65,6 +65,7 @@ export const manifestSchema = z.object({
   storage: z.enum(['datapipe']).default('datapipe'),
   curation_criteria: z.string().min(1),
   completion_redirect: httpUrl.optional(),
+  attention_redirect: httpUrl.optional(),      // where a session that failed any attention check ends instead: the platform's separate completion code
   osf_study: z.string().min(1),                 // DataPipe experiment id
 }).strict().superRefine((m, ctx) => {
   if (m.artifact_type === 'code') {   // the extension picks the highlighting grammar, so every artifact needs a known one

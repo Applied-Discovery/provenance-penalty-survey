@@ -138,3 +138,19 @@ test('finalRedirect: the screen-out URL after a failed prescreen, else the compl
   expect(finalRedirect(m, c, [{ trial_kind: 'consent' }])).toBe('https://p.test/done');
   expect(finalRedirect(m, ctx, [{ trial_kind: 'consent' }])).toBeUndefined();
 });
+
+// Failed attention check: the platform's separate completion code, when the manifest names one.
+const ma = validateManifest({ ...m, attention_redirect: 'https://p.test/attn' } as any);
+const passedCheck = { trial_kind: 'attention', expected: 7, response: 6 };   // response is the zero-based button index: 6 -> rating 7
+const failedCheck = { trial_kind: 'attention', expected: 7, response: 7 };
+test('finalRedirect: the attention URL after any failed check, else the completion redirect', () => {
+  const c = { ...ctx, redirect: 'https://p.test/done' };
+  expect(finalRedirect(ma, c, [passedCheck, failedCheck])).toBe('https://p.test/attn');
+  expect(finalRedirect(ma, c, [passedCheck])).toBe('https://p.test/done');
+  expect(finalRedirect(m, c, [failedCheck])).toBe('https://p.test/done');   // no attention_redirect: as before
+  expect(finalRedirect(ma, ctx, [failedCheck])).toBe('https://p.test/attn');   // even without a completion redirect
+});
+test('finalRedirect: a failed prescreen wins over the attention URL (the checks were never shown)', () => {
+  const both = validateManifest({ ...mp, attention_redirect: 'https://p.test/attn' } as any);
+  expect(finalRedirect(both, ctx, [{ trial_kind: 'prescreen', passed: false }])).toBe('https://p.test/out');
+});
