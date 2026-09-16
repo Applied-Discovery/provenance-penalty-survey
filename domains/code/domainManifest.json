@@ -1,0 +1,88 @@
+{
+  "name": "code",
+  "protocol_version": "protocol-v1",
+  "domain_version": "code-v1",
+  "wave": 1,
+  "artifact_type": "code",
+  "evaluator_class": "expert",
+  "stem_noun": "solution",
+  "human_verb": "written",
+  "expected_minutes": "8",
+  "attention_checks": 1,
+  "labeled_artifacts_per_session": 4,
+  "unlabeled_per_session": 1,
+  "avoid_pairs": true,
+  "artifacts": {
+    "human": {
+      "0": "artifacts/c7e3fd0dbcea86b0.py",
+      "1": "artifacts/6810be6a32339790.c",
+      "2": "artifacts/6b9e5276cee78ad3.c",
+      "3": "artifacts/e37bf2e34ce15f53.py",
+      "4": "artifacts/d7a40c78bc3d3800.java",
+      "5": "artifacts/ca94912e35baa3a9.java",
+      "6": "artifacts/2061ceb3d562694d.java",
+      "7": "artifacts/aa7ee7483af529b2.java",
+      "8": "artifacts/3ea4b347f58b2b26.java",
+      "9": "artifacts/ddbca60ec9fdb038.java",
+      "10": "artifacts/e576b8f77bbd800a.java",
+      "11": "artifacts/976f90c9c0bf7804.py",
+      "12": "artifacts/e1a3c4a50fd6b13a.py",
+      "13": "artifacts/abcc483c2c5ba71b.py",
+      "14": "artifacts/3864b4c7046cd10b.py",
+      "15": "artifacts/e2dbd8a16a7500e8.py",
+      "16": "artifacts/143d4e4a13bcd98e.py",
+      "17": "artifacts/7b686cbdbc56850a.py",
+      "18": "artifacts/fd3aa751cccd10b9.ts",
+      "19": "artifacts/c7e989eefc019d79.ts"
+    },
+    "ai": {
+      "0": "artifacts/725ee491ae7ab9a7.py",
+      "1": "artifacts/d7391b1d37cde659.c",
+      "2": "artifacts/def61358571f2b1e.c",
+      "3": "artifacts/46b03ce9e194a8ed.py",
+      "4": "artifacts/a09f3d5015c75a01.java",
+      "5": "artifacts/9325810794372d69.java",
+      "6": "artifacts/6aee676f1cebf635.java",
+      "7": "artifacts/9d5b28cb8a615095.java",
+      "8": "artifacts/76aad4d0720c7013.java",
+      "9": "artifacts/de5d2ee656101412.java",
+      "10": "artifacts/989f7adf405e2b07.java",
+      "11": "artifacts/028fc727551ad478.py",
+      "12": "artifacts/c2cfe36cb0111ca3.py",
+      "13": "artifacts/692b26f95e16a9ae.py",
+      "14": "artifacts/b9438d6257509abb.py",
+      "15": "artifacts/041d58d1c76d4893.py",
+      "16": "artifacts/0b65386d869a4f8b.py",
+      "17": "artifacts/f18a9ab44ee64e53.py",
+      "18": "artifacts/f3d75eed0f731c54.ts",
+      "19": "artifacts/710d7abac0565401.ts"
+    }
+  },
+  "demographics": [
+    {
+      "id": "coding_frequency",
+      "question": "How often do you write code?",
+      "options": [
+        "Daily",
+        "Most days",
+        "A few times a week",
+        "A few times a month",
+        "Rarely"
+      ]
+    },
+    {
+      "id": "ai_coding_use",
+      "question": "How often do you use AI when writing code?",
+      "options": [
+        "Always",
+        "Most times",
+        "Sometimes",
+        "Rarely",
+        "Never"
+      ]
+    }
+  ],
+  "storage": "datapipe",
+  "curation_criteria": "curationCriteria.md",
+  "osf_study": "kMJDgIUCj6ZN"
+}
