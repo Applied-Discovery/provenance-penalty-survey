@@ -193,3 +193,9 @@ test('rejects an empty attribution entry', () => {
 test('attribution urls must be http(s), so a credit cannot carry a javascript: link', () => {
   expect(() => attributed({ human: { '0': { title: 'T', title_url: 'javascript:alert(1)' } } })).toThrow(/http\(s\)|url/);
 });
+
+test('attention_redirect is optional and must be an http(s) URL', () => {
+  expect(validateManifest(base).attention_redirect).toBeUndefined();
+  expect(validateManifest({ ...base, attention_redirect: 'https://app.prolific.com/submissions/complete?cc=ATTN' }).attention_redirect).toBe('https://app.prolific.com/submissions/complete?cc=ATTN');
+  expect(() => validateManifest({ ...base, attention_redirect: 'javascript:alert(1)' })).toThrow(/attention_redirect/);
+});

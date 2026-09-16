@@ -133,6 +133,13 @@ question and answer before collection and record them in the run log; the
 registration's pass mark is one out of one. `domains/test/` and
 `domains/code/` carry examples.
 
+`attention_redirect`, also optional, is where a session that answered any
+attention check wrongly ends instead of `completion_redirect`: on Prolific, a
+second completion code for failed attention checks, so those submissions arrive
+already sorted. The data are stored the same way either way
+(`attention_passed` in the session row); only the destination differs. A
+failed prescreen takes precedence, since such a session saw no checks.
+
 ```
 npm run anonymize -- <name>
 ```
@@ -190,7 +197,7 @@ The site is static, so everything the browser needs is public. Consequences:
   on the page exposes it, but a saved file can be inspected.
 - `SESSION_ID` and `STUDY_ID` must match `[A-Za-z0-9_-]{1,128}`; anything
   else is ignored (a fresh session id is generated) and logged to the console.
-- `completion_redirect` must be an http(s) URL; artifact paths must be relative
+- `completion_redirect` and `attention_redirect` must be http(s) URLs; artifact paths must be relative
   to the domain folder with no `..`.
 - `index.html` carries a Content-Security-Policy meta tag (GitHub Pages sends
   no headers). Keep it when copying the example; add hosts to `connect-src`

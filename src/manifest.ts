@@ -97,6 +97,7 @@ export const manifestSchema = z.object({
   storage: z.enum(['datapipe']).default('datapipe'),
   curation_criteria: z.string().min(1),
   completion_redirect: httpUrl.optional(),
+  attention_redirect: httpUrl.optional(),      // where a session that failed any attention check ends instead: the platform's separate completion code
   osf_study: z.string().min(1),                 // DataPipe experiment id
 }).strict().superRefine((m, ctx) => {
   const everyArtifact = () => [...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai), ...(m.prescreener ? [m.prescreener.artifact] : [])];

@@ -53,6 +53,7 @@ has the following structure
     storage?: "datapipe", // default (currently only supported)
     curation_criteria: "path/to/markdown_file.md", // contains criteria for curation of the artifacts which should be frozen and uploaded to OSF before data collection begins.
     completion_redirect?: "", // URL to redirect to once a survey is complete
+    attention_redirect?: "", // URL to redirect to instead when any attention check was answered wrongly (a failed prescreen still wins)
     osf_study: "" // ID for datapipe
 }
 ```
