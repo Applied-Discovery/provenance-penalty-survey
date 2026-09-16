@@ -8,6 +8,7 @@ export * from './copy';
 export * from './trials/consent';
 export * from './trials/rating';
 export * from './trials/unlabeled';
+export * from './trials/demographics';
 export * from './trials/disclosure';
 export * from './submission';
 export * from './storage/types';

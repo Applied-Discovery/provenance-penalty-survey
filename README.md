@@ -79,6 +79,14 @@ answers to the same prompt: a session then never shows both halves of a pair,
 so it can draw at most one artifact per pair (20 with the standard pool) and
 the session shape must be set smaller.
 
+To ask participants about themselves, add `demographics` to the manifest by
+hand: a list of `{ id, question, options }` single-choice questions (snake_case
+ids, at least two options). They are asked after the last rating and before the
+debrief, so a domain-specific question, say AI coding assistant use in the code
+domain, cannot prime the ratings, and each answer lands in the session row as
+`demo_<id>` holding the chosen option text. Add a "Prefer not to say" option
+where the question warrants one. `domains/test/` carries an example.
+
 ```
 npm run anonymize -- <name>
 ```

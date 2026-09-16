@@ -37,6 +37,21 @@ test('full session stores one session row, one labeled table and one unlabeled t
   expect(JSON.stringify(dp.posts)).not.toMatch(/PROLIFIC|user_id/);              // no participant identifier anywhere
 });
 
+test('demographic questions from the manifest are asked after the ratings and land in the session row', async ({ page }) => {
+  const dp = await interceptDataPipe(page);
+  await patchManifest(page, { demographics: [
+    { id: 'ai_use', question: 'How often do you use AI coding assistants?', options: ['Never', 'Weekly', 'Daily'] },
+    { id: 'role', question: 'What best describes you?', options: ['Student', 'Professional'] },
+  ] });
+  await page.goto(`${EXAMPLE}?SESSION_ID=e2e-demo`);
+  const clicked = await runSession(page, { ...happy, demographicOption: 1 });
+  expect(clicked).toMatchObject({ labeled: 2, unlabeled: 1, beliefs: 1, demographics: ['Weekly', 'Professional'] });
+  const [session] = file(dp.posts, 'session_');
+  expect(session).toMatchObject({ demo_ai_use: 'Weekly', demo_role: 'Professional' });
+  expect(Object.keys(session).slice(-2)).toEqual(['demo_ai_use', 'demo_role']);
+  expect(file(dp.posts, 'labeled_')[0]).not.toHaveProperty('demo_ai_use');
+});
+
 test('failed attention check and withdrawal are recorded', async ({ page }) => {
   const dp = await interceptDataPipe(page);
   await page.goto(`${EXAMPLE}?SESSION_ID=e2e-2`);

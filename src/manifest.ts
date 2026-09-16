@@ -9,6 +9,14 @@ export function isSafeArtifactPath(p: string): boolean {
     && !p.split('/').some((seg) => seg === '..' || seg === '');
 }
 
+/** A single-choice question asked after the ratings; its answer lands in the session row as `demo_<id>`. */
+const demographicQuestion = z.object({
+  id: z.string().regex(/^[a-z][a-z0-9_]*$/, 'demographic question id must be snake_case'),
+  question: z.string().min(1),
+  options: z.array(z.string().min(1)).min(2),
+}).strict();
+export type DemographicQuestion = z.infer<typeof demographicQuestion>;
+
 const artifactPath = z.string().refine(isSafeArtifactPath, 'artifact path must be relative to the domain folder, with no scheme, leading slash or ".."');
 
 const artifactMap = z.record(z.string(), artifactPath).superRefine((obj, ctx) => {
@@ -36,6 +44,7 @@ export const manifestSchema = z.object({
   unlabeled_per_session: z.number().int().min(0).default(1),
   avoid_pairs: z.boolean().default(false),      // never show human i and ai i in the same session
   artifacts: z.object({ human: artifactMap, ai: artifactMap }),
+  demographics: z.array(demographicQuestion).default([]),   // asked after every rating, before the debrief, so the questions cannot prime the ratings
   storage: z.enum(['datapipe']).default('datapipe'),
   curation_criteria: z.string().min(1),
   completion_redirect: z.string().url().refine((u) => /^https?:$/.test(new URL(u).protocol), 'completion_redirect must be an http(s) URL').optional(),
@@ -49,6 +58,8 @@ export const manifestSchema = z.object({
   if (m.avoid_pairs) {
     if (need > human) ctx.addIssue({ code: 'custom', message: `session needs ${need} pairs, pool has ${human}` });
   } else if (need > human + ai) ctx.addIssue({ code: 'custom', message: `session needs ${need} artifacts, pool has ${human + ai}` });
+  const ids = m.demographics.map((q) => q.id), dup = ids.find((id, i) => ids.indexOf(id) !== i);
+  if (dup) ctx.addIssue({ code: 'custom', path: ['demographics'], message: `duplicate demographic question id "${dup}"` });
 });
 
 export type DomainManifest = z.infer<typeof manifestSchema>;

@@ -65,3 +65,14 @@ test('with avoid_pairs the session may draw at most one artifact per pair', () =
   expect(() => validateManifest({ ...base, avoid_pairs: true })).toThrow(/needs 4 pairs, pool has 2/);
   expect(validateManifest({ ...base, avoid_pairs: true, attention_checks: 0, unlabeled_per_session: 0 }).avoid_pairs).toBe(true);
 });
+test('demographics default to none', () => {
+  expect(validateManifest(base).demographics).toEqual([]);
+});
+test('demographics: single-choice questions with snake_case ids, at least two options, ids unique', () => {
+  const q = { id: 'ai_use', question: 'How often do you use AI coding assistants?', options: ['Never', 'Monthly', 'Weekly', 'Daily'] };
+  expect(validateManifest({ ...base, demographics: [q] }).demographics).toEqual([q]);
+  expect(() => validateManifest({ ...base, demographics: [{ ...q, id: 'AI use' }] })).toThrow(/snake_case/);
+  expect(() => validateManifest({ ...base, demographics: [{ ...q, options: ['Only one'] }] })).toThrow(/options/);
+  expect(() => validateManifest({ ...base, demographics: [{ ...q, extra: 1 }] })).toThrow(/extra/);
+  expect(() => validateManifest({ ...base, demographics: [q, { ...q, question: 'Again?' }] })).toThrow(/duplicate demographic question id "ai_use"/);
+});

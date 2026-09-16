@@ -24,6 +24,20 @@
       "3": "artifacts/e45de7e013132559.txt"
     }
   },
+  "demographics": [
+    {
+      "id": "ai_use",
+      "question": "How often do you use AI tools such as ChatGPT?",
+      "options": [
+        "Never",
+        "A few times a year",
+        "Monthly",
+        "Weekly",
+        "Daily",
+        "Prefer not to say"
+      ]
+    }
+  ],
   "storage": "datapipe",
   "curation_criteria": "curationCriteria.md",
   "osf_study": "1mz9PEqd1VT9"

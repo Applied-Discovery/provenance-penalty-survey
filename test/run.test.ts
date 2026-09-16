@@ -17,6 +17,18 @@ test('timeline order: consent, labeled section with checks, title, unlabeled pai
   expect(kinds).toEqual(['consent', 'attention', 'labeled', 'labeled', 'attention', 'labeled', 'labeled', 'unlabeled_title',
     'unlabeled_rating', 'belief', 'unlabeled_rating', 'belief', 'disclosure', 'submit', 'thanks']);
 });
+test('demographic questions come after the last rating and before the disclosure', () => {
+  const q = { id: 'ai_use', question: 'How often do you use AI coding assistants?', options: ['Never', 'Daily'] };
+  const md = validateManifest({ ...m, demographics: [q, { ...q, id: 'role' }] } as any);
+  const trials = buildTimeline(md, plan, loaded, ctx, async () => true) as any[];
+  const kinds = trials.map((t) => t.data.trial_kind);
+  expect(kinds.slice(-5)).toEqual(['demographic', 'demographic', 'disclosure', 'submit', 'thanks']);
+  expect(kinds[kinds.length - 6]).toBe('belief');
+  const first = trials[kinds.indexOf('demographic')];
+  expect(first.data.question_id).toBe('ai_use');
+  expect(first.choices).toEqual(['Never', 'Daily']);
+  expect(first.stimulus).toContain(q.question);
+});
 test('image domains get a preload trial right after consent', () => {
   const im = validateManifest({ ...m, artifact_type: 'image' } as any);
   const kinds = buildTimeline(im, plan, loaded, ctx, async () => true).map((t: any) => t.data.trial_kind);

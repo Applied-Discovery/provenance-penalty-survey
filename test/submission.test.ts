@@ -34,6 +34,21 @@ test('assembles the submission from jsPsych trial records', () => {
   ]);
   expect(s.data.ratings.map((r) => r.id)).not.toContain('d_v1_human_1');   // attention artifacts are never rated
 });
+test('demographics are empty when the manifest asks no questions', () => {
+  expect(buildSubmission(m, ctx, trials).data.demographics).toEqual([]);
+});
+const q1 = { id: 'ai_use', question: 'How often do you use AI coding assistants?', options: ['Never', 'Weekly', 'Daily'] };
+const q2 = { id: 'role', question: 'What is your role?', options: ['Student', 'Professional'] };
+const mDemo = validateManifest({ ...m, demographics: [q1, q2] } as any);
+test('demographic answers are the chosen option text, in manifest order', () => {
+  const t = [...trials, { trial_kind: 'demographic', question_id: 'role', response: 1, rt: 700 }, { trial_kind: 'demographic', question_id: 'ai_use', response: 2, rt: 900 }];
+  expect(buildSubmission(mDemo, ctx, t).data.demographics).toEqual([{ id: 'ai_use', answer: 'Daily' }, { id: 'role', answer: 'Professional' }]);
+});
+test('throws if a demographic question was not answered or the answer is out of range', () => {
+  expect(() => buildSubmission(mDemo, ctx, [...trials, { trial_kind: 'demographic', question_id: 'ai_use', response: 0, rt: 1 }])).toThrow(/role/);
+  expect(() => buildSubmission(mDemo, ctx, [...trials, { trial_kind: 'demographic', question_id: 'ai_use', response: 0, rt: 1 },
+    { trial_kind: 'demographic', question_id: 'role', response: 5, rt: 1 }])).toThrow(/role/);
+});
 test('withdrawn is false when the box is unticked', () => {
   const t = trials.map((x) => (x.trial_kind === 'disclosure' ? { ...x, response: {} } : x));
   expect(buildSubmission(m, ctx, t).data.withdrawn).toBe(false);

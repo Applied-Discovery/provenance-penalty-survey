@@ -42,12 +42,12 @@ export const file = (posts: Post[], prefix: string) => {
 const rate = (page: Page, n: number) =>
   page.locator('button.rating-btn').filter({ has: page.locator('.rating-n', { hasText: new RegExp(`^${n}$`) }) }).click();
 
-export interface Choices { attentionCorrect: boolean; withdraw: boolean; labeledRating: number; unlabeledRating: number }
-export interface Clicked { labeled: number; unlabeled: number; beliefs: number; attention: { expected: number; picked: number }[] }
+export interface Choices { attentionCorrect: boolean; withdraw: boolean; labeledRating: number; unlabeledRating: number; demographicOption?: number }
+export interface Clicked { labeled: number; unlabeled: number; beliefs: number; attention: { expected: number; picked: number }[]; demographics: string[] }
 
 /** Drive one session from consent to the thank-you page by reacting to whatever is on screen. */
 export async function runSession(page: Page, c: Choices): Promise<Clicked> {
-  const clicked: Clicked = { labeled: 0, unlabeled: 0, beliefs: 0, attention: [] };
+  const clicked: Clicked = { labeled: 0, unlabeled: 0, beliefs: 0, attention: [], demographics: [] };
   for (let step = 0; step < 200; step++) {
     if (await page.getByRole('heading', { name: 'Thank you' }).isVisible()) return clicked;   // debrief body also says "Thank you", so match the heading
     if (await page.getByRole('button', { name: 'I agree' }).isVisible()) { await page.getByRole('button', { name: 'I agree' }).click(); continue; }
@@ -60,6 +60,10 @@ export async function runSession(page: Page, c: Choices): Promise<Clicked> {
     if (await page.getByRole('button', { name: 'Continue' }).isVisible()) { await page.getByRole('button', { name: 'Continue' }).click(); continue; }
     if (await page.getByRole('button', { name: 'A person' }).isVisible()) { clicked.beliefs++; await page.getByRole('button', { name: 'A person' }).click(); continue; }
     if (await page.locator('button.rating-btn').first().isVisible()) { clicked.unlabeled++; await rate(page, c.unlabeledRating); continue; }
+    if (await page.locator('.demographic').isVisible()) {
+      const btn = page.locator('#jspsych-html-button-response-btngroup button').nth(c.demographicOption ?? 0);
+      clicked.demographics.push(await btn.innerText()); await btn.click(); continue;
+    }
     if (await page.getByRole('button', { name: 'Submit' }).isVisible()) {
       if (c.withdraw) await page.getByLabel(/withdraw/i).check();
       await page.getByRole('button', { name: 'Submit' }).click(); continue;
