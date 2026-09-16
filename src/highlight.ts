@@ -31,6 +31,20 @@ export const CODE_LANGUAGES = Object.keys(GRAMMARS).sort() as (keyof typeof GRAM
 export type CodeLanguage = (typeof CODE_LANGUAGES)[number];
 export const isCodeLanguage = (s: string): s is CodeLanguage => (CODE_LANGUAGES as string[]).includes(s);
 
+/** File extension (lower case, no dot) to grammar, for a code domain whose artifacts are highlighted by extension. */
+const EXTENSIONS: Record<string, CodeLanguage> = {
+  sh: 'bash', bash: 'bash', c: 'c', h: 'c', cpp: 'cpp', cc: 'cpp', cxx: 'cpp', hpp: 'cpp', cs: 'csharp', go: 'go', java: 'java',
+  js: 'javascript', mjs: 'javascript', cjs: 'javascript', jsx: 'javascript', kt: 'kotlin', kts: 'kotlin', php: 'php', txt: 'plaintext',
+  py: 'python', r: 'r', rb: 'ruby', rs: 'rust', scala: 'scala', sql: 'sql', swift: 'swift', ts: 'typescript', tsx: 'typescript',
+};
+export const CODE_EXTENSIONS = Object.keys(EXTENSIONS).sort();
+
+/** The grammar an artifact path's extension names, or undefined when the extension is missing or not registered. */
+export function languageForPath(path: string): CodeLanguage | undefined {
+  const m = /\.([A-Za-z0-9]+)$/.exec(path);
+  return m ? EXTENSIONS[m[1].toLowerCase()] : undefined;
+}
+
 /** HTML for `code` highlighted as `language`: text nodes escaped, tokens wrapped in `hljs-*` spans. Never auto-detects. */
 export function highlightCode(code: string, language: CodeLanguage): string {
   return hljs.highlight(code, { language, ignoreIllegals: true }).value;

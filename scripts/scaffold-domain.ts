@@ -7,7 +7,7 @@ import { checkName, curationRoot, CURATION_OPTION, domainsDir } from './curation
 
 export interface ScaffoldOptions {
   name: string; artifactType: 'text' | 'image' | 'code'; stemNoun: string;
-  codeLanguage?: string;   // required with artifactType 'code'; one of CODE_LANGUAGES
+  codeLanguage?: string;   // artifactType 'code' only: one of CODE_LANGUAGES for the whole pool; omit to highlight each artifact by its extension
   humanVerb?: string; evaluatorClass?: 'lay' | 'expert'; expectedMinutes?: string;
   labeled?: number; unlabeled?: number; attentionChecks?: number; avoidPairs?: boolean;
 }
@@ -87,7 +87,7 @@ function main(argv: string[]) {
   const int = (v: string | undefined) => (v === undefined ? undefined : Number.parseInt(v, 10));
   if (!name || !values.type || !values.noun) { process.stderr.write(USAGE + '\n'); process.exit(1); }
   if (!['text', 'image', 'code'].includes(values.type)) throw new Error(`--type must be text, image or code`);
-  if (values.type === 'code' && !values.language) throw new Error(`--type code needs --language, one of: ${CODE_LANGUAGES.join(', ')}`);
+  if (values.language && !CODE_LANGUAGES.includes(values.language as (typeof CODE_LANGUAGES)[number])) throw new Error(`--language must be one of: ${CODE_LANGUAGES.join(', ')}`);
   if (values.class && !['lay', 'expert'].includes(values.class)) throw new Error(`--class must be lay or expert`);
   const n = scaffoldDomain(curationRoot(values.curation), domainsDir(), {
     name, artifactType: values.type as ScaffoldOptions['artifactType'], stemNoun: values.noun, codeLanguage: values.language, humanVerb: values.verb,

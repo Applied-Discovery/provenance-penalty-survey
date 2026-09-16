@@ -60,10 +60,14 @@ test('scaffold honours explicit session shape, class and minutes, and omits huma
   expect(manifestOf('code_review')).toMatchObject({ artifact_type: 'code', code_language: 'python', evaluator_class: 'expert', expected_minutes: '10', labeled_artifacts_per_session: 2, unlabeled_per_session: 1, attention_checks: 0 });
   expect(manifestOf('code_review')).not.toHaveProperty('human_verb');
 });
-test('scaffold refuses a code domain without a language, and a text domain with one, writing nothing', () => {
+test('scaffold accepts a code domain without a language when every extension is known, and refuses one that is not', () => {
+  newDomain(curation, 'code_mixed');
+  curate('code_mixed', ['human_1.py', 'human_2.c', 'ai_1.py', 'ai_2.c']);
+  scaffoldDomain(curation, domains, { name: 'code_mixed', artifactType: 'code', stemNoun: 'function', labeled: 2, unlabeled: 1, attentionChecks: 0 });
+  expect(manifestOf('code_mixed')).not.toHaveProperty('code_language');
   newDomain(curation, 'code_nolang');
-  curate('code_nolang', ['human_1.py', 'ai_1.py']);
-  expect(() => scaffoldDomain(curation, domains, { name: 'code_nolang', artifactType: 'code', stemNoun: 'function', labeled: 0, unlabeled: 1, attentionChecks: 0 })).toThrow(/code_language is required/);
+  curate('code_nolang', ['human_1.cobol', 'ai_1.cobol']);
+  expect(() => scaffoldDomain(curation, domains, { name: 'code_nolang', artifactType: 'code', stemNoun: 'function', labeled: 0, unlabeled: 1, attentionChecks: 0 })).toThrow(/not recognised/);
   expect(existsSync(join(domains, 'code_nolang'))).toBe(false);
   curate('haiku', tenOfEach);
   expect(() => scaffoldDomain(curation, domains, { ...opts, codeLanguage: 'python', labeled: 2 })).toThrow(/only when artifact_type is code/);

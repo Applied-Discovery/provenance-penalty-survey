@@ -76,11 +76,16 @@ test('demographics: single-choice questions with snake_case ids, at least two op
   expect(() => validateManifest({ ...base, demographics: [{ ...q, extra: 1 }] })).toThrow(/extra/);
   expect(() => validateManifest({ ...base, demographics: [q, { ...q, question: 'Again?' }] })).toThrow(/duplicate demographic question id "ai_use"/);
 });
-test('code_language is required for code domains, forbidden elsewhere, and must be a registered language', () => {
-  const code = { ...base, artifact_type: 'code', stem_noun: 'function' };
-  expect(() => validateManifest(code)).toThrow(/code_language is required/);
+const code = { ...base, name: 'code', artifact_type: 'code', stem_noun: 'function',
+  artifacts: { human: { '0': 'artifacts/a.py', '1': 'artifacts/b.c' }, ai: { '0': 'artifacts/c.ts', '1': 'artifacts/d.java' } } };
+test('a code domain may name one grammar or rely on every artifact extension', () => {
+  expect(validateManifest(code).code_language).toBeUndefined();
   expect(validateManifest({ ...code, code_language: 'python' }).code_language).toBe('python');
   expect(() => validateManifest({ ...code, code_language: 'cobol' })).toThrow(/code_language must be one of/);
   expect(() => validateManifest({ ...base, code_language: 'python' })).toThrow(/only when artifact_type is code/);
-  expect(validateManifest(base).code_language).toBeUndefined();
+});
+test('a code domain without code_language rejects an artifact whose extension is unknown, naming it', () => {
+  const bad = { ...code, artifacts: { ...code.artifacts, ai: { '0': 'artifacts/c.ts', '1': 'artifacts/d.cobol' } } };
+  expect(() => validateManifest(bad)).toThrow(/not recognised: artifacts\/d\.cobol/);
+  expect(validateManifest({ ...bad, code_language: 'python' }).code_language).toBe('python');   // an explicit grammar covers any name
 });

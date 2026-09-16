@@ -127,19 +127,26 @@ test('creative writing keeps its line breaks and indentation on screen', async (
   expect(shown).toMatch(/\n {4}\S/);             // every example poem indents lines 4 and 6 by four spaces
 });
 
-test('a code domain shows every artifact highlighted with the manifest language, inside a scrolling box', async ({ page }) => {
+test('a code domain highlights each artifact by its file extension, inside a scrolling box', async ({ page }) => {
   await interceptDataPipe(page);
-  await patchManifest(page, { artifact_type: 'code', code_language: 'python', stem_noun: 'function' });
-  const py = 'def add(a, b):\n    return a + b  # <sum>\n';
-  await page.route('**/artifacts/*.txt', (route) => route.fulfill({ status: 200, contentType: 'text/plain', body: py }));
-  await page.goto(`${EXAMPLE}?SESSION_ID=e2e-code`);
-  await page.getByRole('button', { name: 'I agree' }).click();
-  const code = page.locator('pre.artifact-code code.hljs.language-python');
-  await expect(code).toBeVisible();
-  await expect(code.locator('span.hljs-keyword').first()).toHaveText('def');
-  await expect(code).toHaveText(py.trimEnd());            // the escaped comment reads back as written
-  const keywordColor = await code.locator('span.hljs-keyword').first().evaluate((el) => getComputedStyle(el).color);
-  const bodyColor = await code.evaluate((el) => getComputedStyle(el).color);
-  expect(keywordColor).not.toBe(bodyColor);                 // the theme stylesheet is loaded
-  expect(await code.evaluate((el) => getComputedStyle(el.parentElement!).overflowX)).toBe('auto');
+  const seen = new Set<string>();
+  for (const id of ['e2e-code-1', 'e2e-code-2', 'e2e-code-3']) {   // several sessions, so all four languages of example_code come up
+    await page.goto(`/domains/example_code/?SESSION_ID=${id}`);
+    await page.getByRole('button', { name: 'I agree' }).click();
+    for (let i = 0; i < 4; i++) {                                    // attention check + 2 labeled + 1 unlabeled
+      const code = page.locator('pre.artifact-code code.hljs');
+      await expect(code).toBeVisible();
+      const lang = (await code.getAttribute('class'))!.match(/language-(\S+)/)![1];
+      seen.add(lang);
+      await expect(code.locator('span.hljs-keyword').first()).toBeVisible();
+      const keywordColor = await code.locator('span.hljs-keyword').first().evaluate((el) => getComputedStyle(el).color);
+      expect(keywordColor).not.toBe(await code.evaluate((el) => getComputedStyle(el).color));   // the theme stylesheet is loaded
+      expect(await code.evaluate((el) => getComputedStyle(el.parentElement!).overflowX)).toBe('auto');
+      const next = page.locator('button.rating-btn').first();
+      if (await page.getByText('attention check').isVisible()) await page.locator('button.rating-btn').nth(2).click(); else await next.click();
+      if (await page.getByRole('button', { name: 'Continue' }).isVisible()) await page.getByRole('button', { name: 'Continue' }).click();
+      if (await page.getByRole('button', { name: 'A person' }).isVisible()) await page.getByRole('button', { name: 'A person' }).click();
+    }
+  }
+  expect([...seen].sort()).toEqual(['c', 'java', 'python', 'typescript']);
 });
