@@ -1,6 +1,9 @@
 import type { PlannedArtifact } from './plan';
 import type { DomainManifest } from './manifest';
+import { highlightCode, type CodeLanguage } from './highlight';
 export type ArtifactType = DomainManifest['artifact_type'];
+/** What rendering needs from the manifest: the artifact type and, for code, the grammar to highlight with. */
+export type RenderSpec = Pick<DomainManifest, 'artifact_type' | 'code_language'>;
 export interface LoadedArtifact { artifact: PlannedArtifact; content: string }
 
 export function escapeHtml(s: string): string {
@@ -21,10 +24,15 @@ export async function loadArtifacts(
   return out;
 }
 
-export function renderArtifact(loaded: LoadedArtifact, type: ArtifactType, alt: string): string {
-  switch (type) {
+export function renderArtifact(loaded: LoadedArtifact, spec: RenderSpec, alt: string): string {
+  switch (spec.artifact_type) {
     case 'image': return `<img class="artifact artifact-image" src="${escapeHtml(loaded.content)}" alt="${escapeHtml(alt)}">`;
-    case 'code':  return `<pre class="artifact artifact-code"><code>${escapeHtml(loaded.content)}</code></pre>`;
+    case 'code': {
+      // The manifest validates code_language for code domains; without one (a bare test spec) the code is shown unhighlighted.
+      const lang = spec.code_language as CodeLanguage | undefined;
+      const body = lang ? highlightCode(loaded.content, lang) : escapeHtml(loaded.content);
+      return `<pre class="artifact artifact-code"><code class="hljs${lang ? ` language-${lang}` : ''}">${body}</code></pre>`;
+    }
     case 'text':  return `<div class="artifact artifact-text">${escapeHtml(loaded.content)}</div>`;   // whitespace rules: .artifact-text in style.css
   }
 }

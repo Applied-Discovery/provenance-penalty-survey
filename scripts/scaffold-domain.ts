@@ -2,10 +2,12 @@ import { mkdirSync, readdirSync, readFileSync, writeFileSync, existsSync, copyFi
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { validateManifest } from '../src/manifest';
+import { CODE_LANGUAGES } from '../src/highlight';
 import { checkName, curationRoot, CURATION_OPTION, domainsDir } from './curation';
 
 export interface ScaffoldOptions {
   name: string; artifactType: 'text' | 'image' | 'code'; stemNoun: string;
+  codeLanguage?: string;   // required with artifactType 'code'; one of CODE_LANGUAGES
   humanVerb?: string; evaluatorClass?: 'lay' | 'expert'; expectedMinutes?: string;
   labeled?: number; unlabeled?: number; attentionChecks?: number; avoidPairs?: boolean;
 }
@@ -46,7 +48,9 @@ export function scaffoldDomain(curationRootDir: string, domainsRoot: string, o: 
 
   const manifest: Record<string, unknown> = {
     name: o.name, protocol_version: example.protocol_version, domain_version: 'v0.1', wave: 1,
-    artifact_type: o.artifactType, evaluator_class: o.evaluatorClass ?? DEFAULTS.evaluatorClass, stem_noun: o.stemNoun,
+    artifact_type: o.artifactType,
+    ...(o.codeLanguage ? { code_language: o.codeLanguage } : {}),
+    evaluator_class: o.evaluatorClass ?? DEFAULTS.evaluatorClass, stem_noun: o.stemNoun,
     ...(o.humanVerb ? { human_verb: o.humanVerb } : {}),
     ...(o.expectedMinutes ? { expected_minutes: o.expectedMinutes } : {}),
     attention_checks: o.attentionChecks ?? DEFAULTS.attentionChecks,
@@ -70,12 +74,12 @@ export function scaffoldDomain(curationRootDir: string, domainsRoot: string, o: 
 }
 
 const USAGE = `usage: npm run scaffold -- <name> --type text|image|code --noun <stem noun>
-       [--verb <human verb>] [--class lay|expert] [--minutes <consent duration>]
+       [--language <code language>] [--verb <human verb>] [--class lay|expert] [--minutes <consent duration>]
        [--labeled N] [--unlabeled N] [--checks N] [--avoid-pairs] [--curation DIR]`;
 
 function main(argv: string[]) {
   const { values, positionals } = parseArgs({ args: argv, allowPositionals: true, options: {
-    ...CURATION_OPTION, type: { type: 'string' }, noun: { type: 'string' }, verb: { type: 'string' }, class: { type: 'string' },
+    ...CURATION_OPTION, type: { type: 'string' }, noun: { type: 'string' }, language: { type: 'string' }, verb: { type: 'string' }, class: { type: 'string' },
     minutes: { type: 'string' }, labeled: { type: 'string' }, unlabeled: { type: 'string' }, checks: { type: 'string' },
     'avoid-pairs': { type: 'boolean' },
   } });
@@ -83,9 +87,10 @@ function main(argv: string[]) {
   const int = (v: string | undefined) => (v === undefined ? undefined : Number.parseInt(v, 10));
   if (!name || !values.type || !values.noun) { process.stderr.write(USAGE + '\n'); process.exit(1); }
   if (!['text', 'image', 'code'].includes(values.type)) throw new Error(`--type must be text, image or code`);
+  if (values.type === 'code' && !values.language) throw new Error(`--type code needs --language, one of: ${CODE_LANGUAGES.join(', ')}`);
   if (values.class && !['lay', 'expert'].includes(values.class)) throw new Error(`--class must be lay or expert`);
   const n = scaffoldDomain(curationRoot(values.curation), domainsDir(), {
-    name, artifactType: values.type as ScaffoldOptions['artifactType'], stemNoun: values.noun, humanVerb: values.verb,
+    name, artifactType: values.type as ScaffoldOptions['artifactType'], stemNoun: values.noun, codeLanguage: values.language, humanVerb: values.verb,
     evaluatorClass: values.class as ScaffoldOptions['evaluatorClass'], expectedMinutes: values.minutes,
     labeled: int(values.labeled), unlabeled: int(values.unlabeled), attentionChecks: int(values.checks), avoidPairs: values['avoid-pairs'],
   });

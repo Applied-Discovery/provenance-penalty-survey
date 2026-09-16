@@ -15,7 +15,7 @@ export function unlabeledTitleTrial() {
 export function unlabeledRatingTrial(item: UnlabeledItem, loaded: LoadedArtifact, m: DomainManifest) {
   return {
     type: htmlButtonResponse,
-    stimulus: renderArtifact(loaded, m.artifact_type, NEUTRAL_ALT) + stemHtml(m),
+    stimulus: renderArtifact(loaded, m, NEUTRAL_ALT) + stemHtml(m),
     choices: RATING_CHOICES,
     button_html: ratingButtonHtml,
     ...RATING_LAYOUT,
@@ -26,7 +26,7 @@ export function unlabeledRatingTrial(item: UnlabeledItem, loaded: LoadedArtifact
 export function beliefTrial(item: UnlabeledItem, loaded: LoadedArtifact, m: DomainManifest) {
   return {
     type: htmlButtonResponse,
-    stimulus: `${renderArtifact(loaded, m.artifact_type, NEUTRAL_ALT)}<p class="stem">${COPY.beliefQuestion}</p>`,
+    stimulus: `${renderArtifact(loaded, m, NEUTRAL_ALT)}<p class="stem">${COPY.beliefQuestion}</p>`,
     choices: [...COPY.beliefChoices],
     ...RATING_LAYOUT,   // one choice per row, stacked like the rating scale
     data: { trial_kind: 'belief', artifact_id: item.artifact.id, survey_pos: item.survey_pos },

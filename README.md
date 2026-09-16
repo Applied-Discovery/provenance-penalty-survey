@@ -64,7 +64,7 @@ named `human_<n>.<ext>` and `ai_<n>.<ext>`, keep the prompts that produced
 the AI artifacts in `prompts/`, and write the criteria.
 
 ```
-npm run scaffold -- <name> --type text|image|code --noun <stem noun> [--verb <human verb>] [--class lay|expert] [--minutes <consent duration>] [--labeled N] [--unlabeled N] [--checks N] [--avoid-pairs]
+npm run scaffold -- <name> --type text|image|code --noun <stem noun> [--language <code language>] [--verb <human verb>] [--class lay|expert] [--minutes <consent duration>] [--labeled N] [--unlabeled N] [--checks N] [--avoid-pairs]
 ```
 
 Builds `domains/<name>/` from the finished pool: copies the artifacts and
@@ -77,7 +77,11 @@ the attention check has taken its artifact. `--avoid-pairs` sets
 `avoid_pairs` in the manifest for domains where `human_<n>` and `ai_<n>` are
 answers to the same prompt: a session then never shows both halves of a pair,
 so it can draw at most one artifact per pair (20 with the standard pool) and
-the session shape must be set smaller.
+the session shape must be set smaller. `--type code` needs `--language`, the
+grammar every artifact is highlighted with (`python`, `javascript`, ... ;
+`src/highlight.ts` lists them, and `plaintext` turns highlighting off). One
+grammar per domain, never auto-detected, so human and AI artifacts are always
+coloured by the same rules.
 
 To ask participants about themselves, add `demographics` to the manifest by
 hand: a list of `{ id, question, options }` single-choice questions (snake_case

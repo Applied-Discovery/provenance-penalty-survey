@@ -25,6 +25,7 @@ has the following structure
     domain_version: "v0.1",
     wave: 1,
     artifact_type: "image" | "text" | "code",
+    code_language?: "python", // required when artifact_type is code, forbidden otherwise; a registered highlight.js grammar (src/highlight.ts)
     evaluator_class: "lay" | "expert",
     stem_noun: "", // e.g. poem, short story, etc.
     human_verb?: "", // default: created. Could be "drawn, written, painted"
@@ -61,6 +62,7 @@ Validation rules:
 | with `avoid_pairs`: `labeled_artifacts_per_session + attention_checks + unlabeled_per_session <= artifacts.human.length` | Each pair can supply at most one artifact to a session |
 | `artifacts.human` and `artifacts.ai` must have keys 0, 1, ... N-1 | We want easily indexable artifacts. Are using a dict so the keys are stable. |
 | `demographics[].id` snake_case and unique; `options` has at least two entries | Each id becomes a session-row column `demo_<id>` |
+| `code_language` present iff `artifact_type == "code"`, and one of the registered languages | Every artifact in a code domain is highlighted with the same grammar, never auto-detected, so colouring cannot differ between the human and AI halves of the pool |
 
 #### GET Parameters
 
@@ -103,6 +105,8 @@ On submit, passes results to the storage layer. Retry once if it fails. Displays
 #### Display
 
 This package is accompanied by a `copy.ts` where all fixed participant facing copy is stored.
+
+Code artifacts are shown in a monospace box with syntax highlighting from highlight.js, using the manifest's `code_language` grammar for every artifact (text escaped, tokens wrapped in `hljs-*` spans, github light theme). Lines are never wrapped; wide code scrolls inside the box. `plaintext` is available for a domain whose language is not registered; adding a language means importing its grammar in `src/highlight.ts`.
 
 #### Notes
 - We want to ensure that the true provenance of a piece of text or image isn't revealed. Image alt text should be set to the provenance label. File names should not leak. Option to create a utility script which gives all the artifacts a random string name and updates manifest accordingly.

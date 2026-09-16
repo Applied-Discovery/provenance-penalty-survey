@@ -76,3 +76,11 @@ test('demographics: single-choice questions with snake_case ids, at least two op
   expect(() => validateManifest({ ...base, demographics: [{ ...q, extra: 1 }] })).toThrow(/extra/);
   expect(() => validateManifest({ ...base, demographics: [q, { ...q, question: 'Again?' }] })).toThrow(/duplicate demographic question id "ai_use"/);
 });
+test('code_language is required for code domains, forbidden elsewhere, and must be a registered language', () => {
+  const code = { ...base, artifact_type: 'code', stem_noun: 'function' };
+  expect(() => validateManifest(code)).toThrow(/code_language is required/);
+  expect(validateManifest({ ...code, code_language: 'python' }).code_language).toBe('python');
+  expect(() => validateManifest({ ...code, code_language: 'cobol' })).toThrow(/code_language must be one of/);
+  expect(() => validateManifest({ ...base, code_language: 'python' })).toThrow(/only when artifact_type is code/);
+  expect(validateManifest(base).code_language).toBeUndefined();
+});

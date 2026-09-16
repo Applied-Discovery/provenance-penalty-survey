@@ -21,7 +21,20 @@ body { margin: 0; }
   line-height: 1.6;
 }
 .artifact-image { max-width: 100%; height: auto; }
-.artifact-code { overflow-x: auto; }   /* wide code scrolls inside its box; the page never scrolls sideways */
+/* Code: monospace at a size that fits typical line lengths in the column; wide lines scroll inside the box, the page
+ * never scrolls sideways. Token colours come from highlight.js's github theme (web/main.ts); the box gets a faint
+ * background and border so an unhighlighted (plaintext) domain still reads as code. */
+.artifact-code {
+  overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  tab-size: 4;
+  padding: 0.9rem 1rem;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
+  background: #f6f8fa;
+}
+.artifact-code code.hljs { padding: 0; background: transparent; }   /* the theme pads and paints code.hljs; the pre already does */
 /* Creative writing keeps the author's whitespace: line breaks, indentation, blank stanza gaps.
  * pre-wrap still wraps lines that exceed the column; overflow-wrap catches unbroken runs. */
 .artifact-text { white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 4; }

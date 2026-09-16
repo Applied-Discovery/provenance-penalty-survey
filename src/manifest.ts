@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CODE_LANGUAGES, isCodeLanguage } from './highlight';
 
 export type Author = 'human' | 'ai';
 
@@ -35,6 +36,7 @@ export const manifestSchema = z.object({
   domain_version: z.string().min(1),
   wave: z.number().int().positive(),
   artifact_type: z.enum(['image', 'text', 'code']),
+  code_language: z.string().refine(isCodeLanguage, `code_language must be one of: ${CODE_LANGUAGES.join(', ')}`).optional(),   // required for code, forbidden otherwise
   evaluator_class: z.enum(['lay', 'expert']),
   stem_noun: z.string().min(1),
   human_verb: z.string().min(1).default('created'),
@@ -50,6 +52,10 @@ export const manifestSchema = z.object({
   completion_redirect: z.string().url().refine((u) => /^https?:$/.test(new URL(u).protocol), 'completion_redirect must be an http(s) URL').optional(),
   osf_study: z.string().min(1),                 // DataPipe experiment id
 }).strict().superRefine((m, ctx) => {
+  if (m.artifact_type === 'code' && !m.code_language)
+    ctx.addIssue({ code: 'custom', path: ['code_language'], message: 'code_language is required when artifact_type is code' });
+  if (m.artifact_type !== 'code' && m.code_language)
+    ctx.addIssue({ code: 'custom', path: ['code_language'], message: 'code_language applies only when artifact_type is code' });
   if (m.labeled_artifacts_per_session % 2 !== 0)
     ctx.addIssue({ code: 'custom', message: 'labeled_artifacts_per_session must be even' });
   const human = Object.keys(m.artifacts.human).length, ai = Object.keys(m.artifacts.ai).length;

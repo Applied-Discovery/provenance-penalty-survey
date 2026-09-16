@@ -56,9 +56,18 @@ test('scaffold copies the pool and writes a manifest whose pools run 0..N-1 in n
 test('scaffold honours explicit session shape, class and minutes, and omits human_verb when not given', () => {
   newDomain(curation, 'code_review');
   curate('code_review', ['human_1.py', 'human_2.py', 'ai_1.py', 'ai_2.py']);
-  scaffoldDomain(curation, domains, { name: 'code_review', artifactType: 'code', stemNoun: 'function', evaluatorClass: 'expert', expectedMinutes: '10', labeled: 2, unlabeled: 1, attentionChecks: 0 });
-  expect(manifestOf('code_review')).toMatchObject({ evaluator_class: 'expert', expected_minutes: '10', labeled_artifacts_per_session: 2, unlabeled_per_session: 1, attention_checks: 0 });
+  scaffoldDomain(curation, domains, { name: 'code_review', artifactType: 'code', codeLanguage: 'python', stemNoun: 'function', evaluatorClass: 'expert', expectedMinutes: '10', labeled: 2, unlabeled: 1, attentionChecks: 0 });
+  expect(manifestOf('code_review')).toMatchObject({ artifact_type: 'code', code_language: 'python', evaluator_class: 'expert', expected_minutes: '10', labeled_artifacts_per_session: 2, unlabeled_per_session: 1, attention_checks: 0 });
   expect(manifestOf('code_review')).not.toHaveProperty('human_verb');
+});
+test('scaffold refuses a code domain without a language, and a text domain with one, writing nothing', () => {
+  newDomain(curation, 'code_nolang');
+  curate('code_nolang', ['human_1.py', 'ai_1.py']);
+  expect(() => scaffoldDomain(curation, domains, { name: 'code_nolang', artifactType: 'code', stemNoun: 'function', labeled: 0, unlabeled: 1, attentionChecks: 0 })).toThrow(/code_language is required/);
+  expect(existsSync(join(domains, 'code_nolang'))).toBe(false);
+  curate('haiku', tenOfEach);
+  expect(() => scaffoldDomain(curation, domains, { ...opts, codeLanguage: 'python', labeled: 2 })).toThrow(/only when artifact_type is code/);
+  expect(existsSync(join(domains, 'haiku'))).toBe(false);
 });
 test('scaffold refuses stray files, unequal pools and an existing target without writing', () => {
   curate('haiku', ['human_1.txt', 'ai_1.txt', 'notes.txt']);

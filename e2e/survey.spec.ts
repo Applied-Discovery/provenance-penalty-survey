@@ -126,3 +126,20 @@ test('creative writing keeps its line breaks and indentation on screen', async (
   expect(shown).toMatch(/\n\n/);                 // blank line between title and stanza survives
   expect(shown).toMatch(/\n {4}\S/);             // every example poem indents lines 4 and 6 by four spaces
 });
+
+test('a code domain shows every artifact highlighted with the manifest language, inside a scrolling box', async ({ page }) => {
+  await interceptDataPipe(page);
+  await patchManifest(page, { artifact_type: 'code', code_language: 'python', stem_noun: 'function' });
+  const py = 'def add(a, b):\n    return a + b  # <sum>\n';
+  await page.route('**/artifacts/*.txt', (route) => route.fulfill({ status: 200, contentType: 'text/plain', body: py }));
+  await page.goto(`${EXAMPLE}?SESSION_ID=e2e-code`);
+  await page.getByRole('button', { name: 'I agree' }).click();
+  const code = page.locator('pre.artifact-code code.hljs.language-python');
+  await expect(code).toBeVisible();
+  await expect(code.locator('span.hljs-keyword').first()).toHaveText('def');
+  await expect(code).toHaveText(py.trimEnd());            // the escaped comment reads back as written
+  const keywordColor = await code.locator('span.hljs-keyword').first().evaluate((el) => getComputedStyle(el).color);
+  const bodyColor = await code.evaluate((el) => getComputedStyle(el).color);
+  expect(keywordColor).not.toBe(bodyColor);                 // the theme stylesheet is loaded
+  expect(await code.evaluate((el) => getComputedStyle(el.parentElement!).overflowX)).toBe('auto');
+});
