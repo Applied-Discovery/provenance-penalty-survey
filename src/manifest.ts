@@ -34,6 +34,7 @@ export const manifestSchema = z.object({
   attention_checks: z.number().int().min(0).default(1),
   labeled_artifacts_per_session: z.number().int().positive(),
   unlabeled_per_session: z.number().int().min(0).default(1),
+  avoid_pairs: z.boolean().default(false),      // never show human i and ai i in the same session
   artifacts: z.object({ human: artifactMap, ai: artifactMap }),
   storage: z.enum(['datapipe']).default('datapipe'),
   curation_criteria: z.string().min(1),
@@ -45,7 +46,9 @@ export const manifestSchema = z.object({
   const human = Object.keys(m.artifacts.human).length, ai = Object.keys(m.artifacts.ai).length;
   if (human !== ai) ctx.addIssue({ code: 'custom', message: `human and ai pools must be equal in size (got ${human} and ${ai})` });
   const need = m.labeled_artifacts_per_session + m.attention_checks + m.unlabeled_per_session;
-  if (need > human + ai) ctx.addIssue({ code: 'custom', message: `session needs ${need} artifacts, pool has ${human + ai}` });
+  if (m.avoid_pairs) {
+    if (need > human) ctx.addIssue({ code: 'custom', message: `session needs ${need} pairs, pool has ${human}` });
+  } else if (need > human + ai) ctx.addIssue({ code: 'custom', message: `session needs ${need} artifacts, pool has ${human + ai}` });
 });
 
 export type DomainManifest = z.infer<typeof manifestSchema>;

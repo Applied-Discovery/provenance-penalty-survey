@@ -32,6 +32,7 @@ has the following structure
     attention_checks?: 1, // default: 1
     labeled_artifacts_per_session: 4, // Will be split 50/50 human/ai. Error if not even
     unlabeled_per_session: 1, // default 1
+    avoid_pairs?: false, // default false. When true, human i and ai i never appear in the same session (labeled, attention or unlabeled)
     artifacts: {
         human: {
             id: "paths/to/artifacts" // ids are 0-indexed integers, unique within human/ai. Important they remain stable
@@ -54,6 +55,7 @@ Validation rules:
 | `labeled_artifacts_per_session % 2 == 0 ` | Must be able to split evenly AI/Human |
 | `artifacts.human.length == artifacts.ai.length` | Must be an even sample |
 | `labeled_artifacts_per_session + attention_checks + unlabeled_per_session <= artifacts.human.length + artifacts.ai.length` | Cannot attempt to show more artifacts than exist |
+| with `avoid_pairs`: `labeled_artifacts_per_session + attention_checks + unlabeled_per_session <= artifacts.human.length` | Each pair can supply at most one artifact to a session |
 | `artifacts.human` and `artifacts.ai` must have keys 0, 1, ... N-1 | We want easily indexable artifacts. Are using a dict so the keys are stable. |
 
 #### GET Parameters
@@ -73,7 +75,7 @@ Then, jsPsych should, for each run, generate a timeline that:
 
 **Ratings**
 
-1. Pull in an even split of AI and human artifacts
+1. Pull in an even split of AI and human artifacts. With `avoid_pairs`, an artifact whose index has already been drawn for the session is skipped; this applies to every draw below (labeled, unlabeled, attention).
 2. Randomize order (with the RNG seeded by the session id)
 3. Randomize stated provenance, balanced between Human and AI (with the RNG seeded by the session id)
 4. Insert the attention checks into the order, following the formula: Attention check k of N is inserted before labeled position `floor(k * L / N)` (k from 0). Attention checks use real artifacts. They carry no provenance label but have instruction text instead

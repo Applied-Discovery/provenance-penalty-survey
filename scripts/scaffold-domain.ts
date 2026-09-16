@@ -7,7 +7,7 @@ import { checkName, curationRoot, CURATION_OPTION, domainsDir } from './curation
 export interface ScaffoldOptions {
   name: string; artifactType: 'text' | 'image' | 'code'; stemNoun: string;
   humanVerb?: string; evaluatorClass?: 'lay' | 'expert'; expectedMinutes?: string;
-  labeled?: number; unlabeled?: number; attentionChecks?: number;
+  labeled?: number; unlabeled?: number; attentionChecks?: number; avoidPairs?: boolean;
 }
 
 /** Default session shape for the registered 40-artifact pool: 30 labeled (15 human-labeled, 15 AI-labeled), 8 unlabeled
@@ -51,6 +51,7 @@ export function scaffoldDomain(curationRootDir: string, domainsRoot: string, o: 
     ...(o.expectedMinutes ? { expected_minutes: o.expectedMinutes } : {}),
     attention_checks: o.attentionChecks ?? DEFAULTS.attentionChecks,
     labeled_artifacts_per_session: o.labeled ?? DEFAULTS.labeled, unlabeled_per_session: o.unlabeled ?? DEFAULTS.unlabeled,
+    ...(o.avoidPairs ? { avoid_pairs: true } : {}),
     artifacts: { human: index(pool.human), ai: index(pool.ai) }, storage: 'datapipe',
     curation_criteria: 'curationCriteria.md',   // kept in the curation folder and on OSF, never deployed
     osf_study: 'REPLACE_WITH_DATAPIPE_EXPERIMENT_ID',
@@ -70,12 +71,13 @@ export function scaffoldDomain(curationRootDir: string, domainsRoot: string, o: 
 
 const USAGE = `usage: npm run scaffold -- <name> --type text|image|code --noun <stem noun>
        [--verb <human verb>] [--class lay|expert] [--minutes <consent duration>]
-       [--labeled N] [--unlabeled N] [--checks N] [--curation DIR]`;
+       [--labeled N] [--unlabeled N] [--checks N] [--avoid-pairs] [--curation DIR]`;
 
 function main(argv: string[]) {
   const { values, positionals } = parseArgs({ args: argv, allowPositionals: true, options: {
     ...CURATION_OPTION, type: { type: 'string' }, noun: { type: 'string' }, verb: { type: 'string' }, class: { type: 'string' },
     minutes: { type: 'string' }, labeled: { type: 'string' }, unlabeled: { type: 'string' }, checks: { type: 'string' },
+    'avoid-pairs': { type: 'boolean' },
   } });
   const name = positionals[0];
   const int = (v: string | undefined) => (v === undefined ? undefined : Number.parseInt(v, 10));
@@ -85,7 +87,7 @@ function main(argv: string[]) {
   const n = scaffoldDomain(curationRoot(values.curation), domainsDir(), {
     name, artifactType: values.type as ScaffoldOptions['artifactType'], stemNoun: values.noun, humanVerb: values.verb,
     evaluatorClass: values.class as ScaffoldOptions['evaluatorClass'], expectedMinutes: values.minutes,
-    labeled: int(values.labeled), unlabeled: int(values.unlabeled), attentionChecks: int(values.checks),
+    labeled: int(values.labeled), unlabeled: int(values.unlabeled), attentionChecks: int(values.checks), avoidPairs: values['avoid-pairs'],
   });
   process.stdout.write(`Scaffolded domains/${name}: ${n.human} human and ${n.ai} AI artifacts, manifest validated.\n`);
   process.stdout.write(`\nNext:\n  1. npm run anonymize -- ${name}\n` +

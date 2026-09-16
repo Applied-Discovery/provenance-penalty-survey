@@ -24,6 +24,20 @@ export function buildSessionPlan(m: DomainManifest, rng: Rng): SessionPlan {
   const perAuthor = m.labeled_artifacts_per_session / 2;
   const human = rng.shuffle(pool(m, 'human')), ai = rng.shuffle(pool(m, 'ai'));
 
+  // Draw the first n eligible artifacts from a shuffled pool, removing them from it. With avoid_pairs, an artifact
+  // is eligible only if its pair index has not been drawn yet (human i and ai i never share a session); with the
+  // flag off every artifact is eligible and the draw sequence is unchanged.
+  const used = new Set<number>();
+  const draw = (arts: PlannedArtifact[], n: number): PlannedArtifact[] => {
+    const out: PlannedArtifact[] = [];
+    for (let i = 0; i < arts.length && out.length < n; ) {
+      if (m.avoid_pairs && used.has(arts[i].index)) { i++; continue; }
+      out.push(...arts.splice(i, 1));
+    }
+    out.forEach((a) => used.add(a.index));
+    return out;
+  };
+
   // Stated labels crossed with actual: within each actual group, half human-stated, half AI-stated.
   // If perAuthor is odd, the extra human-stated label goes to one group and the extra AI-stated to the other,
   // so that stated totals stay exactly perAuthor each.
@@ -33,8 +47,8 @@ export function buildSessionPlan(m: DomainManifest, rng: Rng): SessionPlan {
       kind: 'labeled', artifact, stated_author: i < nHumanStated ? 'human' : 'ai', survey_pos: 0,
     })));
   const labeledItems = rng.shuffle([
-    ...assign(human.slice(0, perAuthor), humanGroupHumanStated),
-    ...assign(ai.slice(0, perAuthor), aiGroupHumanStated),
+    ...assign(draw(human, perAuthor), humanGroupHumanStated),
+    ...assign(draw(ai, perAuthor), aiGroupHumanStated),
   ]);
   labeledItems.forEach((it, i) => { it.survey_pos = i + 1; });
 
@@ -42,9 +56,9 @@ export function buildSessionPlan(m: DomainManifest, rng: Rng): SessionPlan {
   // strict (never fall back to the other author) so the registered even split is enforced, not just arithmetic
   // that happens to hold given this draw order. Only attention-check draws may fall back to the other author,
   // since the spec's pool rule for attention checks is a sum over both authors.
-  const rest: Record<Author, PlannedArtifact[]> = { human: human.slice(perAuthor), ai: ai.slice(perAuthor) };
+  const rest: Record<Author, PlannedArtifact[]> = { human, ai };   // what the labeled draws left
   const take = (prefer: Author, allowFallback: boolean): PlannedArtifact => {
-    const a = rest[prefer].shift() ?? (allowFallback ? rest[prefer === 'human' ? 'ai' : 'human'].shift() : undefined);
+    const a = draw(rest[prefer], 1)[0] ?? (allowFallback ? draw(rest[prefer === 'human' ? 'ai' : 'human'], 1)[0] : undefined);
     if (!a) throw new Error(`Artifact pool exhausted for ${prefer}; manifest validation should have caught this`);
     return a;
   };
