@@ -1,7 +1,13 @@
 import htmlButtonResponse from '@jspsych/plugin-html-button-response';
 import type { DemographicQuestion } from '../manifest';
 import { escapeHtml } from '../artifacts';
+import { COPY } from '../copy';
 import { RATING_LAYOUT } from './rating';
+
+/** Title page separating the ratings from the demographic questions; only built when the manifest asks any. */
+export function demographicsTitleTrial() {
+  return { type: htmlButtonResponse, stimulus: `<h2>${COPY.demographicsStatement}</h2>`, choices: [COPY.continueButton], data: { trial_kind: 'demographics_title' } };
+}
 
 /** One single-choice question from the manifest's `demographics`, shown after the last rating so that domains
  * asking different questions stay comparable on the ratings themselves. The answer is stored as the option text. */

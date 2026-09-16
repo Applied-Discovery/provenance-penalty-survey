@@ -92,7 +92,7 @@ Then, jsPsych should, for each run, generate a timeline that:
 
 **Demographics**
 
-One trial per `demographics` question, in manifest order, each a stacked single-choice list like the belief question. They come after the unlabeled block so that domains asking different questions (e.g. AI coding assistant use in the code domain) stay comparable on the ratings themselves, and before the disclosure so they are in the submission. A domain that asks nothing skips the block.
+A title page ("We will now ask some questions about you.", trial kind `demographics_title`) followed by one trial per `demographics` question, in manifest order, each a stacked single-choice list like the belief question. They come after the unlabeled block so that domains asking different questions (e.g. AI coding assistant use in the code domain) stay comparable on the ratings themselves, and before the disclosure so they are in the submission. A domain that asks nothing skips the block.
 
 **Disclosure**
 Shows a disclosure with a withdrawal checkbox and a submit button.
