@@ -17,6 +17,28 @@ test('timeline order: consent, labeled section with checks, title, unlabeled pai
   expect(kinds).toEqual(['consent', 'attention', 'labeled', 'labeled', 'attention', 'labeled', 'labeled', 'unlabeled_title',
     'unlabeled_rating', 'belief', 'unlabeled_rating', 'belief', 'disclosure', 'submit', 'thanks']);
 });
+test('demographic questions come after the last rating and before the disclosure', () => {
+  const q = { id: 'ai_use', question: 'How often do you use AI coding assistants?', options: ['Never', 'Daily'] };
+  const md = validateManifest({ ...m, demographics: [q, { ...q, id: 'role' }] } as any);
+  const trials = buildTimeline(md, plan, loaded, ctx, async () => true) as any[];
+  const kinds = trials.map((t) => t.data.trial_kind);
+  expect(kinds.slice(-6)).toEqual(['demographics_title', 'demographic', 'demographic', 'disclosure', 'submit', 'thanks']);
+  expect(kinds[kinds.length - 7]).toBe('belief');
+  const title = trials[kinds.indexOf('demographics_title')];
+  expect(title.stimulus).toContain('about you');
+  expect(title.choices).toEqual(['Continue']);
+  const first = trials[kinds.indexOf('demographic')];
+  expect(first.data.question_id).toBe('ai_use');
+  expect(first.choices).toEqual(['Never', 'Daily']);
+  expect(first.stimulus).toContain(q.question);
+});
+test('no demographics title when the manifest asks no demographic questions', () => {
+  const md = validateManifest({ ...m, demographics: [] } as any);
+  const kinds = buildTimeline(md, plan, loaded, ctx, async () => true).map((t: any) => t.data.trial_kind);
+  expect(kinds).not.toContain('demographics_title');
+  expect(kinds).not.toContain('demographic');
+  expect(kinds.slice(-4)).toEqual(['belief', 'disclosure', 'submit', 'thanks']);
+});
 test('image domains get a preload trial right after consent', () => {
   const im = validateManifest({ ...m, artifact_type: 'image' } as any);
   const kinds = buildTimeline(im, plan, loaded, ctx, async () => true).map((t: any) => t.data.trial_kind);

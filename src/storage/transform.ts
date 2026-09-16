@@ -30,6 +30,7 @@ export function toSessionRow(s: Submission, meta: BrowserMeta, m: DomainManifest
     avg_rating: all.length ? all.reduce((a, r) => a + r.rating, 0) / all.length : null,
     min_time_spent: times.length ? Math.min(...times) : null, median_time_spent: median(times),
     browser: meta.browser, jspsych_version: meta.jspsych_version, viewport_width: meta.viewport_width, viewport_height: meta.viewport_height,
+    ...Object.fromEntries(s.data.demographics.map((d) => [`demo_${d.id}`, d.answer])),   // one column per manifest question, last so the fixed columns keep their places
   };
 }
 

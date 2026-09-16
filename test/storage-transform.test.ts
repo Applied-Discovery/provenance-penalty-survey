@@ -13,7 +13,8 @@ const sub: Submission = {
   data: { attention_expected: [7, 3], attention_answer: [7, 5], withdrawn: false,
     ratings: [{ id: 'a', actual_author: 'human', stated_author: 'ai', survey_pos: 1, rating: 5, time_spent: 5000 },
               { id: 'b', actual_author: 'ai', stated_author: 'human', survey_pos: 2, rating: 9, time_spent: 6000 }],
-    unlabeled_ratings: [{ id: 'c', actual_author: 'ai', predicted_author: 'ai', survey_pos: 3, rating: 3, rating_time_spent: 4000, belief_time_spent: 1500 }] },
+    unlabeled_ratings: [{ id: 'c', actual_author: 'ai', predicted_author: 'ai', survey_pos: 3, rating: 3, rating_time_spent: 4000, belief_time_spent: 1500 }],
+    demographics: [] },
 };
 const meta = { browser: 'UA', jspsych_version: '8.0.0', viewport_width: 1200, viewport_height: 800 };
 
@@ -28,6 +29,13 @@ test('session row has run columns, manifest data, stats, and metadata', () => {
     n_labeled: 2, n_unlabeled: 1, avg_rating: 17 / 3, min_time_spent: 4000, median_time_spent: 5000,
     browser: 'UA', jspsych_version: '8.0.0', viewport_width: 1200, viewport_height: 800,
   });
+});
+test('session row ends with one demo_<id> column per demographic answer', () => {
+  const withDemo = { ...sub, data: { ...sub.data, demographics: [{ id: 'ai_use', answer: 'Daily' }, { id: 'role', answer: 'Student' }] } };
+  const row = toSessionRow(withDemo, meta, m);
+  expect(Object.keys(row).slice(-2)).toEqual(['demo_ai_use', 'demo_role']);
+  expect(row).toMatchObject({ demo_ai_use: 'Daily', demo_role: 'Student' });
+  expect(toLabeledRows(withDemo)[0]).not.toHaveProperty('demo_ai_use');   // answers live in the session row only
 });
 test('labeled rows: one per labeled rating', () => {
   const rows = toLabeledRows(sub);

@@ -33,6 +33,9 @@ has the following structure
     labeled_artifacts_per_session: 4, // Will be split 50/50 human/ai. Error if not even
     unlabeled_per_session: 1, // default 1
     avoid_pairs?: false, // default false. When true, human i and ai i never appear in the same session (labeled, attention or unlabeled)
+    demographics?: [ // default []. Single-choice questions asked after the last rating, before the debrief
+        { id: "ai_use", question: "How often do you use AI coding assistants?", options: ["Never", "Monthly", "Weekly", "Daily"] }
+    ],
     artifacts: {
         human: {
             id: "paths/to/artifacts" // ids are 0-indexed integers, unique within human/ai. Important they remain stable
@@ -57,6 +60,7 @@ Validation rules:
 | `labeled_artifacts_per_session + attention_checks + unlabeled_per_session <= artifacts.human.length + artifacts.ai.length` | Cannot attempt to show more artifacts than exist |
 | with `avoid_pairs`: `labeled_artifacts_per_session + attention_checks + unlabeled_per_session <= artifacts.human.length` | Each pair can supply at most one artifact to a session |
 | `artifacts.human` and `artifacts.ai` must have keys 0, 1, ... N-1 | We want easily indexable artifacts. Are using a dict so the keys are stable. |
+| `demographics[].id` snake_case and unique; `options` has at least two entries | Each id becomes a session-row column `demo_<id>` |
 
 #### GET Parameters
 
@@ -85,6 +89,10 @@ Then, jsPsych should, for each run, generate a timeline that:
 1. Choose random artifacts which did *not* appear in the ratings. Odd remainder goes to either at random. (with the RNG seeded by the session id)
 2. Randomize order (with the RNG seeded by the session id)
 3. Display, prompting to rate, and then guess provenance.
+
+**Demographics**
+
+A title page ("We will now ask some questions about you.", trial kind `demographics_title`) followed by one trial per `demographics` question, in manifest order, each a stacked single-choice list like the belief question. They come after the unlabeled block so that domains asking different questions (e.g. AI coding assistant use in the code domain) stay comparable on the ratings themselves, and before the disclosure so they are in the submission. A domain that asks nothing skips the block.
 
 **Disclosure**
 Shows a disclosure with a withdrawal checkbox and a submit button.
@@ -129,6 +137,7 @@ The data JSON will contain
 | `withdrawn` | True/False |
 | `ratings` | JSON `[{"id": artifact id, "actual_author": human|ai, "stated_author": human|ai, "survey_pos": int, "rating": int, time_spent: ms}]` |
 | `unlabeled_ratings` | JSON `[{id, actual_author, predicted_author, survey_pos, rating, rating_time_spent, belief_time_spent}]
+| `demographics` | JSON `[{id, answer}]`, one per manifest question in manifest order; `answer` is the chosen option text |
 
 Note:
 - Artifact ids are constructed as `"{domain}_{domain version}_{author}_{index}"`
@@ -138,7 +147,7 @@ Note:
 ### Storage layer
 
 The data is split into three and transformed accordingly:
-- Session Data: All metadata. Withdrawals, attention expected/responses (semicolon separated), avg rating, min time spent, median time spent. This data contains all we need to potentially disqualify data. Additional browser metadata is also collected and added: browser, jsPsych version, viewport.
+- Session Data: All metadata. Withdrawals, attention expected/responses (semicolon separated), avg rating, min time spent, median time spent. This data contains all we need to potentially disqualify data. Additional browser metadata is also collected and added: browser, jsPsych version, viewport. Demographic answers follow as the last columns, `demo_<id>` per manifest question, so the fixed columns keep their places across domains.
 - Labeled Responses: one row per rating. Session id, and all rating information
 - Unlabeled Responses: one row per rating. Session id, and all rating information
 

@@ -15,6 +15,7 @@ export const COPY = {
   attentionInstruction: (n: number) =>
     `This item is an attention check. Please ignore the item below and select ${n} on the scale.`,
   unlabeledStatement: 'For the following, we will not tell you who made them.',
+  demographicsStatement: 'We will now ask some questions about you.',
   beliefQuestion: 'Who do you think made this, a person or an AI system?',
   beliefChoices: ['A person', 'An AI system'] as const,
   debriefTitle: 'About this study',
