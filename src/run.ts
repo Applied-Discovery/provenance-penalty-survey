@@ -11,6 +11,7 @@ import { consentTrial } from './trials/consent';
 import { labeledRatingTrial, attentionTrial } from './trials/rating';
 import { unlabeledTitleTrial, unlabeledRatingTrial, beliefTrial } from './trials/unlabeled';
 import { demographicsTitleTrial, demographicTrial } from './trials/demographics';
+import { prescreenTrial, screenOutTrial } from './trials/prescreen';
 import { disclosureTrial, thankYouTrial, showSavingPage } from './trials/disclosure';
 import { buildSubmission, type TrialRecord, type Submission } from './submission';
 import { storeSubmission } from './storage/writeRows';
@@ -22,24 +23,45 @@ export interface RunOptions {
   uuid?: () => string; now?: () => string; navigate?: (url: string) => void;
 }
 
-export function buildTimeline(m: DomainManifest, plan: SessionPlan, loaded: Map<string, LoadedArtifact>, ctx: SessionContext, submit: () => Promise<boolean>) {
+/** Id under which the prescreener's artifact is loaded; not an artifact of the study pools, so never in a plan. */
+export const PRESCREEN_ARTIFACT_ID = 'prescreen';
+
+export function buildTimeline(m: DomainManifest, plan: SessionPlan, loaded: Map<string, LoadedArtifact>, ctx: SessionContext, submit: () => Promise<boolean>, prescreenArtifact?: LoadedArtifact) {
   const get = (id: string) => { const l = loaded.get(id); if (!l) throw new Error(`Artifact ${id} not loaded`); return l; };
   // Images are preloaded after consent so a rating trial's rt does not include download time.
   const preloadTrials = m.artifact_type === 'image'
     ? [{ type: preload, images: [...loaded.values()].map((l) => l.content), show_progress_bar: false, data: { trial_kind: 'preload' } }]
     : [];
   let submitted = false;
-  return [
-    consentTrial(m, ctx.platform_session),
+  const submitTrial = { type: callFunction, async: true, func: (done: () => void) => { showSavingPage(); submit().then((ok) => { submitted = ok; }).finally(done); }, data: { trial_kind: 'submit' } };
+  const study = [
     ...preloadTrials,
     ...plan.labeled.map((it) => (it.kind === 'attention' ? attentionTrial(it, get(it.artifact.id), m) : labeledRatingTrial(it, get(it.artifact.id), m))),
     unlabeledTitleTrial(),
     ...plan.unlabeled.flatMap((it) => [unlabeledRatingTrial(it, get(it.artifact.id), m), beliefTrial(it, get(it.artifact.id), m)]),
     ...(m.demographics.length > 0 ? [demographicsTitleTrial(), ...m.demographics.map(demographicTrial)] : []),
     disclosureTrial(ctx.platform_session),
-    { type: callFunction, async: true, func: (done: () => void) => { showSavingPage(); submit().then((ok) => { submitted = ok; }).finally(done); }, data: { trial_kind: 'submit' } },
+    submitTrial,
     thankYouTrial(ctx.redirect, ctx.session_id, () => submitted),
   ];
+  if (!m.prescreener) return [consentTrial(m, ctx.platform_session), ...study];
+  if (!prescreenArtifact) throw new Error('Manifest has a prescreener but its artifact was not loaded');
+  // The answer, recorded by the prescreen trial's on_finish, picks one of two jsPsych conditional timelines: the study,
+  // or a session-row save (so the screened-out session is counted) followed by the screen-out page and redirect.
+  let passed = false;
+  return [
+    consentTrial(m, ctx.platform_session),
+    prescreenTrial(m.prescreener, prescreenArtifact, m.artifact_type, (ok) => { passed = ok; }),
+    { timeline: study, conditional_function: () => passed },
+    { timeline: [submitTrial, screenOutTrial()], conditional_function: () => !passed },
+  ];
+}
+
+/** Where the page goes when the timeline ends: the platform's screen-out URL after a failed prescreen, else the
+ * manifest's completion redirect (none in either case when the manifest sets none). */
+export function finalRedirect(m: DomainManifest, ctx: SessionContext, trials: TrialRecord[]): string | undefined {
+  const screenedOut = trials.some((t) => t.trial_kind === 'prescreen' && t.passed === false);
+  return screenedOut && m.prescreener ? m.prescreener.redirect : ctx.redirect;
 }
 
 /** One retry after a pause, so a transient network blip is not retried in the same instant it failed. */
@@ -92,12 +114,15 @@ export async function runSurvey(opts: RunOptions = {}): Promise<void> {
   const ctx = readSessionContext(opts.search ?? window.location.search, m.completion_redirect, opts.uuid);
   const plan = buildSessionPlan(m, new Rng(hashSeed(ctx.session_id)));
   const artifacts = [...plan.labeled.map((i) => i.artifact), ...plan.unlabeled.map((i) => i.artifact)];
-  const loaded = await loadArtifacts(artifacts, m.artifact_type, new URL('.', manifestUrl).toString(), fetchFn);
+  const prescreenArtifacts = m.prescreener ? [{ id: PRESCREEN_ARTIFACT_ID, author: 'human' as const, index: 0, path: m.prescreener.artifact }] : [];
+  const loaded = await loadArtifacts([...artifacts, ...prescreenArtifacts], m.artifact_type, new URL('.', manifestUrl).toString(), fetchFn);
+  const prescreenArtifact = loaded.get(PRESCREEN_ARTIFACT_ID);
+  loaded.delete(PRESCREEN_ARTIFACT_ID);   // not part of the study pools: keeps the image preload list to the rated artifacts
   const sink = opts.sink ?? new DataPipeSink({ experimentId: m.osf_study, fetchFn, startTime: ctx.start_time });
   const navigate = opts.navigate ?? ((url) => { window.location.href = url; });
 
   const jsPsych = initJsPsych({
-    on_finish: () => { if (ctx.redirect) navigate(ctx.redirect); },
+    on_finish: () => { const to = finalRedirect(m, ctx, jsPsych.data.get().values() as TrialRecord[]); if (to) navigate(to); },
   });
   const meta = (): BrowserMeta => ({ browser: navigator.userAgent, jspsych_version: jsPsych.version(),
     viewport_width: window.innerWidth, viewport_height: window.innerHeight });
@@ -107,5 +132,5 @@ export async function runSurvey(opts: RunOptions = {}): Promise<void> {
     store: (submission) => storeSubmission(submission, meta(), m, sink),
     sessionId: ctx.session_id,
   });
-  await jsPsych.run(buildTimeline(m, plan, loaded, ctx, submit));
+  await jsPsych.run(buildTimeline(m, plan, loaded, ctx, submit, prescreenArtifact));
 }

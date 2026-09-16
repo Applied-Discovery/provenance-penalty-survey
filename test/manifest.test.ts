@@ -85,3 +85,22 @@ test('a code domain accepts a mixed-language pool and rejects an artifact whose 
   expect(() => validateManifest(bad)).toThrow(/not recognised: artifacts\/d\.cobol/);
   expect(() => validateManifest({ ...base, artifacts: bad.artifacts })).not.toThrow();   // a text domain does not care about extensions
 });
+
+const prescreener = { artifact: 'artifacts/prescreen.py', question: 'What is the best name for this function?',
+  options: ['factorial', 'fibonacci', 'triangular_number', 'sum_of_digits'], answer: 'fibonacci',
+  redirect: 'https://app.prolific.com/submissions/complete?cc=SCREENOUT' };
+const codeBase = { ...base, artifact_type: 'code', artifacts: { human: { '0': 'artifacts/a.py', '1': 'artifacts/b.py' }, ai: { '0': 'artifacts/c.py', '1': 'artifacts/d.py' } } };
+test('prescreener is optional and kept as given', () => {
+  expect(validateManifest(base).prescreener).toBeUndefined();
+  expect(validateManifest({ ...codeBase, prescreener }).prescreener).toEqual(prescreener);
+});
+test('prescreener answer must be one of its options', () => {
+  expect(() => validateManifest({ ...codeBase, prescreener: { ...prescreener, answer: 'fourier_series' } })).toThrow(/answer/);
+});
+test('prescreener redirect must be an http(s) URL and the artifact path safe', () => {
+  expect(() => validateManifest({ ...codeBase, prescreener: { ...prescreener, redirect: 'javascript:alert(1)' } })).toThrow(/redirect/);
+  expect(() => validateManifest({ ...codeBase, prescreener: { ...prescreener, artifact: '../secret.py' } })).toThrow(/artifact/);
+});
+test('a code domain needs a recognised extension on the prescreener artifact too', () => {
+  expect(() => validateManifest({ ...codeBase, prescreener: { ...prescreener, artifact: 'artifacts/prescreen.xyz' } })).toThrow(/prescreen\.xyz/);
+});

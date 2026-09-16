@@ -19,6 +19,21 @@ const demographicQuestion = z.object({
 export type DemographicQuestion = z.infer<typeof demographicQuestion>;
 
 const artifactPath = z.string().refine(isSafeArtifactPath, 'artifact path must be relative to the domain folder, with no scheme, leading slash or ".."');
+const httpUrl = z.string().url().refine((u) => /^https?:$/.test(new URL(u).protocol), 'must be an http(s) URL');
+
+/** One single-choice competence question shown right after consent (registration: expertise screen for expert domains).
+ * A wrong answer ends the session: a session row is written with `prescreen_passed` false and the participant is sent
+ * to `redirect`, the platform's screen-out completion URL. `artifact` is shown above the question, rendered like the study artifacts. */
+const prescreener = z.object({
+  artifact: artifactPath,
+  question: z.string().min(1),
+  options: z.array(z.string().min(1)).min(2),
+  answer: z.string().min(1),
+  redirect: httpUrl,
+}).strict().superRefine((p, ctx) => {
+  if (!p.options.includes(p.answer)) ctx.addIssue({ code: 'custom', path: ['answer'], message: 'prescreener answer must be one of its options' });
+});
+export type Prescreener = z.infer<typeof prescreener>;
 
 const artifactMap = z.record(z.string(), artifactPath).superRefine((obj, ctx) => {
   const rawKeys = Object.keys(obj);
@@ -46,13 +61,14 @@ export const manifestSchema = z.object({
   avoid_pairs: z.boolean().default(false),      // never show human i and ai i in the same session
   artifacts: z.object({ human: artifactMap, ai: artifactMap }),
   demographics: z.array(demographicQuestion).default([]),   // asked after every rating, before the debrief, so the questions cannot prime the ratings
+  prescreener: prescreener.optional(),
   storage: z.enum(['datapipe']).default('datapipe'),
   curation_criteria: z.string().min(1),
-  completion_redirect: z.string().url().refine((u) => /^https?:$/.test(new URL(u).protocol), 'completion_redirect must be an http(s) URL').optional(),
+  completion_redirect: httpUrl.optional(),
   osf_study: z.string().min(1),                 // DataPipe experiment id
 }).strict().superRefine((m, ctx) => {
   if (m.artifact_type === 'code') {   // the extension picks the highlighting grammar, so every artifact needs a known one
-    const unknown = [...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai)].filter((p) => !languageForPath(p));
+    const unknown = [...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai), ...(m.prescreener ? [m.prescreener.artifact] : [])].filter((p) => !languageForPath(p));
     if (unknown.length) ctx.addIssue({ code: 'custom', path: ['artifacts'], message:
       `every artifact of a code domain needs a recognised extension (${CODE_EXTENSIONS.join(', ')}); not recognised: ${unknown.join(', ')}` });
   }

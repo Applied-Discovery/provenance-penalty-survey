@@ -1,4 +1,4 @@
-import { buildTimeline, submitWithRetry, submitSession } from '../src/run';
+import { buildTimeline, submitWithRetry, submitSession, finalRedirect } from '../src/run';
 import { buildSessionPlan } from '../src/plan';
 import { validateManifest } from '../src/manifest';
 import { Rng } from '../src/rng';
@@ -91,4 +91,50 @@ test('submitSession logs and alerts, without throwing, when buildSubmission itse
   expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('S1'));
   errorSpy.mockRestore();
   vi.unstubAllGlobals();
+});
+
+// Expertise screen: the manifest's `prescreener` splits the timeline after consent into a pass branch (the study) and
+// a fail branch (save a session row, screen-out page), both gated by the answer recorded on the prescreen trial.
+const prescreener = { artifact: 'artifacts/prescreen.txt', question: 'Q?', options: ['a', 'b'], answer: 'b', redirect: 'https://p.test/out' };
+const mp = validateManifest({ ...m, prescreener } as any);
+const screenArt = { artifact: { id: 'prescreen', author: 'human' as const, index: 0, path: prescreener.artifact }, content: 'item' };
+const flat = (t: any): string[] => (t.timeline ? t.timeline.flatMap(flat) : [t.data.trial_kind]);
+
+test('without a prescreener the timeline is flat and unchanged', () => {
+  expect(buildTimeline(m, plan, loaded, ctx, async () => true).every((t: any) => !t.timeline)).toBe(true);
+});
+test('with a prescreener: consent, the question, then a study branch and a screen-out branch', () => {
+  const tl = buildTimeline(mp, plan, loaded, ctx, async () => true, screenArt) as any[];
+  expect(tl.map((t) => t.data?.trial_kind ?? 'branch')).toEqual(['consent', 'prescreen', 'branch', 'branch']);
+  expect(flat(tl[2])).toEqual(['attention', 'labeled', 'labeled', 'attention', 'labeled', 'labeled', 'unlabeled_title',
+    'unlabeled_rating', 'belief', 'unlabeled_rating', 'belief', 'disclosure', 'submit', 'thanks']);
+  expect(flat(tl[3])).toEqual(['submit', 'screen_out']);
+});
+test('the answer to the prescreen question decides which branch runs', () => {
+  const tl = buildTimeline(mp, plan, loaded, ctx, async () => true, screenArt) as any[];
+  const [, question, study, out] = tl;
+  question.on_finish({ response: 1 });   // 'b', the answer
+  expect(study.conditional_function()).toBe(true); expect(out.conditional_function()).toBe(false);
+  question.on_finish({ response: 0 });
+  expect(study.conditional_function()).toBe(false); expect(out.conditional_function()).toBe(true);
+});
+test('the screen-out branch saves behind the saving page before the screen-out page', async () => {
+  document.body.innerHTML = '<div id="jspsych-content"></div>';
+  const submit = vi.fn(async () => true);
+  const tl = buildTimeline(mp, plan, loaded, ctx, submit, screenArt) as any[];
+  const done = vi.fn();
+  tl[3].timeline[0].func(done);
+  expect(document.getElementById('jspsych-content')!.textContent).toContain('Saving your responses');
+  await vi.waitFor(() => expect(done).toHaveBeenCalled());
+  expect(submit).toHaveBeenCalledTimes(1);
+});
+test('a prescreener without its loaded artifact is a programming error', () => {
+  expect(() => buildTimeline(mp, plan, loaded, ctx, async () => true)).toThrow(/prescreen/);
+});
+test('finalRedirect: the screen-out URL after a failed prescreen, else the completion redirect', () => {
+  const c = { ...ctx, redirect: 'https://p.test/done' };
+  expect(finalRedirect(mp, c, [{ trial_kind: 'consent' }, { trial_kind: 'prescreen', passed: false }])).toBe('https://p.test/out');
+  expect(finalRedirect(mp, c, [{ trial_kind: 'consent' }, { trial_kind: 'prescreen', passed: true }])).toBe('https://p.test/done');
+  expect(finalRedirect(m, c, [{ trial_kind: 'consent' }])).toBe('https://p.test/done');
+  expect(finalRedirect(m, ctx, [{ trial_kind: 'consent' }])).toBeUndefined();
 });

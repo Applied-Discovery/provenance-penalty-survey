@@ -82,6 +82,18 @@
       ]
     }
   ],
+  "prescreener": {
+    "artifact": "artifacts/prescreen.py",
+    "question": "What is the best name for this function?",
+    "options": [
+      "factorial",
+      "fibonacci",
+      "triangular_number",
+      "sum_of_digits"
+    ],
+    "answer": "fibonacci",
+    "redirect": "https://app.prolific.com/submissions/complete?cc=CTJ09O8Y"
+  },
   "storage": "datapipe",
   "curation_criteria": "curationCriteria.md",
   "osf_study": "kMJDgIUCj6ZN"
