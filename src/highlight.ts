@@ -19,19 +19,18 @@ import swift from 'highlight.js/lib/languages/swift';
 import typescript from 'highlight.js/lib/languages/typescript';
 
 /**
- * The languages a code domain may name in `code_language`. A fixed, registered set keeps the bundle small (highlight.js
- * core plus these grammars rather than every language) and makes the colouring deterministic: every artifact in a domain
- * is highlighted with the same grammar, so the rendering can never differ between the human and AI halves of the pool.
- * `plaintext` is the escape hatch for a domain whose language is not here.
+ * The grammars a code artifact can be highlighted with, chosen by file extension (EXTENSIONS below). A fixed, registered
+ * set keeps the bundle small (highlight.js core plus these grammars rather than every language) and makes the colouring
+ * deterministic: the grammar comes from the file name, never from the content, so a human and an AI artifact in the same
+ * language are always coloured by the same rules. `plaintext` (`.txt`) is the escape hatch for a language not here.
  */
 const GRAMMARS = { bash, c, cpp, csharp, go, java, javascript, kotlin, php, plaintext, python, r, ruby, rust, scala, sql, swift, typescript };
 for (const [name, grammar] of Object.entries(GRAMMARS)) hljs.registerLanguage(name, grammar);
 
 export const CODE_LANGUAGES = Object.keys(GRAMMARS).sort() as (keyof typeof GRAMMARS)[];
 export type CodeLanguage = (typeof CODE_LANGUAGES)[number];
-export const isCodeLanguage = (s: string): s is CodeLanguage => (CODE_LANGUAGES as string[]).includes(s);
 
-/** File extension (lower case, no dot) to grammar, for a code domain whose artifacts are highlighted by extension. */
+/** File extension (lower case, no dot) to grammar. The manifest requires every artifact of a code domain to have one of these. */
 const EXTENSIONS: Record<string, CodeLanguage> = {
   sh: 'bash', bash: 'bash', c: 'c', h: 'c', cpp: 'cpp', cc: 'cpp', cxx: 'cpp', hpp: 'cpp', cs: 'csharp', go: 'go', java: 'java',
   js: 'javascript', mjs: 'javascript', cjs: 'javascript', jsx: 'javascript', kt: 'kotlin', kts: 'kotlin', php: 'php', txt: 'plaintext',

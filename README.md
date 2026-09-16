@@ -64,7 +64,7 @@ named `human_<n>.<ext>` and `ai_<n>.<ext>`, keep the prompts that produced
 the AI artifacts in `prompts/`, and write the criteria.
 
 ```
-npm run scaffold -- <name> --type text|image|code --noun <stem noun> [--language <code language>] [--verb <human verb>] [--class lay|expert] [--minutes <consent duration>] [--labeled N] [--unlabeled N] [--checks N] [--avoid-pairs]
+npm run scaffold -- <name> --type text|image|code --noun <stem noun> [--verb <human verb>] [--class lay|expert] [--minutes <consent duration>] [--labeled N] [--unlabeled N] [--checks N] [--avoid-pairs]
 ```
 
 Builds `domains/<name>/` from the finished pool: copies the artifacts and
@@ -81,8 +81,7 @@ the session shape must be set smaller. A `--type code` domain is highlighted
 by each artifact's file extension (`.py`, `.c`, `.ts`, `.java`, ...;
 `src/highlight.ts` maps extensions to grammars, and `.txt` turns highlighting
 off), so a pool may mix languages as long as every file has a known extension.
-`--language <grammar>` (`python`, `javascript`, ...) instead applies one grammar
-to the whole pool. Highlighting is never auto-detected from the content, so a
+Highlighting is never auto-detected from the content, so a
 human and AI artifact in the same language are always coloured by the same
 rules. `domains/example_code/` is a placeholder code domain covering C, Python,
 TypeScript and Java; open it on the dev server to check the highlighting.

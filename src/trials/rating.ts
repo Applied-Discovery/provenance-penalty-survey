@@ -22,7 +22,7 @@ export function labeledRatingTrial(item: LabeledItem, loaded: LoadedArtifact, m:
   const label = labelSentence(m, item.stated_author);
   return {
     type: htmlButtonResponse,
-    stimulus: `<p class="label">${escapeHtml(label)}</p>${renderArtifact(loaded, m, label)}${stemHtml(m)}`,
+    stimulus: `<p class="label">${escapeHtml(label)}</p>${renderArtifact(loaded, m.artifact_type, label)}${stemHtml(m)}`,
     choices: RATING_CHOICES,
     button_html: ratingButtonHtml,
     ...RATING_LAYOUT,
@@ -34,7 +34,7 @@ export function labeledRatingTrial(item: LabeledItem, loaded: LoadedArtifact, m:
 export function attentionTrial(item: AttentionItem, loaded: LoadedArtifact, m: DomainManifest) {
   return {
     type: htmlButtonResponse,
-    stimulus: `<p class="label attention">${escapeHtml(COPY.attentionInstruction(item.expected))}</p>${renderArtifact(loaded, m, 'Artifact')}${stemHtml(m)}`,
+    stimulus: `<p class="label attention">${escapeHtml(COPY.attentionInstruction(item.expected))}</p>${renderArtifact(loaded, m.artifact_type, 'Artifact')}${stemHtml(m)}`,
     choices: RATING_CHOICES,
     button_html: ratingButtonHtml,
     ...RATING_LAYOUT,
