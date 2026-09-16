@@ -7,7 +7,7 @@
   "evaluator_class": "expert",
   "stem_noun": "solution",
   "human_verb": "written",
-  "expected_minutes": "8",
+  "expected_minutes": "5-10",
   "attention_checks": 1,
   "labeled_artifacts_per_session": 4,
   "unlabeled_per_session": 1,
