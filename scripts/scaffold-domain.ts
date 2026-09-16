@@ -46,7 +46,8 @@ export function scaffoldDomain(curationRootDir: string, domainsRoot: string, o: 
 
   const manifest: Record<string, unknown> = {
     name: o.name, protocol_version: example.protocol_version, domain_version: 'v0.1', wave: 1,
-    artifact_type: o.artifactType, evaluator_class: o.evaluatorClass ?? DEFAULTS.evaluatorClass, stem_noun: o.stemNoun,
+    artifact_type: o.artifactType,
+    evaluator_class: o.evaluatorClass ?? DEFAULTS.evaluatorClass, stem_noun: o.stemNoun,
     ...(o.humanVerb ? { human_verb: o.humanVerb } : {}),
     ...(o.expectedMinutes ? { expected_minutes: o.expectedMinutes } : {}),
     attention_checks: o.attentionChecks ?? DEFAULTS.attentionChecks,

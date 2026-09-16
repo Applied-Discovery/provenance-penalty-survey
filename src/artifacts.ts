@@ -1,5 +1,6 @@
 import type { PlannedArtifact } from './plan';
 import type { DomainManifest } from './manifest';
+import { highlightCode, languageForPath } from './highlight';
 export type ArtifactType = DomainManifest['artifact_type'];
 export interface LoadedArtifact { artifact: PlannedArtifact; content: string }
 
@@ -24,7 +25,13 @@ export async function loadArtifacts(
 export function renderArtifact(loaded: LoadedArtifact, type: ArtifactType, alt: string): string {
   switch (type) {
     case 'image': return `<img class="artifact artifact-image" src="${escapeHtml(loaded.content)}" alt="${escapeHtml(alt)}">`;
-    case 'code':  return `<pre class="artifact artifact-code"><code>${escapeHtml(loaded.content)}</code></pre>`;
+    case 'code': {
+      // The artifact's extension picks the grammar; the manifest checks every extension of a code domain is known, so an
+      // unknown one (a bare test spec) only ever shows the code unhighlighted.
+      const lang = languageForPath(loaded.artifact.path);
+      const body = lang ? highlightCode(loaded.content, lang) : escapeHtml(loaded.content);
+      return `<pre class="artifact artifact-code"><code class="hljs${lang ? ` language-${lang}` : ''}">${body}</code></pre>`;
+    }
     case 'text':  return `<div class="artifact artifact-text">${escapeHtml(loaded.content)}</div>`;   // whitespace rules: .artifact-text in style.css
   }
 }

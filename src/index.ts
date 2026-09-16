@@ -4,6 +4,7 @@ export * from './rng';
 export * from './session';
 export * from './plan';
 export * from './artifacts';
+export * from './highlight';
 export * from './copy';
 export * from './trials/consent';
 export * from './trials/rating';

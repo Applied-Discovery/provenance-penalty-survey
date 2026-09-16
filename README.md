@@ -77,7 +77,14 @@ the attention check has taken its artifact. `--avoid-pairs` sets
 `avoid_pairs` in the manifest for domains where `human_<n>` and `ai_<n>` are
 answers to the same prompt: a session then never shows both halves of a pair,
 so it can draw at most one artifact per pair (20 with the standard pool) and
-the session shape must be set smaller.
+the session shape must be set smaller. A `--type code` domain is highlighted
+by each artifact's file extension (`.py`, `.c`, `.ts`, `.java`, ...;
+`src/highlight.ts` maps extensions to grammars, and `.txt` turns highlighting
+off), so a pool may mix languages as long as every file has a known extension.
+Highlighting is never auto-detected from the content, so a
+human and AI artifact in the same language are always coloured by the same
+rules. `domains/example_code/` is a placeholder code domain covering C, Python,
+TypeScript and Java; open it on the dev server to check the highlighting.
 
 To ask participants about themselves, add `demographics` to the manifest by
 hand: a list of `{ id, question, options }` single-choice questions (snake_case

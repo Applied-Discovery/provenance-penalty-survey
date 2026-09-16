@@ -61,6 +61,7 @@ Validation rules:
 | with `avoid_pairs`: `labeled_artifacts_per_session + attention_checks + unlabeled_per_session <= artifacts.human.length` | Each pair can supply at most one artifact to a session |
 | `artifacts.human` and `artifacts.ai` must have keys 0, 1, ... N-1 | We want easily indexable artifacts. Are using a dict so the keys are stable. |
 | `demographics[].id` snake_case and unique; `options` has at least two entries | Each id becomes a session-row column `demo_<id>` |
+| with `artifact_type == "code"`: every artifact path has an extension registered in `src/highlight.ts` | The highlighting grammar comes from the file name, never auto-detected from the content, so colouring cannot differ between the human and AI halves of a pair |
 
 #### GET Parameters
 
@@ -103,6 +104,8 @@ On submit, passes results to the storage layer. Retry once if it fails. Displays
 #### Display
 
 This package is accompanied by a `copy.ts` where all fixed participant facing copy is stored.
+
+Code artifacts are shown in a monospace box with syntax highlighting from highlight.js (text escaped, tokens wrapped in `hljs-*` spans, github light theme). Highlighting applies only to `artifact_type: code`; the grammar is the one the artifact's file extension maps to in `src/highlight.ts` (`.py`, `.c`, `.ts`, `.java`, ...), so a pool may mix languages; anonymisation keeps extensions. Lines are never wrapped; wide code scrolls inside the box. `plaintext` (`.txt`) is available for a language that is not registered; adding a language means importing its grammar and its extensions in `src/highlight.ts`.
 
 #### Notes
 - We want to ensure that the true provenance of a piece of text or image isn't revealed. Image alt text should be set to the provenance label. File names should not leak. Option to create a utility script which gives all the artifacts a random string name and updates manifest accordingly.

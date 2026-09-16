@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CODE_EXTENSIONS, languageForPath } from './highlight';
 
 export type Author = 'human' | 'ai';
 
@@ -50,6 +51,11 @@ export const manifestSchema = z.object({
   completion_redirect: z.string().url().refine((u) => /^https?:$/.test(new URL(u).protocol), 'completion_redirect must be an http(s) URL').optional(),
   osf_study: z.string().min(1),                 // DataPipe experiment id
 }).strict().superRefine((m, ctx) => {
+  if (m.artifact_type === 'code') {   // the extension picks the highlighting grammar, so every artifact needs a known one
+    const unknown = [...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai)].filter((p) => !languageForPath(p));
+    if (unknown.length) ctx.addIssue({ code: 'custom', path: ['artifacts'], message:
+      `every artifact of a code domain needs a recognised extension (${CODE_EXTENSIONS.join(', ')}); not recognised: ${unknown.join(', ')}` });
+  }
   if (m.labeled_artifacts_per_session % 2 !== 0)
     ctx.addIssue({ code: 'custom', message: 'labeled_artifacts_per_session must be even' });
   const human = Object.keys(m.artifacts.human).length, ai = Object.keys(m.artifacts.ai).length;
