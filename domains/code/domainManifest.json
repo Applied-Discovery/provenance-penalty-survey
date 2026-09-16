@@ -60,26 +60,25 @@
   },
   "demographics": [
     {
-      "id": "programming_experience",
-      "question": "How many years have you been programming?",
+      "id": "coding_frequency",
+      "question": "How often do you write code?",
       "options": [
-        "Less than 1 year",
-        "1 to 3 years",
-        "4 to 10 years",
-        "More than 10 years",
-        "Prefer not to say"
+        "Daily",
+        "Most days",
+        "A few times a week",
+        "A few times a month",
+        "Rarely"
       ]
     },
     {
       "id": "ai_coding_use",
-      "question": "How often do you use AI coding assistants such as GitHub Copilot or ChatGPT when writing code?",
+      "question": "How often do you use AI when writing code?",
       "options": [
-        "Never",
-        "A few times a year",
-        "Monthly",
-        "Weekly",
-        "Daily",
-        "Prefer not to say"
+        "Always",
+        "Most times",
+        "Sometimes",
+        "Rarely",
+        "Never"
       ]
     }
   ],
