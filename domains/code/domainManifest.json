@@ -92,9 +92,10 @@
       "sum_of_digits"
     ],
     "answer": "fibonacci",
-    "redirect": "https://app.prolific.com/submissions/complete?cc=CTJ09O8Y"
+    "redirect": "https://app.prolific.com/submissions/complete?cc=C1IH5U2G"
   },
   "storage": "datapipe",
   "curation_criteria": "curationCriteria.md",
-  "osf_study": "kMJDgIUCj6ZN"
+  "osf_study": "kMJDgIUCj6ZN",
+  "completion_redirect": "https://app.prolific.com/submissions/complete?cc=CSGNR47H"
 }
