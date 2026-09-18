@@ -1,4 +1,4 @@
-import { buildTimeline, submitWithRetry, submitSession, finalRedirect } from '../src/run';
+import { buildTimeline, submitWithRetry, submitSession, submitInBackground, finalRedirect } from '../src/run';
 import { buildSessionPlan } from '../src/plan';
 import { validateManifest } from '../src/manifest';
 import { Rng } from '../src/rng';
@@ -98,38 +98,53 @@ test('submitSession logs and alerts, without throwing, when buildSubmission itse
 const prescreener = { artifact: 'artifacts/prescreen.txt', question: 'Q?', options: ['a', 'b'], answer: 'b', redirect: 'https://p.test/out' };
 const mp = validateManifest({ ...m, prescreener } as any);
 const screenArt = { artifact: { id: 'prescreen', author: 'human' as const, index: 0, path: prescreener.artifact }, content: 'item' };
+const prescreen = { artifact: screenArt, submit: () => {} };
 const flat = (t: any): string[] => (t.timeline ? t.timeline.flatMap(flat) : [t.data.trial_kind]);
 
 test('without a prescreener the timeline is flat and unchanged', () => {
   expect(buildTimeline(m, plan, loaded, ctx, async () => true).every((t: any) => !t.timeline)).toBe(true);
 });
 test('with a prescreener: consent, the question, then a study branch and a screen-out branch', () => {
-  const tl = buildTimeline(mp, plan, loaded, ctx, async () => true, screenArt) as any[];
+  const tl = buildTimeline(mp, plan, loaded, ctx, async () => true, prescreen) as any[];
   expect(tl.map((t) => t.data?.trial_kind ?? 'branch')).toEqual(['consent', 'prescreen', 'branch', 'branch']);
   expect(flat(tl[2])).toEqual(['attention', 'labeled', 'labeled', 'attention', 'labeled', 'labeled', 'unlabeled_title',
     'unlabeled_rating', 'belief', 'unlabeled_rating', 'belief', 'disclosure', 'submit', 'thanks']);
-  expect(flat(tl[3])).toEqual(['submit', 'screen_out']);
+  expect(flat(tl[3])).toEqual(['submit_screen_out', 'screen_out']);
 });
 test('the answer to the prescreen question decides which branch runs', () => {
-  const tl = buildTimeline(mp, plan, loaded, ctx, async () => true, screenArt) as any[];
+  const tl = buildTimeline(mp, plan, loaded, ctx, async () => true, prescreen) as any[];
   const [, question, study, out] = tl;
   question.on_finish({ response: 1 });   // 'b', the answer
   expect(study.conditional_function()).toBe(true); expect(out.conditional_function()).toBe(false);
   question.on_finish({ response: 0 });
   expect(study.conditional_function()).toBe(false); expect(out.conditional_function()).toBe(true);
 });
-test('the screen-out branch saves behind the saving page before the screen-out page', async () => {
+test('the screen-out branch fires the save without waiting and without the saving page, then shows the screen-out page', () => {
   document.body.innerHTML = '<div id="jspsych-content"></div>';
-  const submit = vi.fn(async () => true);
-  const tl = buildTimeline(mp, plan, loaded, ctx, submit, screenArt) as any[];
-  const done = vi.fn();
-  tl[3].timeline[0].func(done);
-  expect(document.getElementById('jspsych-content')!.textContent).toContain('Saving your responses');
-  await vi.waitFor(() => expect(done).toHaveBeenCalled());
-  expect(submit).toHaveBeenCalledTimes(1);
+  const submit = vi.fn(async () => true), fire = vi.fn();
+  const tl = buildTimeline(mp, plan, loaded, ctx, submit, { artifact: screenArt, submit: fire }) as any[];
+  const [save, out] = tl[3].timeline;
+  expect(save.async).toBeFalsy();
+  save.func();
+  expect(fire).toHaveBeenCalledTimes(1);
+  expect(submit).not.toHaveBeenCalled();
+  expect(document.getElementById('jspsych-content')!.textContent).not.toContain('Saving your responses');
+  expect(out.trial_duration).toBe(3000);
 });
-test('a prescreener without its loaded artifact is a programming error', () => {
+test('a prescreener without its loaded artifact and background submit is a programming error', () => {
   expect(() => buildTimeline(mp, plan, loaded, ctx, async () => true)).toThrow(/prescreen/);
+});
+test('submitInBackground stores without waiting and only logs when the build or the store fails', async () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  const alertSpy = vi.fn(); vi.stubGlobal('alert', alertSpy);
+  const stored: unknown[] = [];
+  submitInBackground({ getTrials: () => [], buildSubmission: () => ({ ok: true } as any), store: async (s) => { stored.push(s); }, sessionId: 'S' });
+  await vi.waitFor(() => expect(stored).toEqual([{ ok: true }]));
+  submitInBackground({ getTrials: () => [], buildSubmission: () => { throw new Error('bad build'); }, store: async () => {}, sessionId: 'S' });
+  submitInBackground({ getTrials: () => [], buildSubmission: () => ({} as any), store: async () => { throw new Error('bad store'); }, sessionId: 'S' });
+  await vi.waitFor(() => expect(warn).toHaveBeenCalledTimes(2));
+  expect(alertSpy).not.toHaveBeenCalled();
+  warn.mockRestore(); vi.unstubAllGlobals();
 });
 test('finalRedirect: the screen-out URL after a failed prescreen, else the completion redirect', () => {
   const c = { ...ctx, redirect: 'https://p.test/done' };

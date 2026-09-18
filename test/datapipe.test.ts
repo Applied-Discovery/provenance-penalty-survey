@@ -134,3 +134,13 @@ test('property: csv has one header line plus one line per row when no cell needs
     return out.endsWith('\n') && out.split('\n').length === rows.length + 2;
   }));
 });
+
+test('keepalive: the post asks the browser to let the request outlive the page; off by default', async () => {
+  const fetchFn = vi.fn(async () => new Response('', { status: 200 })) as unknown as typeof fetch;
+  const plain = new DataPipeSink({ experimentId: 'EXP', fetchFn });
+  await plain.writeSessionRows([{ session_id: 'S' }]); await plain.flush();
+  expect((fetchFn as any).mock.calls[0][1].keepalive).toBeFalsy();
+  const keep = new DataPipeSink({ experimentId: 'EXP', fetchFn, keepalive: true });
+  await keep.writeSessionRows([{ session_id: 'S' }]); await keep.flush();
+  expect((fetchFn as any).mock.calls[1][1].keepalive).toBe(true);
+});

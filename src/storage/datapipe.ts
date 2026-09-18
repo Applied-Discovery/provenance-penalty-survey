@@ -28,13 +28,15 @@ export class DataPipeSink implements Sink {
   private experimentId: string;
   private timeoutMs: number;
   private startTime?: string;
+  private keepalive: boolean;
 
-  constructor(opts: { experimentId: string; endpoint?: string; fetchFn?: typeof fetch; timeoutMs?: number; startTime?: string }) {
+  constructor(opts: { experimentId: string; endpoint?: string; fetchFn?: typeof fetch; timeoutMs?: number; startTime?: string; keepalive?: boolean }) {
     this.experimentId = opts.experimentId;
     this.endpoint = opts.endpoint ?? 'https://pipe.jspsych.org/api/data/';
     this.fetchFn = opts.fetchFn ?? fetch.bind(globalThis);
     this.timeoutMs = opts.timeoutMs ?? 60_000;   // DataPipe took 7 to 14 s per file in 2026-09; a client-side abort leaves the file on OSF and the retry then collides
     this.startTime = opts.startTime;
+    this.keepalive = opts.keepalive ?? false;   // lets a post outlive the page (fetch keepalive, 64 KB cap): the screen-out branch redirects without waiting
   }
 
   private name(prefix: string, sessionId: unknown): string { return sessionFileName(prefix, sessionId, this.startTime); }
@@ -46,6 +48,7 @@ export class DataPipeSink implements Sink {
       headers: { 'Content-Type': 'application/json', Accept: '*/*' },
       body: JSON.stringify({ experimentID: this.experimentId, filename, data }),
       signal: AbortSignal.timeout(this.timeoutMs),
+      ...(this.keepalive ? { keepalive: true } : {}),
     });
     if (!res.ok) throw new Error(`DataPipe write of ${filename} failed: HTTP ${res.status}`);
     this.posted.add(filename);
