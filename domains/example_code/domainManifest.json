@@ -14,6 +14,18 @@
     "human": { "0": "artifacts/h0.py", "1": "artifacts/h1.c", "2": "artifacts/h2.ts", "3": "artifacts/h3.java" },
     "ai":    { "0": "artifacts/a0.py", "1": "artifacts/a1.c", "2": "artifacts/a2.ts", "3": "artifacts/a3.java" }
   },
+  "prescreener": {
+    "artifact": "artifacts/prescreen.py",
+    "question": "What is the best name for this function?",
+    "options": [
+      "factorial",
+      "fibonacci",
+      "triangular_number",
+      "sum_of_digits"
+    ],
+    "answer": "fibonacci",
+    "redirect": "https://www.google.com"
+  },
   "storage": "datapipe",
   "curation_criteria": "curationCriteria.md",
   "osf_study": "REPLACE_WITH_DATAPIPE_EXPERIMENT_ID"

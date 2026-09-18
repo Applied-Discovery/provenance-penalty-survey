@@ -15,7 +15,7 @@ export const COPY = {
   attentionInstruction: (n: number) =>
     `This item is an attention check. Please ignore the item below and select ${n} on the scale.`,
   // Expertise screen (expert domains): one question right after consent; a wrong answer ends the session.
-  prescreenIntro: 'Before you begin, one quick question about the item below.',
+  prescreenIntro: 'Before you begin, one question about the item below.',
   screenOutTitle: 'Thank you',
   screenOutBody: 'This study needs participants with a particular background, and your answer did not match. Your session ends here.',
   unlabeledStatement: 'For the following, we will not tell you who made them.',
