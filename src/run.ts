@@ -26,7 +26,10 @@ export interface RunOptions {
 /** Id under which the prescreener's artifact is loaded; not an artifact of the study pools, so never in a plan. */
 export const PRESCREEN_ARTIFACT_ID = 'prescreen';
 
-export function buildTimeline(m: DomainManifest, plan: SessionPlan, loaded: Map<string, LoadedArtifact>, ctx: SessionContext, submit: () => Promise<boolean>, prescreenArtifact?: LoadedArtifact) {
+/** What the expertise screen needs: its loaded artifact, and a fire-and-forget save for the screened-out session row. */
+export interface PrescreenDeps { artifact: LoadedArtifact; submit: () => void }
+
+export function buildTimeline(m: DomainManifest, plan: SessionPlan, loaded: Map<string, LoadedArtifact>, ctx: SessionContext, submit: () => Promise<boolean>, prescreen?: PrescreenDeps) {
   const get = (id: string) => { const l = loaded.get(id); if (!l) throw new Error(`Artifact ${id} not loaded`); return l; };
   // Images are preloaded after consent so a rating trial's rt does not include download time.
   const preloadTrials = m.artifact_type === 'image'
@@ -45,15 +48,18 @@ export function buildTimeline(m: DomainManifest, plan: SessionPlan, loaded: Map<
     thankYouTrial(ctx.redirect, ctx.session_id, () => submitted),
   ];
   if (!m.prescreener) return [consentTrial(m, ctx.platform_session), ...study];
-  if (!prescreenArtifact) throw new Error('Manifest has a prescreener but its artifact was not loaded');
+  if (!prescreen) throw new Error('Manifest has a prescreener but its artifact and background submit were not provided');
   // The answer, recorded by the prescreen trial's on_finish, picks one of two jsPsych conditional timelines: the study,
-  // or a session-row save (so the screened-out session is counted) followed by the screen-out page and redirect.
+  // or the screen-out page and redirect. The screened-out session row is posted in the background (keepalive) while
+  // the page shows, not behind the saving page: the screen should feel instant, and losing the odd row is accepted
+  // (the platform's screen-out count is the reference).
   let passed = false;
+  const fireTrial = { type: callFunction, func: () => { prescreen.submit(); }, data: { trial_kind: 'submit_screen_out' } };
   return [
     consentTrial(m, ctx.platform_session),
-    prescreenTrial(m.prescreener, prescreenArtifact, m.artifact_type, (ok) => { passed = ok; }),
+    prescreenTrial(m.prescreener, prescreen.artifact, m.artifact_type, (ok) => { passed = ok; }),
     { timeline: study, conditional_function: () => passed },
-    { timeline: [submitTrial, screenOutTrial()], conditional_function: () => !passed },
+    { timeline: [fireTrial, screenOutTrial()], conditional_function: () => !passed },
   ];
 }
 
@@ -98,6 +104,15 @@ export async function submitSession(deps: SubmitSessionDeps): Promise<boolean> {
   }
 }
 
+/** Fire-and-forget counterpart of submitSession for the screened-out row: no retry, no alert, a console warning on
+ * failure. Nothing waits on it; the page moves on and the request survives the redirect via the sink's keepalive. */
+export function submitInBackground(deps: SubmitSessionDeps): void {
+  let submission: Submission;
+  try { submission = deps.buildSubmission(deps.getTrials()); }
+  catch (e) { console.warn('Screen-out submission not built', deps.sessionId, e); return; }
+  deps.store(submission).catch((e) => console.warn('Screen-out submission not stored', deps.sessionId, e));
+}
+
 /** Platform-owned failure page shown when the survey cannot start at all (e.g. an invalid manifest). */
 export function renderStartupFailure(err: unknown): void {
   console.error(err);
@@ -119,6 +134,7 @@ export async function runSurvey(opts: RunOptions = {}): Promise<void> {
   const prescreenArtifact = loaded.get(PRESCREEN_ARTIFACT_ID);
   loaded.delete(PRESCREEN_ARTIFACT_ID);   // not part of the study pools: keeps the image preload list to the rated artifacts
   const sink = opts.sink ?? new DataPipeSink({ experimentId: m.osf_study, fetchFn, startTime: ctx.start_time });
+  const screenOutSink = opts.sink ?? new DataPipeSink({ experimentId: m.osf_study, fetchFn, startTime: ctx.start_time, keepalive: true });
   const navigate = opts.navigate ?? ((url) => { window.location.href = url; });
 
   const jsPsych = initJsPsych({
@@ -126,11 +142,13 @@ export async function runSurvey(opts: RunOptions = {}): Promise<void> {
   });
   const meta = (): BrowserMeta => ({ browser: navigator.userAgent, jspsych_version: jsPsych.version(),
     viewport_width: window.innerWidth, viewport_height: window.innerHeight });
-  const submit = () => submitSession({
+  const deps = (to: Sink): SubmitSessionDeps => ({
     getTrials: () => jsPsych.data.get().values() as TrialRecord[],
     buildSubmission: (trials) => buildSubmission(m, ctx, trials, opts.now),
-    store: (submission) => storeSubmission(submission, meta(), m, sink),
+    store: (submission) => storeSubmission(submission, meta(), m, to),
     sessionId: ctx.session_id,
   });
-  await jsPsych.run(buildTimeline(m, plan, loaded, ctx, submit, prescreenArtifact));
+  const submit = () => submitSession(deps(sink));
+  const prescreen = prescreenArtifact ? { artifact: prescreenArtifact, submit: () => submitInBackground(deps(screenOutSink)) } : undefined;
+  await jsPsych.run(buildTimeline(m, plan, loaded, ctx, submit, prescreen));
 }

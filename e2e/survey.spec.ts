@@ -133,6 +133,7 @@ test('a code domain highlights each artifact by its file extension, inside a scr
   for (const id of ['e2e-code-1', 'e2e-code-2', 'e2e-code-3']) {   // several sessions, so all four languages of example_code come up
     await page.goto(`/domains/example_code/?SESSION_ID=${id}`);
     await page.getByRole('button', { name: 'I agree' }).click();
+    await page.getByRole('button', { name: 'fibonacci' }).click();  // example_code screens; the item is the recursive Fibonacci function
     for (let i = 0; i < 4; i++) {                                    // attention check + 2 labeled + 1 unlabeled
       const code = page.locator('pre.artifact-code code.hljs');
       await expect(code).toBeVisible();

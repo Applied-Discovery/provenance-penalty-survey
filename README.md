@@ -100,10 +100,13 @@ artifact (a file in the domain folder, rendered like the study artifacts; it
 must not be one of the study pool) is shown above the question, and `answer`
 must be one of `options`. A right answer continues into the study, and the
 session row records `prescreen_answer` and `prescreen_passed` (before the
-`demo_` columns). A wrong answer ends the session: a session row is saved with
-`prescreen_passed` false and no response files, a screen-out page is shown, and
-the participant is sent to `redirect`, the platform's screen-out completion URL
-(on Prolific, a second completion code of the "screened out" kind). Fix the
+`demo_` columns). A wrong answer ends the session: a session row with
+`prescreen_passed` false and no response files is posted in the background (a
+keepalive request, no saving page, no retry), the screen-out page shows for
+the redirect delay, and the participant is sent to `redirect`, the platform's
+screen-out completion URL (on Prolific, a second completion code of the
+"screened out" kind). The odd screened-out row may not land; the platform's
+screen-out count is the reference. Fix the
 question and answer before collection and record them in the run log; the
 registration's pass mark is one out of one. `domains/test/` and
 `domains/code/` carry examples.
