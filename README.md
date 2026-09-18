@@ -108,6 +108,13 @@ question and answer before collection and record them in the run log; the
 registration's pass mark is one out of one. `domains/test/` and
 `domains/code/` carry examples.
 
+`attention_redirect`, also optional, is where a session that answered any
+attention check wrongly ends instead of `completion_redirect`: on Prolific, a
+second completion code for failed attention checks, so those submissions arrive
+already sorted. The data are stored the same way either way
+(`attention_passed` in the session row); only the destination differs. A
+failed prescreen takes precedence, since such a session saw no checks.
+
 ```
 npm run anonymize -- <name>
 ```

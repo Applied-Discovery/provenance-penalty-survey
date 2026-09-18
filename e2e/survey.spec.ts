@@ -189,3 +189,13 @@ test('a passing participant follows the completion redirect, not the screen-out 
   await runSession(page, { ...happy, prescreenOption: 1 });
   await page.waitForURL(/cc=DONE/);
 });
+
+test('a failed attention check follows attention_redirect instead of the completion redirect', async ({ page }) => {
+  const dp = await interceptDataPipe(page);
+  await patchManifest(page, { completion_redirect: 'https://app.prolific.com/submissions/complete?cc=DONE', attention_redirect: 'https://app.prolific.com/submissions/complete?cc=ATTN' });
+  await page.route('https://app.prolific.com/**', (route) => route.fulfill({ status: 200, contentType: 'text/html', body: '<h1>prolific</h1>' }));
+  await page.goto(`${EXAMPLE}?SESSION_ID=e2e-attn`);
+  await runSession(page, { ...happy, attentionCorrect: false });
+  await page.waitForURL(/cc=ATTN/);
+  expect(file(dp.posts, 'session_')[0].attention_passed).toBe('false');   // the data are unchanged; only the redirect differs
+});
