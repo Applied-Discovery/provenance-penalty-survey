@@ -61,3 +61,34 @@ test('throws if a rating trial has no response time', () => {
 test('throws if a belief answer is missing for an unlabeled rating', () => {
   expect(() => buildSubmission(m, ctx, trials.filter((x) => x.trial_kind !== 'belief'))).toThrow(/belief/);
 });
+
+// Expertise screen
+const prescreener = { artifact: 'artifacts/p.txt', question: 'Q?', options: ['a', 'b', 'c'], answer: 'b', redirect: 'https://p.test/out' };
+const mScreen = validateManifest({ ...mDemo, prescreener } as any);
+const demoAnswers = [{ trial_kind: 'demographic', question_id: 'ai_use', response: 0, rt: 1 }, { trial_kind: 'demographic', question_id: 'role', response: 1, rt: 1 }];
+test('no prescreen field when the manifest has no prescreener', () => {
+  expect(buildSubmission(m, ctx, trials).data.prescreen).toBeUndefined();
+});
+test('a passed prescreen is recorded with the chosen option and the session continues as usual', () => {
+  const t = [trials[0], { trial_kind: 'prescreen', response: 1, rt: 4000 }, ...trials.slice(1), ...demoAnswers];
+  const s = buildSubmission(mScreen, ctx, t);
+  expect(s.data.prescreen).toEqual({ answer: 'b', passed: true });
+  expect(s.data.ratings).toHaveLength(2);
+  expect(s.data.demographics).toHaveLength(2);
+});
+test('a screened-out session has only consent and the wrong answer: no ratings, checks, demographics or withdrawal', () => {
+  const s = buildSubmission(mScreen, ctx, [trials[0], { trial_kind: 'prescreen', response: 2, rt: 4000 }]);
+  expect(s.data.prescreen).toEqual({ answer: 'c', passed: false });
+  expect(s.data).toMatchObject({ ratings: [], unlabeled_ratings: [], attention_expected: [], attention_answer: [], demographics: [], withdrawn: false });
+});
+test('the pass mark is the manifest answer, not the trial record', () => {
+  const s = buildSubmission(mScreen, ctx, [trials[0], { trial_kind: 'prescreen', response: 0, rt: 1, passed: true }]);
+  expect(s.data.prescreen).toEqual({ answer: 'a', passed: false });
+});
+test('throws when the manifest has a prescreener but the question was not answered, or the answer is out of range', () => {
+  expect(() => buildSubmission(mScreen, ctx, [...trials, ...demoAnswers])).toThrow(/prescreen/);
+  expect(() => buildSubmission(mScreen, ctx, [trials[0], { trial_kind: 'prescreen', response: 7, rt: 1 }])).toThrow(/prescreen/);
+});
+test('a passed prescreen still requires the demographic answers', () => {
+  expect(() => buildSubmission(mScreen, ctx, [trials[0], { trial_kind: 'prescreen', response: 1, rt: 1 }, ...trials.slice(1)])).toThrow(/ai_use|role/);
+});

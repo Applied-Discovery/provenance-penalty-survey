@@ -150,3 +150,42 @@ test('a code domain highlights each artifact by its file extension, inside a scr
   }
   expect([...seen].sort()).toEqual(['c', 'java', 'python', 'typescript']);
 });
+
+// Expertise screen (manifest `prescreener`): the example's h0.txt stands in for the screening item.
+const prescreener = { artifact: 'artifacts/h0.txt', question: 'Which word describes the item above?', options: ['wrong', 'right', 'other'], answer: 'right',
+  redirect: 'https://app.prolific.com/submissions/complete?cc=SCREENOUT' };
+
+test('a right prescreen answer continues into the study and lands in the session row', async ({ page }) => {
+  const dp = await interceptDataPipe(page);
+  await patchManifest(page, { prescreener, demographics: [{ id: 'role', question: 'Role?', options: ['Student', 'Professional'] }] });
+  await page.goto(`${EXAMPLE}?SESSION_ID=e2e-screen-pass`);
+  const clicked = await runSession(page, { ...happy, prescreenOption: 1 });
+  expect(clicked).toMatchObject({ prescreen: 'right', labeled: 2, unlabeled: 1, beliefs: 1, demographics: ['Student'] });
+  expect(dp.posts.map((p) => p.filename.split('_')[0]).sort()).toEqual(['labeled', 'session', 'unlabeled']);
+  const [session] = file(dp.posts, 'session_');
+  expect(session).toMatchObject({ prescreen_answer: 'right', prescreen_passed: 'true', n_labeled: '2', demo_role: 'Student' });
+  expect(Object.keys(session).slice(-3)).toEqual(['prescreen_answer', 'prescreen_passed', 'demo_role']);
+});
+
+test('a wrong prescreen answer saves a session row only, shows the screen-out page and follows the screen-out redirect', async ({ page }) => {
+  const dp = await interceptDataPipe(page);
+  await patchManifest(page, { prescreener, completion_redirect: 'https://app.prolific.com/submissions/complete?cc=DONE' });
+  await page.route('https://app.prolific.com/**', (route) => route.fulfill({ status: 200, contentType: 'text/html', body: '<h1>prolific</h1>' }));
+  await page.goto(`${EXAMPLE}?SESSION_ID=e2e-screen-out`);
+  const clicked = await runSession(page, { ...happy, prescreenOption: 2 });
+  expect(clicked).toMatchObject({ prescreen: 'other', labeled: 0, unlabeled: 0, beliefs: 0, attention: [] });
+  await expect(page.getByText('did not match')).toBeVisible();
+  await page.waitForURL(/cc=SCREENOUT/);
+  expect(dp.posts.map((p) => p.filename.split('_')[0])).toEqual(['session']);
+  const [session] = file(dp.posts, 'session_');
+  expect(session).toMatchObject({ session_id: 'e2e-screen-out', prescreen_answer: 'other', prescreen_passed: 'false', n_labeled: '0', n_unlabeled: '0', withdrawn: 'false' });
+});
+
+test('a passing participant follows the completion redirect, not the screen-out one', async ({ page }) => {
+  await interceptDataPipe(page);
+  await patchManifest(page, { prescreener, completion_redirect: 'https://app.prolific.com/submissions/complete?cc=DONE' });
+  await page.route('https://app.prolific.com/**', (route) => route.fulfill({ status: 200, contentType: 'text/html', body: '<h1>prolific</h1>' }));
+  await page.goto(`${EXAMPLE}?SESSION_ID=e2e-screen-done`);
+  await runSession(page, { ...happy, prescreenOption: 1 });
+  await page.waitForURL(/cc=DONE/);
+});

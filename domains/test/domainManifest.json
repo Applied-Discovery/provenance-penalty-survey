@@ -38,6 +38,17 @@
       ]
     }
   ],
+  "prescreener": {
+    "artifact": "artifacts/prescreen.txt",
+    "question": "Which animal jumps in the sentence above?",
+    "options": [
+      "The dog",
+      "The fox",
+      "The cat"
+    ],
+    "answer": "The fox",
+    "redirect": "https://app.prolific.com/submissions/complete?cc=SCREENOUT"
+  },
   "storage": "datapipe",
   "curation_criteria": "curationCriteria.md",
   "osf_study": "1mz9PEqd1VT9"

@@ -4,7 +4,8 @@ export type { Author };
 export interface Rating          { id: string; actual_author: Author; stated_author: Author; survey_pos: number; rating: number; time_spent: number }
 export interface UnlabeledRating { id: string; actual_author: Author; predicted_author: Author; survey_pos: number; rating: number; rating_time_spent: number; belief_time_spent: number }
 export interface DemographicAnswer { id: string; answer: string }   // the option text chosen for manifest question `id`
-export interface SubmissionData  { attention_expected: number[]; attention_answer: number[]; withdrawn: boolean; ratings: Rating[]; unlabeled_ratings: UnlabeledRating[]; demographics: DemographicAnswer[] }
+export interface PrescreenResult { answer: string; passed: boolean }   // chosen option text; passed when it is the manifest's answer
+export interface SubmissionData  { attention_expected: number[]; attention_answer: number[]; withdrawn: boolean; ratings: Rating[]; unlabeled_ratings: UnlabeledRating[]; demographics: DemographicAnswer[]; prescreen?: PrescreenResult }
 export interface Submission {
   domain: string; submission_time: string; start_time: string; session_id: string; study_id: string | null;
   protocol_version: string; domain_version: string; evaluator_type: 'human'; evaluator_class: 'lay' | 'expert'; wave: number;
@@ -41,8 +42,18 @@ export function buildSubmission(
       survey_pos: Number(t.survey_pos), rating: ratingOf(t), rating_time_spent: ms(t), belief_time_spent: ms(b) };
   });
 
+  // Scored here from the manifest, not read off the trial record, so the stored outcome never depends on page-side state.
+  let prescreen: PrescreenResult | undefined;
+  if (m.prescreener) {
+    const t = of('prescreen')[0];
+    const answer = t ? m.prescreener.options[Number(t.response)] : undefined;
+    if (answer === undefined) throw new Error('Missing or out-of-range answer for the prescreen question');
+    prescreen = { answer, passed: answer === m.prescreener.answer };
+  }
+  const screenedOut = prescreen !== undefined && !prescreen.passed;   // the session ended at the screen: nothing after it was asked
+
   const answered = new Map(of('demographic').map((t) => [String(t.question_id), t]));
-  const demographics: DemographicAnswer[] = m.demographics.map((q) => {
+  const demographics: DemographicAnswer[] = screenedOut ? [] : m.demographics.map((q) => {
     const t = answered.get(q.id);
     const answer = t ? q.options[Number(t.response)] : undefined;
     if (answer === undefined) throw new Error(`Missing or out-of-range answer for demographic question ${q.id}`);
@@ -54,6 +65,6 @@ export function buildSubmission(
     protocol_version: m.protocol_version, domain_version: m.domain_version, evaluator_type: 'human',
     evaluator_class: m.evaluator_class, wave: m.wave,
     data: { attention_expected: attention.map((t) => Number(t.expected)), attention_answer: attention.map(ratingOf),
-            withdrawn, ratings, unlabeled_ratings, demographics },
+            withdrawn, ratings, unlabeled_ratings, demographics, ...(prescreen ? { prescreen } : {}) },
   };
 }

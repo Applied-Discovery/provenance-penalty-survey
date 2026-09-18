@@ -94,6 +94,20 @@ domain, cannot prime the ratings, and each answer lands in the session row as
 `demo_<id>` holding the chosen option text. Add a "Prefer not to say" option
 where the question warrants one. `domains/test/` carries an example.
 
+For an expert domain, `prescreener` adds a one-question expertise screen right
+after consent: `{ artifact, question, options, answer, redirect }`. The
+artifact (a file in the domain folder, rendered like the study artifacts; it
+must not be one of the study pool) is shown above the question, and `answer`
+must be one of `options`. A right answer continues into the study, and the
+session row records `prescreen_answer` and `prescreen_passed` (before the
+`demo_` columns). A wrong answer ends the session: a session row is saved with
+`prescreen_passed` false and no response files, a screen-out page is shown, and
+the participant is sent to `redirect`, the platform's screen-out completion URL
+(on Prolific, a second completion code of the "screened out" kind). Fix the
+question and answer before collection and record them in the run log; the
+registration's pass mark is one out of one. `domains/test/` and
+`domains/code/` carry examples.
+
 ```
 npm run anonymize -- <name>
 ```
@@ -166,7 +180,9 @@ to its session row from content alone. The three files are posted at once (DataP
 takes several seconds per request, so this is one wait rather than three), behind a
 saving page that asks the participant to keep the tab open; a file that fails is
 re-sent once while the ones that landed are not. The analysis keeps the first complete
-set per session id (see `02_design/ANALYSIS.md`, exclusions).
+set per session id (see `02_design/ANALYSIS.md`, exclusions). A session screened
+out at the expertise question writes the `session_` file only, with zero counts,
+empty statistics and `prescreen_passed` false.
 
 ## Browser end-to-end tests
 

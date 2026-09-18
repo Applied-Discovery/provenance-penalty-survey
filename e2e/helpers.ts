@@ -42,8 +42,8 @@ export const file = (posts: Post[], prefix: string) => {
 const rate = (page: Page, n: number) =>
   page.locator('button.rating-btn').filter({ has: page.locator('.rating-n', { hasText: new RegExp(`^${n}$`) }) }).click();
 
-export interface Choices { attentionCorrect: boolean; withdraw: boolean; labeledRating: number; unlabeledRating: number; demographicOption?: number }
-export interface Clicked { labeled: number; unlabeled: number; beliefs: number; attention: { expected: number; picked: number }[]; demographics: string[] }
+export interface Choices { attentionCorrect: boolean; withdraw: boolean; labeledRating: number; unlabeledRating: number; demographicOption?: number; prescreenOption?: number }
+export interface Clicked { labeled: number; unlabeled: number; beliefs: number; attention: { expected: number; picked: number }[]; demographics: string[]; prescreen?: string }
 
 /** Drive one session from consent to the thank-you page by reacting to whatever is on screen. */
 export async function runSession(page: Page, c: Choices): Promise<Clicked> {
@@ -51,6 +51,10 @@ export async function runSession(page: Page, c: Choices): Promise<Clicked> {
   for (let step = 0; step < 200; step++) {
     if (await page.getByRole('heading', { name: 'Thank you' }).isVisible()) return clicked;   // debrief body also says "Thank you", so match the heading
     if (await page.getByRole('button', { name: 'I agree' }).isVisible()) { await page.getByRole('button', { name: 'I agree' }).click(); continue; }
+    if (await page.locator('.prescreen').isVisible()) {
+      const btn = page.locator('#jspsych-html-button-response-btngroup button').nth(c.prescreenOption ?? 0);
+      clicked.prescreen = await btn.innerText(); await btn.click(); continue;
+    }
     if (await page.locator('.attention').isVisible()) {
       const expected = Number((await page.locator('.attention').innerText()).match(/select (\d+)/)![1]);
       const picked = c.attentionCorrect ? expected : (expected % 10) + 1;

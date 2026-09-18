@@ -58,3 +58,20 @@ test('the same seed reproduces the same files', async () => {
     for (const f of readdirSync(dir)) expect(readFileSync(join(other, f), 'utf8')).toBe(readFileSync(join(dir, f), 'utf8'));
   } finally { rmSync(other, { recursive: true, force: true }); }
 });
+
+test('expert domains screen: index 15 is screened out with a session file only, the rest pass and carry the prescreen columns', async () => {
+  const [truth] = await simulateExport(dir, ['code'], 20, 1);
+  expect(truth).toMatchObject({ domain: 'code', evaluator_class: 'expert', sessions: 20, kept: 16, screened_out: 1, incomplete: 1, duplicate: 1, withdrawn: 1, attention_failed: 1 });
+  const files = readdirSync(dir);
+  expect(files.filter((f) => f.includes('-0015_')).map((f) => f.split('_')[0])).toEqual(['session']);
+  const out = parse(readFileSync(join(dir, files.find((f) => f.startsWith('session_code-0015_'))!), 'utf8'))[0];
+  expect(out).toMatchObject({ prescreen_passed: 'false', n_labeled: '0', n_unlabeled: '0', attention_passed: 'true', withdrawn: 'false', avg_rating: '' });
+  const clean = parse(readFileSync(join(dir, files.find((f) => f.startsWith('session_code-0000_'))!), 'utf8'))[0];
+  expect(clean).toMatchObject({ prescreen_passed: 'true', prescreen_answer: 'b', n_labeled: String(SESSION.labeled) });
+  expect(Object.keys(clean).slice(-3)).toEqual(['viewport_height', 'prescreen_answer', 'prescreen_passed']);
+});
+test('lay domains do not screen: index 15 is a clean session and the truth counts no screen-outs', async () => {
+  const [truth] = await simulateExport(dir, ['creative_writing'], 20, 1);
+  expect(truth).toMatchObject({ kept: 17, screened_out: 0 });
+  expect(readdirSync(dir).filter((f) => f.includes('-0015_'))).toHaveLength(3);
+});

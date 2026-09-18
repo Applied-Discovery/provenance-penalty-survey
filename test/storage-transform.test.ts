@@ -63,3 +63,30 @@ test('storeSubmission writes session, labeled rows, unlabeled rows, then flushes
   await storeSubmission(sub, meta, m, sink);
   expect(calls).toEqual(['s1', 'l2', 'u1', 'f']);
 });
+
+// Expertise screen: two columns between the browser metadata and the demographic answers, present only when the domain screens.
+test('session row has no prescreen columns when the submission has no prescreen', () => {
+  expect(Object.keys(toSessionRow(sub, meta, m))).not.toContain('prescreen_passed');
+});
+test('session row carries the prescreen answer and outcome before the demographic columns', () => {
+  const s = { ...sub, data: { ...sub.data, prescreen: { answer: 'b', passed: true }, demographics: [{ id: 'role', answer: 'Student' }] } };
+  const keys = Object.keys(toSessionRow(s, meta, m));
+  expect(keys.slice(-3)).toEqual(['prescreen_answer', 'prescreen_passed', 'demo_role']);
+  expect(toSessionRow(s, meta, m)).toMatchObject({ prescreen_answer: 'b', prescreen_passed: true });
+});
+test('a screened-out session row has zero counts and null statistics', () => {
+  const s: Submission = { ...sub, data: { attention_expected: [], attention_answer: [], withdrawn: false, ratings: [], unlabeled_ratings: [], demographics: [],
+    prescreen: { answer: 'c', passed: false } } };
+  expect(toSessionRow(s, meta, m)).toMatchObject({ prescreen_answer: 'c', prescreen_passed: false, attention_expected: '', attention_answer: '',
+    attention_passed: true, n_labeled: 0, n_unlabeled: 0, avg_rating: null, min_time_spent: null, median_time_spent: null });
+  expect(toLabeledRows(s)).toEqual([]); expect(toUnlabeledRows(s)).toEqual([]);
+});
+test('storeSubmission of a screened-out session writes the session file only', async () => {
+  const s: Submission = { ...sub, data: { attention_expected: [], attention_answer: [], withdrawn: false, ratings: [], unlabeled_ratings: [], demographics: [],
+    prescreen: { answer: 'c', passed: false } } };
+  const posted: string[] = [];
+  const fetchFn = vi.fn(async (_url: string, init: any) => { posted.push(JSON.parse(init.body).filename); return new Response('{}', { status: 200 }); });
+  const { DataPipeSink } = await import('../src/storage/datapipe');
+  await storeSubmission(s, meta, m, new DataPipeSink({ experimentId: 'EXP', fetchFn: fetchFn as any, startTime: 'T1' }));
+  expect(posted).toEqual(['session_S_T1.csv']);
+});
