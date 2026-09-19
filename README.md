@@ -86,6 +86,24 @@ human and AI artifact in the same language are always coloured by the same
 rules. `domains/example_code/` is a placeholder code domain covering C, Python,
 TypeScript and Java; open it on the dev server to check the highlighting.
 
+A `--type image` domain shows each artifact in an `<img>` at its own aspect
+ratio, fitted to the column and to half the window height, never cropped,
+stretched or upscaled; the height cap is what keeps the stem and the start of
+the rating scale on screen when an artifact is portrait. Only `.jpg`, `.jpeg`
+and `.png` are accepted, and the manifest rejects anything else: an artifact
+the browser cannot decode would render its alt text, which on a labeled trial
+is the provenance sentence. The session's artifacts are preloaded after
+consent behind a progress bar, so a rating's response time excludes download
+time, and a pool that will not load within two minutes ends the session on the
+failure page instead of reaching a rating trial. Because an image is shown at
+its own size and format, both are visible to the rater: curation has to keep
+dimensions, aspect ratios and formats comparable across the human and AI
+halves, or a pool whose AI half is uniformly 1024x1024 PNG and whose human
+half is 4032x3024 JPEG hands the rater a provenance cue that has nothing to do
+with the artifact. `domains/example_image/` is a placeholder image domain
+covering all three formats at four shapes, including a tall portrait; open it
+on the dev server to check the display box.
+
 To ask participants about themselves, add `demographics` to the manifest by
 hand: a list of `{ id, question, options }` single-choice questions (snake_case
 ids, at least two options). They are asked, behind their own title page, after
@@ -162,6 +180,10 @@ The site is static, so everything the browser needs is public. Consequences:
   the session, labeled and unlabeled files: `domain, session_id, start_time,
   protocol_version, domain_version, evaluator_type, evaluator_class, wave`.
   Requiring a session-only column such as `withdrawn` rejects the other two.
+- Artifact files are served as they are, so anything inside them is public.
+  Anonymisation renames files; it does not rewrite their contents, and image
+  metadata (EXIF, XMP, C2PA) travels with the file. Nothing a participant sees
+  on the page exposes it, but a saved file can be inspected.
 - `SESSION_ID` and `STUDY_ID` must match `[A-Za-z0-9_-]{1,128}`; anything
   else is ignored (a fresh session id is generated) and logged to the console.
 - `completion_redirect` must be an http(s) URL; artifact paths must be relative
@@ -197,8 +219,11 @@ attention check plus withdrawal being recorded; a failed DataPipe write being
 retried once without duplicating files; the saving page showing while the
 three posts run concurrently; the same `SESSION_ID` reproducing the same artifact
 order and labels; redirecting to `completion_redirect` after
-the thank-you page; and a manifest that fails validation showing the failure
-page instead of a survey.
+the thank-you page; a manifest that fails validation showing the failure
+page instead of a survey; an image domain fitting every artifact into the
+display box, undistorted and never upscaled, with the rating scale reachable
+without scrolling; and an image that will not load ending the session on the
+failure page rather than on a rating trial.
 
 ## End-to-end check
 

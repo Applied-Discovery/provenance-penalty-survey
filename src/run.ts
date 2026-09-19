@@ -23,6 +23,10 @@ export interface RunOptions {
   uuid?: () => string; now?: () => string; navigate?: (url: string) => void;
 }
 
+/** How long the image preload waits before giving up on the pool and showing the failure page. Generous enough for a
+ * full pool of photos on a slow connection, finite so a stalled request cannot strand the participant. */
+export const PRELOAD_TIMEOUT_MS = 120_000;
+
 /** Id under which the prescreener's artifact is loaded; not an artifact of the study pools, so never in a plan. */
 export const PRESCREEN_ARTIFACT_ID = 'prescreen';
 
@@ -31,9 +35,15 @@ export interface PrescreenDeps { artifact: LoadedArtifact; submit: () => void }
 
 export function buildTimeline(m: DomainManifest, plan: SessionPlan, loaded: Map<string, LoadedArtifact>, ctx: SessionContext, submit: () => Promise<boolean>, prescreen?: PrescreenDeps) {
   const get = (id: string) => { const l = loaded.get(id); if (!l) throw new Error(`Artifact ${id} not loaded`); return l; };
-  // Images are preloaded after consent so a rating trial's rt does not include download time.
+  // Images are preloaded after consent so a rating trial's rt does not include download time. A whole pool of photos
+  // is a real wait, so it runs behind a progress bar rather than a blank page, and is bounded: without max_load_time
+  // the plugin waits on a stalled download forever. An image that will not load must never reach a rating trial -
+  // the browser would render the <img> alt, which on a labeled trial is the provenance sentence - so the study stops
+  // here instead, with the platform's own failure copy (jsPsych's default message says nothing about what to do).
   const preloadTrials = m.artifact_type === 'image'
-    ? [{ type: preload, images: [...loaded.values()].map((l) => l.content), show_progress_bar: false, data: { trial_kind: 'preload' } }]
+    ? [{ type: preload, images: [...loaded.values()].map((l) => l.content), data: { trial_kind: 'preload' },
+         show_progress_bar: true, message: `<p>${escapeHtml(COPY.preloadMessage)}</p>`,
+         max_load_time: PRELOAD_TIMEOUT_MS, continue_after_error: false, error_message: `<p>${escapeHtml(COPY.startupFailed)}</p>` }]
     : [];
   let submitted = false;
   const submitTrial = { type: callFunction, async: true, func: (done: () => void) => { showSavingPage(); submit().then((ok) => { submitted = ok; }).finally(done); }, data: { trial_kind: 'submit' } };
