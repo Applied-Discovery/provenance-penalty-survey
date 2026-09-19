@@ -2,6 +2,7 @@ import { buildTimeline, submitWithRetry, submitSession, submitInBackground, fina
 import { buildSessionPlan } from '../src/plan';
 import { validateManifest } from '../src/manifest';
 import { Rng } from '../src/rng';
+import { COPY } from '../src/copy';
 
 vi.mock('jspsych', () => ({ initJsPsych: vi.fn() }));
 const m = validateManifest({ name: 'd', protocol_version: 'v0', domain_version: 'v0', wave: 1, artifact_type: 'text', evaluator_class: 'lay',
@@ -39,10 +40,28 @@ test('no demographics title when the manifest asks no demographic questions', ()
   expect(kinds).not.toContain('demographic');
   expect(kinds.slice(-4)).toEqual(['belief', 'disclosure', 'submit', 'thanks']);
 });
+const pngPool = (n: number, prefix: string) => Object.fromEntries(Array.from({ length: n }, (_, i) => [String(i), `artifacts/${prefix}${i}.png`]));
+const imageManifest = validateManifest({ ...m, artifact_type: 'image', artifacts: { human: pngPool(4, 'h'), ai: pngPool(4, 'a') } } as any);
 test('image domains get a preload trial right after consent', () => {
-  const im = validateManifest({ ...m, artifact_type: 'image' } as any);
+  const im = imageManifest;
   const kinds = buildTimeline(im, plan, loaded, ctx, async () => true).map((t: any) => t.data.trial_kind);
   expect(kinds.slice(0, 3)).toEqual(['consent', 'preload', 'attention']);
+});
+const preloadOf = (mf: any) => (buildTimeline(mf, plan, loaded, ctx, async () => true) as any[]).find((t) => t.data.trial_kind === 'preload');
+test('a stalled image preload gives up instead of waiting on a blank page forever', () => {
+  const t = preloadOf(imageManifest).max_load_time;
+  expect(t).toBeGreaterThan(0);
+  expect(Number.isFinite(t)).toBe(true);
+});
+test('an image that fails to load ends the study with the platform copy, never a rating trial showing its alt text', () => {
+  const p = preloadOf(imageManifest);
+  expect(p.continue_after_error).toBe(false);
+  expect(p.error_message).toContain(COPY.startupFailed);
+});
+test('the preload wait tells the participant what is happening', () => {
+  const p = preloadOf(imageManifest);
+  expect(p.show_progress_bar).toBe(true);
+  expect(p.message).toContain(COPY.preloadMessage);
 });
 test('submitWithRetry retries once then throws', async () => {
   let n = 0;

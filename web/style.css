@@ -20,7 +20,20 @@ body { margin: 0; }
   font-size: 1.1rem;
   line-height: 1.6;
 }
-.artifact-image { max-width: 100%; height: auto; }
+/* Images are shown as they are: fitted to the column and to a fraction of the window, never cropped, stretched or
+ * upscaled. The height cap is what keeps the rating scale on screen - an artifact is only as tall as its own aspect
+ * ratio allows, and a portrait one would otherwise push the scale below the fold and be rated after a scroll. Half the
+ * window leaves the stem and the start of the rating scale in view on a laptop, as they are in a text domain. With
+ * both maxima set and width/height auto, the browser fits the image inside the box and keeps its aspect ratio.
+ * Intrinsic size is still visible to the rater, so curation keeps it comparable across the human and AI halves. */
+.artifact-image {
+  display: block;
+  margin-inline: auto;
+  max-width: 100%;
+  max-height: 50vh;
+  width: auto;
+  height: auto;
+}
 /* Code: monospace at a size that fits typical line lengths in the column; wide lines scroll inside the box, the page
  * never scrolls sideways. Token colours come from highlight.js's github theme (web/main.ts); the box gets a faint
  * background and border so an unhighlighted (plaintext) domain still reads as code. */

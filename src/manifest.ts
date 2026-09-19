@@ -3,6 +3,17 @@ import { CODE_EXTENSIONS, languageForPath } from './highlight';
 
 export type Author = 'human' | 'ai';
 
+/** The image formats every browser we target renders from a plain `<img>`. An image domain's artifacts are shown as
+ * they are, so a format the browser cannot decode would leave the rater looking at the alt text - which on a labeled
+ * trial is the provenance sentence. The manifest rejects anything else rather than let that reach a participant. */
+export const IMAGE_EXTENSIONS = ['jpeg', 'jpg', 'png'];
+
+/** True when the path ends in one of IMAGE_EXTENSIONS, compared case-insensitively as the server serves it. */
+export function isSupportedImagePath(path: string): boolean {
+  const m = /\.([A-Za-z0-9]+)$/.exec(path);
+  return !!m && IMAGE_EXTENSIONS.includes(m[1].toLowerCase());
+}
+
 /** Artifact paths are resolved relative to the manifest and copied to the deployed site from the domain folder,
  * so they must stay inside it: relative, no scheme, no `..` segment, no backslashes. */
 export function isSafeArtifactPath(p: string): boolean {
@@ -67,10 +78,16 @@ export const manifestSchema = z.object({
   completion_redirect: httpUrl.optional(),
   osf_study: z.string().min(1),                 // DataPipe experiment id
 }).strict().superRefine((m, ctx) => {
+  const everyArtifact = () => [...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai), ...(m.prescreener ? [m.prescreener.artifact] : [])];
   if (m.artifact_type === 'code') {   // the extension picks the highlighting grammar, so every artifact needs a known one
-    const unknown = [...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai), ...(m.prescreener ? [m.prescreener.artifact] : [])].filter((p) => !languageForPath(p));
+    const unknown = everyArtifact().filter((p) => !languageForPath(p));
     if (unknown.length) ctx.addIssue({ code: 'custom', path: ['artifacts'], message:
       `every artifact of a code domain needs a recognised extension (${CODE_EXTENSIONS.join(', ')}); not recognised: ${unknown.join(', ')}` });
+  }
+  if (m.artifact_type === 'image') {   // shown as-is in an <img>, so the browser has to be able to decode every one
+    const unsupported = everyArtifact().filter((p) => !isSupportedImagePath(p));
+    if (unsupported.length) ctx.addIssue({ code: 'custom', path: ['artifacts'], message:
+      `every artifact of an image domain must be ${IMAGE_EXTENSIONS.join(', ')}; not a supported image format: ${unsupported.join(', ')}` });
   }
   if (m.labeled_artifacts_per_session % 2 !== 0)
     ctx.addIssue({ code: 'custom', message: 'labeled_artifacts_per_session must be even' });

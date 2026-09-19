@@ -62,6 +62,7 @@ Validation rules:
 | `artifacts.human` and `artifacts.ai` must have keys 0, 1, ... N-1 | We want easily indexable artifacts. Are using a dict so the keys are stable. |
 | `demographics[].id` snake_case and unique; `options` has at least two entries | Each id becomes a session-row column `demo_<id>` |
 | with `artifact_type == "code"`: every artifact path has an extension registered in `src/highlight.ts` | The highlighting grammar comes from the file name, never auto-detected from the content, so colouring cannot differ between the human and AI halves of a pair |
+| with `artifact_type == "image"`: every artifact path ends in `.jpg`, `.jpeg` or `.png` | The artifact is shown as it is in an `<img>`. A format the browser cannot decode renders the alt text instead, which on a labeled trial is the provenance sentence |
 
 #### GET Parameters
 
@@ -106,6 +107,15 @@ On submit, passes results to the storage layer. Retry once if it fails. Displays
 This package is accompanied by a `copy.ts` where all fixed participant facing copy is stored.
 
 Code artifacts are shown in a monospace box with syntax highlighting from highlight.js (text escaped, tokens wrapped in `hljs-*` spans, github light theme). Highlighting applies only to `artifact_type: code`; the grammar is the one the artifact's file extension maps to in `src/highlight.ts` (`.py`, `.c`, `.ts`, `.java`, ...), so a pool may mix languages; anonymisation keeps extensions. Lines are never wrapped; wide code scrolls inside the box. `plaintext` (`.txt`) is available for a language that is not registered; adding a language means importing its grammar and its extensions in `src/highlight.ts`.
+
+Image artifacts are shown in an `<img>` at their own aspect ratio, fitted to the column and to half the window height
+(`max-width: 100%`, `max-height: 50vh`), never cropped, stretched or upscaled. The height cap is what keeps the stem and
+the start of the rating scale on screen when an artifact is portrait; without it a tall image is rated after a scroll.
+The pool a session draws is preloaded after consent, behind a progress bar, so a rating's response time never includes
+download time. The preload is bounded (`PRELOAD_TIMEOUT_MS` in `src/run.ts`): an artifact that fails to load, or a pool
+that has not arrived by then, ends the session on the platform's failure page rather than reaching a rating trial where
+the browser would render the alt text. Because an image is shown at its own size and format, both stay visible to the
+rater, so curation keeps dimensions, aspect ratios and formats comparable across the human and AI halves of the pool.
 
 #### Notes
 - We want to ensure that the true provenance of a piece of text or image isn't revealed. Image alt text should be set to the provenance label. File names should not leak. Option to create a utility script which gives all the artifacts a random string name and updates manifest accordingly.

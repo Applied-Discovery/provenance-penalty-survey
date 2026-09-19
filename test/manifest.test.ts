@@ -1,4 +1,6 @@
 import { validateManifest, artifactId } from '../src/manifest';
+import { readdirSync, readFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 const base = {
   name: 'creative_writing', protocol_version: 'v0.1', domain_version: 'v0.1', wave: 1,
@@ -103,4 +105,46 @@ test('prescreener redirect must be an http(s) URL and the artifact path safe', (
 });
 test('a code domain needs a recognised extension on the prescreener artifact too', () => {
   expect(() => validateManifest({ ...codeBase, prescreener: { ...prescreener, artifact: 'artifacts/prescreen.xyz' } })).toThrow(/prescreen\.xyz/);
+});
+
+const image = { ...base, name: 'painting', artifact_type: 'image', stem_noun: 'painting', human_verb: 'painted',
+  artifacts: { human: { '0': 'artifacts/a.png', '1': 'artifacts/b.jpg' }, ai: { '0': 'artifacts/c.jpeg', '1': 'artifacts/d.PNG' } } };
+test('an image domain accepts jpg, jpeg and png, whatever the case', () => {
+  expect(() => validateManifest(image)).not.toThrow();
+});
+test('an image domain rejects a format the browser may not render, naming it', () => {
+  const bad = { ...image, artifacts: { ...image.artifacts, ai: { '0': 'artifacts/c.jpeg', '1': 'artifacts/d.heic' } } };
+  expect(() => validateManifest(bad)).toThrow(/not a supported image format: artifacts\/d\.heic/);
+  expect(() => validateManifest(bad)).toThrow(/jpeg, jpg, png/);
+  for (const ext of ['gif', 'webp', 'svg', 'tiff', 'bmp', 'avif'])
+    expect(() => validateManifest({ ...image, artifacts: { ...image.artifacts, ai: { '0': 'artifacts/c.jpeg', '1': `artifacts/d.${ext}` } } })).toThrow(/supported image format/);
+  expect(() => validateManifest({ ...image, artifacts: { ...image.artifacts, ai: { '0': 'artifacts/c.jpeg', '1': 'artifacts/noext' } } })).toThrow(/supported image format/);
+});
+test('a text domain does not care about image formats', () => {
+  expect(() => validateManifest({ ...base, artifacts: { human: { '0': 'artifacts/a.heic', '1': 'artifacts/b.txt' }, ai: { '0': 'artifacts/c.txt', '1': 'artifacts/d.txt' } } })).not.toThrow();
+});
+test('an image domain needs a supported format on the prescreener artifact too', () => {
+  const p = { ...prescreener, artifact: 'artifacts/prescreen.gif' };
+  expect(() => validateManifest({ ...image, prescreener: p })).toThrow(/prescreen\.gif/);
+  expect(() => validateManifest({ ...image, prescreener: { ...p, artifact: 'artifacts/prescreen.png' } })).not.toThrow();
+});
+
+// Every deployed domain folder is data, not code, so nothing else type-checks it: this is the guard that a hand-edited
+// manifest, or a new rule like the image formats above, cannot ship a domain the page would refuse to start.
+test('every committed domain manifest validates', () => {
+  const domains = readdirSync(join(__dirname, '../domains'), { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
+  expect(domains).toContain('example_image');
+  for (const d of domains) {
+    const path = join(__dirname, '../domains', d, 'domainManifest.json');
+    expect(() => validateManifest(JSON.parse(readFileSync(path, 'utf8'))), d).not.toThrow();
+  }
+});
+test('every artifact a committed manifest names is on disk', () => {
+  const domains = readdirSync(join(__dirname, '../domains'), { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
+  for (const d of domains) {
+    const dir = join(__dirname, '../domains', d);
+    const m = validateManifest(JSON.parse(readFileSync(join(dir, 'domainManifest.json'), 'utf8')));
+    for (const p of [...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai), ...(m.prescreener ? [m.prescreener.artifact] : [])])
+      expect(existsSync(join(dir, p)), `${d}/${p}`).toBe(true);
+  }
 });
