@@ -11,8 +11,67 @@
   "labeled_artifacts_per_session": 2,
   "unlabeled_per_session": 1,
   "artifacts": {
-    "human": { "0": "artifacts/h0.png", "1": "artifacts/h1.jpg", "2": "artifacts/h2.png", "3": "artifacts/h3.jpeg" },
-    "ai":    { "0": "artifacts/a0.png", "1": "artifacts/a1.jpg", "2": "artifacts/a2.png", "3": "artifacts/a3.jpeg" }
+    "human": {
+      "0": "artifacts/h0.png",
+      "1": "artifacts/h1.jpg",
+      "2": "artifacts/h2.png",
+      "3": "artifacts/h3.jpeg"
+    },
+    "ai": {
+      "0": "artifacts/a0.png",
+      "1": "artifacts/a1.jpg",
+      "2": "artifacts/a2.png",
+      "3": "artifacts/a3.jpeg"
+    }
+  },
+  "attribution": {
+    "human": {
+      "0": {
+        "title": "Study in Ochre",
+        "title_url": "https://example.test/gallery/ochre",
+        "author": "Placeholder Painter",
+        "author_url": "https://example.test/people/placeholder-painter",
+        "licence": "CC BY-SA 4.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+      },
+      "1": {
+        "title": "Blue Hour",
+        "title_url": "https://example.test/gallery/blue-hour",
+        "licence": "CC BY 4.0",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "2": {
+        "author": "Second Placeholder",
+        "author_url": "https://example.test/people/second-placeholder",
+        "licence": "CC0 1.0",
+        "licence_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      "3": {
+        "title_url": "https://example.test/gallery/untitled-4"
+      }
+    },
+    "ai": {
+      "0": {
+        "author": "Example Image Model v1",
+        "licence": "Example model terms",
+        "licence_url": "https://example.test/terms"
+      },
+      "1": {
+        "author": "Example Image Model v1",
+        "licence": "Example model terms",
+        "licence_url": "https://example.test/terms"
+      },
+      "2": {
+        "author": "Example Image Model v1",
+        "licence": "Example model terms",
+        "licence_url": "https://example.test/terms"
+      },
+      "3": {
+        "author": "Example Image Model v1",
+        "licence": "Example model terms",
+        "licence_url": "https://example.test/terms"
+      }
+    }
   },
   "storage": "datapipe",
   "curation_criteria": "curationCriteria.md",

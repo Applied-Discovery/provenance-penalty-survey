@@ -42,6 +42,12 @@ has the following structure
         },
         ai: {}
     },
+    attribution?: { // default {}. Source credits, keyed by artifact index exactly as `artifacts` is; an artifact with no entry is not credited
+        human: {
+            "0": { title?: "", title_url?: "", author?: "", author_url?: "", licence?: "", licence_url?: "" } // every field optional, at least one required
+        },
+        ai: {}
+    },
     storage?: "datapipe", // default (currently only supported)
     curation_criteria: "path/to/markdown_file.md", // contains criteria for curation of the artifacts which should be frozen and uploaded to OSF before data collection begins.
     completion_redirect?: "", // URL to redirect to once a survey is complete
@@ -59,6 +65,7 @@ Validation rules:
 | `artifacts.human.length == artifacts.ai.length` | Must be an even sample |
 | `labeled_artifacts_per_session + attention_checks + unlabeled_per_session <= artifacts.human.length + artifacts.ai.length` | Cannot attempt to show more artifacts than exist |
 | with `avoid_pairs`: `labeled_artifacts_per_session + attention_checks + unlabeled_per_session <= artifacts.human.length` | Each pair can supply at most one artifact to a session |
+| every key of `attribution.human` / `attribution.ai` names an artifact of that pool | A credit keyed to a missing index is a typo that would silently drop the source |
 | `artifacts.human` and `artifacts.ai` must have keys 0, 1, ... N-1 | We want easily indexable artifacts. Are using a dict so the keys are stable. |
 | `demographics[].id` snake_case and unique; `options` has at least two entries | Each id becomes a session-row column `demo_<id>` |
 | with `artifact_type == "code"`: every artifact path has an extension registered in `src/highlight.ts` | The highlighting grammar comes from the file name, never auto-detected from the content, so colouring cannot differ between the human and AI halves of a pair |
@@ -98,6 +105,14 @@ A title page ("We will now ask some questions about you.", trial kind `demograph
 
 **Disclosure**
 Shows a disclosure with a withdrawal checkbox and a submit button.
+
+Below the submit button, the source credits of the artifacts this session showed, in the order they were shown: one
+line per artifact the manifest's `attribution` block credits, reading title by author, licence, with each field and its
+separator dropped when the entry has neither its text nor its URL, and a `*_url` rendering as a link on the URL itself
+when its text is missing. Only the session's own artifacts are listed - the licences owe attribution for what was used,
+and the credits are shown after every rating is made, so naming the shown human-made artifacts cannot affect the data.
+Links open in a new tab: nothing has been submitted yet at this point, and following a source in the same tab would
+lose the session. Nothing is rendered when no artifact of the session carries a credit.
 
 
 On submit, passes results to the storage layer. Retry once if it fails. Displays a thank you page. Redirects back to Prolific if a callback URL was specified

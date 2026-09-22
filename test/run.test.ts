@@ -172,3 +172,13 @@ test('finalRedirect: the screen-out URL after a failed prescreen, else the compl
   expect(finalRedirect(m, c, [{ trial_kind: 'consent' }])).toBe('https://p.test/done');
   expect(finalRedirect(m, ctx, [{ trial_kind: 'consent' }])).toBeUndefined();
 });
+test('the disclosure trial credits the sources of the artifacts this session showed', () => {
+  // This plan draws the whole pool, so which artifact is credited is the point, not which is left out: that the
+  // block lists only the session's artifacts is covered in attribution.test.ts.
+  const shown = [...plan.labeled, ...plan.unlabeled].map((i) => i.artifact).find((a) => a.author === 'human')!;
+  const credited = validateManifest({ ...m, attribution: { human: { [String(shown.index)]: { title: 'A shown source' } } } } as any);
+  const t = (buildTimeline(credited, plan, loaded, ctx, async () => true) as any[]).find((x) => x.data.trial_kind === 'disclosure');
+  document.body.innerHTML = '<div id="jspsych-content"><form></form></div>';
+  t.on_load();
+  expect(document.getElementById('jspsych-content')!.innerHTML).toContain('A shown source');
+});

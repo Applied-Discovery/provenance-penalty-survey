@@ -30,6 +30,8 @@ export const COPY = {
   ],
   // Appended to the last debrief paragraph only when a platform session id was passed in.
   debriefPaid: 'You will be paid either way.',
+  // Heading of the source credits listed below the submit button, one line per shown artifact the manifest credits.
+  attributionTitle: 'Sources',
   withdrawLabel: 'Please withdraw my responses from this study.',
   submitButton: 'Submit',
   // Shown while the files are posted to DataPipe, which takes several seconds per file; closing the tab here loses the session.
