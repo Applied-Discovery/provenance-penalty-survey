@@ -13,6 +13,7 @@ import { unlabeledTitleTrial, unlabeledRatingTrial, beliefTrial } from './trials
 import { demographicsTitleTrial, demographicTrial } from './trials/demographics';
 import { prescreenTrial, screenOutTrial } from './trials/prescreen';
 import { disclosureTrial, thankYouTrial, showSavingPage } from './trials/disclosure';
+import { attributionHtml } from './attribution';
 import { buildSubmission, type TrialRecord, type Submission } from './submission';
 import { storeSubmission } from './storage/writeRows';
 import { DataPipeSink } from './storage/datapipe';
@@ -53,7 +54,7 @@ export function buildTimeline(m: DomainManifest, plan: SessionPlan, loaded: Map<
     unlabeledTitleTrial(),
     ...plan.unlabeled.flatMap((it) => [unlabeledRatingTrial(it, get(it.artifact.id), m), beliefTrial(it, get(it.artifact.id), m)]),
     ...(m.demographics.length > 0 ? [demographicsTitleTrial(), ...m.demographics.map(demographicTrial)] : []),
-    disclosureTrial(ctx.platform_session),
+    disclosureTrial(ctx.platform_session, attributionHtml(m, plan)),
     submitTrial,
     thankYouTrial(ctx.redirect, ctx.session_id, () => submitted),
   ];

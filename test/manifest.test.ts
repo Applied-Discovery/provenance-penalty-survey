@@ -148,3 +148,24 @@ test('every artifact a committed manifest names is on disk', () => {
       expect(existsSync(join(dir, p)), `${d}/${p}`).toBe(true);
   }
 });
+// Attribution: optional per-artifact source credits, keyed by the same indices as the artifact maps, shown on the
+// disclosure page. Keys are checked against the pools so a typo drops a credit at build time, not silently in the page.
+const attributed = (attribution: unknown) => validateManifest({ ...base, attribution });
+test('accepts attribution entries and leaves an absent block empty', () => {
+  const m = attributed({ human: { '0': { title: 'T', title_url: 'https://x.test/t', licence: 'CC BY 4.0' } } });
+  expect(m.attribution.human['0'].title).toBe('T');
+  expect(m.attribution.ai).toEqual({});
+  expect(validateManifest(base).attribution).toEqual({ human: {}, ai: {} });
+});
+test('rejects an attribution key with no artifact', () => {
+  expect(() => attributed({ ai: { '7': { title: 'T' } } })).toThrow(/attribution.*7/);
+});
+test('rejects an unknown field in an attribution entry', () => {
+  expect(() => attributed({ human: { '0': { titel: 'T' } } })).toThrow(/titel/);
+});
+test('rejects an empty attribution entry', () => {
+  expect(() => attributed({ human: { '0': {} } })).toThrow(/at least one/);
+});
+test('attribution urls must be http(s), so a credit cannot carry a javascript: link', () => {
+  expect(() => attributed({ human: { '0': { title: 'T', title_url: 'javascript:alert(1)' } } })).toThrow(/http\(s\)|url/);
+});

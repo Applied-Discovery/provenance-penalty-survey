@@ -46,6 +46,22 @@ const prescreener = z.object({
 });
 export type Prescreener = z.infer<typeof prescreener>;
 
+/** One artifact's source credit, shown on the disclosure page after the ratings are done. Every field is optional so a
+ * source that has no title, no named author or no licence URL still credits what it can; a `*_url` without its text
+ * renders as a link on the URL itself. The licence of a curated artifact decides which fields it needs. */
+const attributionEntry = z.object({
+  title: z.string().min(1).optional(),
+  title_url: httpUrl.optional(),
+  author: z.string().min(1).optional(),
+  author_url: httpUrl.optional(),
+  licence: z.string().min(1).optional(),
+  licence_url: httpUrl.optional(),
+}).strict().refine((e) => Object.values(e).some((v) => v !== undefined), 'an attribution entry must carry at least one field');
+export type AttributionEntry = z.infer<typeof attributionEntry>;
+
+/** Credits keyed by artifact index, exactly as the artifact maps are; an artifact with no entry is simply not credited. */
+const attributionMap = z.record(z.string(), attributionEntry);
+
 const artifactMap = z.record(z.string(), artifactPath).superRefine((obj, ctx) => {
   const rawKeys = Object.keys(obj);
   if (!rawKeys.every((k) => /^(0|[1-9]\d*)$/.test(k))) {
@@ -71,6 +87,7 @@ export const manifestSchema = z.object({
   unlabeled_per_session: z.number().int().min(0).default(1),
   avoid_pairs: z.boolean().default(false),      // never show human i and ai i in the same session
   artifacts: z.object({ human: artifactMap, ai: artifactMap }),
+  attribution: z.object({ human: attributionMap.default({}), ai: attributionMap.default({}) }).strict().default({}),
   demographics: z.array(demographicQuestion).default([]),   // asked after every rating, before the debrief, so the questions cannot prime the ratings
   prescreener: prescreener.optional(),
   storage: z.enum(['datapipe']).default('datapipe'),
@@ -79,6 +96,11 @@ export const manifestSchema = z.object({
   osf_study: z.string().min(1),                 // DataPipe experiment id
 }).strict().superRefine((m, ctx) => {
   const everyArtifact = () => [...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai), ...(m.prescreener ? [m.prescreener.artifact] : [])];
+  for (const author of ['human', 'ai'] as const) {   // a credit for an index the pool does not have is a typo that would silently drop the source
+    const stray = Object.keys(m.attribution[author]).filter((k) => !(k in m.artifacts[author]));
+    if (stray.length) ctx.addIssue({ code: 'custom', path: ['attribution', author], message:
+      `attribution keys must name an artifact of the ${author} pool; no such artifact: ${stray.join(', ')}` });
+  }
   if (m.artifact_type === 'code') {   // the extension picks the highlighting grammar, so every artifact needs a known one
     const unknown = everyArtifact().filter((p) => !languageForPath(p));
     if (unknown.length) ctx.addIssue({ code: 'custom', path: ['artifacts'], message:

@@ -3,7 +3,15 @@ import htmlKeyboardResponse from '@jspsych/plugin-html-keyboard-response';
 import { COPY } from '../copy';
 import { escapeHtml } from '../artifacts';
 
-export function disclosureTrial(platformSession: boolean) {
+/** Puts the sources block below the submit button. The survey-html-form plugin appends its button to the end of its
+ * form, so there is no slot after it: the block goes after the form inside `#jspsych-content`, the display element
+ * jsPsych mounts and clears between trials. Absent (a bare test DOM) or with nothing to credit, nothing is rendered. */
+export function appendAttribution(html: string, doc: Document = document): void {
+  const el = doc.getElementById('jspsych-content');
+  if (el && html) el.insertAdjacentHTML('beforeend', html);
+}
+
+export function disclosureTrial(platformSession: boolean, attribution = '') {
   const paragraphs = [...COPY.debriefBody];
   if (platformSession) paragraphs[paragraphs.length - 1] += ` ${COPY.debriefPaid}`;
   return {
@@ -11,6 +19,7 @@ export function disclosureTrial(platformSession: boolean) {
     preamble: `<div class="debrief"><h1>${COPY.debriefTitle}</h1>${paragraphs.map((p) => `<p>${p}</p>`).join('')}</div>`,
     html: `<p><label><input type="checkbox" name="withdraw"> ${COPY.withdrawLabel}</label></p>`,
     button_label: COPY.submitButton,
+    on_load: () => appendAttribution(attribution),
     data: { trial_kind: 'disclosure' },
   };
 }

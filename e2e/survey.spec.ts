@@ -234,3 +234,31 @@ test('an image that will not load stops the study on the failure page, never on 
   await expect(page.locator('button.rating-btn')).toHaveCount(0);   // the alt text is the provenance sentence: it must never be what the rater sees
   await expect(page.locator('img.artifact-image')).toHaveCount(0);
 });
+
+const credit = (n: string) => ({ title: `Title ${n}`, title_url: `https://example.test/${n}`, author: `Author ${n}`, licence: 'CC BY 4.0', licence_url: 'https://creativecommons.org/licenses/by/4.0/' });
+
+test('the disclosure page credits every artifact it showed, below the submit button', async ({ page }) => {
+  await interceptDataPipe(page);
+  // The example pool is four artifacts and a session shows all four, so every credit in the manifest is owed here.
+  await patchManifest(page, { attribution: { human: { '0': credit('h0'), '1': credit('h1') }, ai: { '0': credit('a0'), '1': credit('a1') } } });
+  await page.goto(`${EXAMPLE}?SESSION_ID=e2e-attribution`);
+  await runSession(page, { ...happy, stopAtDisclosure: true });
+
+  const sources = page.locator('.attribution');
+  await expect(sources).toBeVisible();
+  await expect(sources.getByRole('listitem')).toHaveCount(4);
+  await expect(sources.getByRole('link').first()).toHaveAttribute('target', '_blank');
+  await expect(sources.getByRole('link', { name: 'CC BY 4.0' }).first()).toHaveAttribute('href', 'https://creativecommons.org/licenses/by/4.0/');
+
+  const button = (await page.getByRole('button', { name: 'Submit' }).boundingBox())!;
+  const block = (await sources.boundingBox())!;
+  expect(block.y).toBeGreaterThan(button.y + button.height);
+});
+
+test('a manifest that credits nothing shows no sources block', async ({ page }) => {
+  await interceptDataPipe(page);
+  await page.goto(`${EXAMPLE}?SESSION_ID=e2e-no-attribution`);
+  await runSession(page, { ...happy, stopAtDisclosure: true });
+  await expect(page.getByRole('button', { name: 'Submit' })).toBeVisible();
+  await expect(page.locator('.attribution')).toHaveCount(0);
+});

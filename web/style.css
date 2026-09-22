@@ -93,3 +93,18 @@ body { margin: 0; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .spinner { animation: none; border-top-color: #ddd; } }
+
+/* Source credits, below the submit button on the disclosure page: what the licences of the shown artifacts require,
+ * set quieter than the debrief so it reads as a footer and never competes with the button above it. */
+.attribution {
+  margin: 2.5rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid #ddd;
+  text-align: left;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #555;
+}
+.attribution h2 { font-size: 0.85rem; font-weight: 600; margin: 0 0 0.5rem; }
+.attribution ul { margin: 0; padding-left: 1.2rem; }
+.attribution li { margin: 0.2rem 0; overflow-wrap: anywhere; }   /* a long URL standing in for a missing title must not widen the page */
