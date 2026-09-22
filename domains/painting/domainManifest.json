@@ -12,6 +12,19 @@
   "labeled_artifacts_per_session": 4,
   "unlabeled_per_session": 1,
   "avoid_pairs": true,
+  "demographics": [
+    {
+      "id": "ai_tool_use",
+      "question": "How often do you use AI tools (for example ChatGPT or the AI summaries in Google search)?",
+      "options": [
+        "Daily",
+        "Most days",
+        "A few times a week",
+        "A few times a month",
+        "Rarely or never"
+      ]
+    }
+  ],
   "artifacts": {
     "human": {
       "0": "artifacts/b6c761749ad5a86e.jpg",
