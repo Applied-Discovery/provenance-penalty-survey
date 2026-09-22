@@ -11,6 +11,7 @@
   "attention_checks": 1,
   "labeled_artifacts_per_session": 4,
   "unlabeled_per_session": 1,
+  "avoid_pairs": true,
   "artifacts": {
     "human": {
       "0": "artifacts/b6c761749ad5a86e.jpg",
