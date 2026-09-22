@@ -190,3 +190,47 @@ test('a passing participant follows the completion redirect, not the screen-out 
   await runSession(page, { ...happy, prescreenOption: 1 });
   await page.waitForURL(/cc=DONE/);
 });
+
+// Images are shown as they are, at their own aspect ratio: the display box has to hold a 600x1800 portrait without
+// pushing the rating scale off screen, and must never upscale or distort what the rater is being asked to judge.
+test('an image domain shows every artifact inside the display box, with the rating scale still on screen', async ({ page }) => {
+  await interceptDataPipe(page);
+  const shapes = new Set<string>();
+  const vh = page.viewportSize()!.height;
+  for (const id of ['e2e-img-1', 'e2e-img-2', 'e2e-img-3']) {
+    await page.goto(`/domains/example_image/?SESSION_ID=${id}`);
+    await page.getByRole('button', { name: 'I agree' }).click();
+    for (let i = 0; i < 4; i++) {                                   // attention check + 2 labeled + 1 unlabeled
+      const img = page.locator('img.artifact-image');
+      await expect(img).toBeVisible();
+      const m = await img.evaluate((el: HTMLImageElement) => ({
+        w: el.getBoundingClientRect().width, h: el.getBoundingClientRect().height,
+        nw: el.naturalWidth, nh: el.naturalHeight, decoded: el.complete && el.naturalWidth > 0,
+      }));
+      expect(m.decoded, 'artifact decoded, so the rater never sees the alt text').toBe(true);
+      shapes.add(`${m.nw}x${m.nh}`);
+      expect(m.h, `${m.nw}x${m.nh} height fits the display box`).toBeLessThanOrEqual(vh * 0.51);
+      expect(m.w, `${m.nw}x${m.nh} not upscaled`).toBeLessThanOrEqual(m.nw + 1);
+      expect(Math.abs(m.w / m.h - m.nw / m.nh), `${m.nw}x${m.nh} undistorted`).toBeLessThan(0.02);
+      // The ten stacked choices run past the fold in every domain, text included, so what the artifact must not do is
+      // push the start of the scale off screen: the first choice stays fully visible without scrolling.
+      const btn = (await page.locator('#jspsych-html-button-response-btngroup button').first().boundingBox())!;
+      expect(btn.y + btn.height, `${m.nw}x${m.nh} leaves the scale reachable without scrolling`).toBeLessThanOrEqual(vh);
+      if (await page.getByText('attention check').isVisible()) await page.locator('button.rating-btn').nth(2).click();
+      else await page.locator('button.rating-btn').first().click();
+      if (await page.getByRole('button', { name: 'Continue' }).isVisible()) await page.getByRole('button', { name: 'Continue' }).click();
+      if (await page.getByRole('button', { name: 'A person' }).isVisible()) await page.getByRole('button', { name: 'A person' }).click();
+    }
+  }
+  expect([...shapes], 'the tall portrait comes up across these sessions').toContain('600x1800');
+});
+
+test('an image that will not load stops the study on the failure page, never on a rating trial', async ({ page }) => {
+  await interceptDataPipe(page);
+  await page.route('**/domains/example_image/artifacts/**', (route) => route.fulfill({ status: 404, body: '' }));
+  await page.goto('/domains/example_image/?SESSION_ID=e2e-img-404');
+  await page.getByRole('button', { name: 'I agree' }).click();
+  await expect(page.getByText('could not be started')).toBeVisible();
+  await expect(page.locator('button.rating-btn')).toHaveCount(0);   // the alt text is the provenance sentence: it must never be what the rater sees
+  await expect(page.locator('img.artifact-image')).toHaveCount(0);
+});

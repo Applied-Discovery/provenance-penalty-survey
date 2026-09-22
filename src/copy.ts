@@ -41,6 +41,8 @@ export const COPY = {
   submitFailed: 'We could not save your responses. Please contact the researcher and quote this session id: ',
   thanksRedirect: 'You will be returned to the platform in a moment.',
   continueButton: 'Continue',
+  // Shown over the progress bar while an image domain's artifacts download, between consent and the first rating.
+  preloadMessage: 'Loading the items. This can take a moment on a slow connection.',
   startupFailed: 'This study could not be started. Please return the submission on the platform.',
 };
 export const RATING_CHOICES = Array.from({ length: 10 }, (_, i) => String(i + 1));
