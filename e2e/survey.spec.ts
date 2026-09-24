@@ -152,6 +152,29 @@ test('a code domain highlights each artifact by its file extension, inside a scr
   expect([...seen].sort()).toEqual(['c', 'java', 'python', 'typescript']);
 });
 
+test('a Markdown text domain renders headings, lists and emphasis, with no markup characters on screen', async ({ page }) => {
+  await interceptDataPipe(page);
+  let sawList = false;
+  for (const id of ['e2e-md-1', 'e2e-md-2']) {                     // pair 1 carries a list on both sides, so every session shows one
+    await page.goto(`/domains/example_markdown/?SESSION_ID=${id}`);
+    await page.getByRole('button', { name: 'I agree' }).click();
+    for (let i = 0; i < 4; i++) {                                    // attention check + 2 labeled + 1 unlabeled
+      const md = page.locator('.artifact-markdown');
+      await expect(md).toBeVisible();
+      await expect(md.locator('h2').first()).toHaveText('Question');
+      const shown = await md.innerText();
+      expect(shown).not.toMatch(/##|\*\*/);
+      const [heading, body] = await md.evaluate((el) => [el.querySelector('h2')!, el.querySelector('p')!].map((e) => parseFloat(getComputedStyle(e).fontSize)));
+      expect(heading).toBeLessThan(body * 1.2);                      // section titles stay near body size, not page-heading size
+      if (await md.locator('li').count()) sawList = true;
+      if (await page.getByText('attention check').isVisible()) await page.locator('button.rating-btn').nth(2).click(); else await page.locator('button.rating-btn').first().click();
+      if (await page.getByRole('button', { name: 'Continue' }).isVisible()) await page.getByRole('button', { name: 'Continue' }).click();
+      if (await page.getByRole('button', { name: 'A person' }).isVisible()) await page.getByRole('button', { name: 'A person' }).click();
+    }
+  }
+  expect(sawList).toBe(true);
+});
+
 // Expertise screen (manifest `prescreener`): the example's h0.txt stands in for the screening item.
 const prescreener = { artifact: 'artifacts/h0.txt', question: 'Which word describes the item above?', options: ['wrong', 'right', 'other'], answer: 'right',
   redirect: 'https://app.prolific.com/submissions/complete?cc=SCREENOUT' };

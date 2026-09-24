@@ -86,6 +86,8 @@ human and AI artifact in the same language are always coloured by the same
 rules. `domains/example_code/` is a placeholder code domain covering C, Python,
 TypeScript and Java; open it on the dev server to check the highlighting.
 
+A `--type text` domain shows each artifact as plain text with its whitespace kept, unless the pool is Markdown: `.md` artifacts are rendered (headings, bold, italics, lists, quotes), with raw HTML escaped and links and images left as literal text, so remove links while curating. A pool is all `.md` or none, which the manifest checks, because a mixed pool would render one half formatted and the other raw. `domains/example_markdown/` is a placeholder Markdown domain in the shape of a question-and-answer pool; open it on the dev server to check the styling.
+
 A `--type image` domain shows each artifact in an `<img>` at its own aspect
 ratio, fitted to the column and to half the window height, never cropped,
 stretched or upscaled; the height cap is what keeps the stem and the start of

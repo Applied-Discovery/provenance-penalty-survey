@@ -70,6 +70,7 @@ Validation rules:
 | `demographics[].id` snake_case and unique; `options` has at least two entries | Each id becomes a session-row column `demo_<id>` |
 | with `artifact_type == "code"`: every artifact path has an extension registered in `src/highlight.ts` | The highlighting grammar comes from the file name, never auto-detected from the content, so colouring cannot differ between the human and AI halves of a pair |
 | with `artifact_type == "image"`: every artifact path ends in `.jpg`, `.jpeg` or `.png` | The artifact is shown as it is in an `<img>`. A format the browser cannot decode renders the alt text instead, which on a labeled trial is the provenance sentence |
+| with `artifact_type == "text"`: either every study artifact path ends in `.md` or none does | A `.md` artifact is rendered as Markdown and any other is shown raw, so a mixed pool would show the rater which half an artifact came from |
 
 #### GET Parameters
 
@@ -122,6 +123,8 @@ On submit, passes results to the storage layer. Retry once if it fails. Displays
 This package is accompanied by a `copy.ts` where all fixed participant facing copy is stored.
 
 Code artifacts are shown in a monospace box with syntax highlighting from highlight.js (text escaped, tokens wrapped in `hljs-*` spans, github light theme). Highlighting applies only to `artifact_type: code`; the grammar is the one the artifact's file extension maps to in `src/highlight.ts` (`.py`, `.c`, `.ts`, `.java`, ...), so a pool may mix languages; anonymisation keeps extensions. Lines are never wrapped; wide code scrolls inside the box. `plaintext` (`.txt`) is available for a language that is not registered; adding a language means importing its grammar and its extensions in `src/highlight.ts`.
+
+Text artifacts are shown as they are, whitespace kept (`white-space: pre-wrap`), unless the file is `.md`: then it is rendered as Markdown by markdown-it (headings, emphasis, lists, quotes, code), with headings kept near body size so a section title reads as part of the artifact. Raw HTML is escaped, and links, images and reference definitions are off, so a Markdown artifact can neither link off the page nor load anything, and a link shows as its literal source rather than disappearing; typographic substitution is off, so quotes and dashes are shown as typed. Curation removes links from `.md` artifacts before scaffolding.
 
 Image artifacts are shown in an `<img>` at their own aspect ratio, fitted to the column and to half the window height
 (`max-width: 100%`, `max-height: 50vh`), never cropped, stretched or upscaled. The height cap is what keeps the stem and
