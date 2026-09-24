@@ -12,6 +12,7 @@ const base = {
 
 test('applies defaults', () => {
   const m = validateManifest(base);
+  expect(m.label_noun).toBe(false);
   expect(m.human_verb).toBe('created');
   expect(m.expected_minutes).toBe('5-10');
   expect(m.attention_checks).toBe(1);
@@ -96,6 +97,11 @@ test('a text domain is all .md or all not: a mixed pool is rejected, naming the 
   expect(() => validateManifest({ ...base, artifacts: mixed })).toThrow(/all \.md or none; not \.md: artifacts\/d\.txt/);
   expect(() => validateManifest({ ...base, artifact_type: 'code', artifacts: { human: { '0': 'artifacts/a.py', '1': 'artifacts/b.py' },
     ai: { '0': 'artifacts/c.py', '1': 'artifacts/d.txt' } } })).not.toThrow();   // the rule is a text-domain one
+});
+
+test('label_noun must be a boolean', () => {
+  expect(validateManifest({ ...base, label_noun: true }).label_noun).toBe(true);
+  expect(() => validateManifest({ ...base, label_noun: 'yes' })).toThrow(/label_noun/);
 });
 
 const prescreener = { artifact: 'artifacts/prescreen.py', question: 'What is the best name for this function?',

@@ -82,6 +82,7 @@ export const manifestSchema = z.object({
   evaluator_class: z.enum(['lay', 'expert']),
   stem_noun: z.string().min(1),
   human_verb: z.string().min(1).default('created'),
+  label_noun: z.boolean().default(false),       // name the stem noun in both labels: "This answer was written by a person."
   expected_minutes: z.string().min(1).default('5-10'),   // shown in consent with "minutes" appended
   attention_checks: z.number().int().min(0).default(1),
   labeled_artifacts_per_session: z.number().int().positive(),
