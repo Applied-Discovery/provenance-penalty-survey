@@ -61,169 +61,369 @@
   },
   "attribution": {
     "human": {
-      "0": {
-        "title": "If a resolution to a dispute may involve breaking a previous contract, what should be signed to agree not to take legal action?",
-        "title_url": "https://law.stackexchange.com/questions/8540/if-a-resolution-to-a-dispute-may-involve-breaking-a-previous-contract-what-shou/8543#8543",
-        "author": "jimsug",
-        "author_url": "https://law.stackexchange.com/users/58/jimsug",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "1": {
-        "title": "Is it trespassing if you unlock a door to which you found the key?",
-        "title_url": "https://law.stackexchange.com/questions/8815/is-it-trespassing-if-you-unlock-a-door-to-which-you-found-the-key/8817#8817",
-        "author": "Dale M",
-        "author_url": "https://law.stackexchange.com/users/344/dale-m",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "2": {
-        "title": "Is it possible to sell a debt that has been ruled by a court",
-        "title_url": "https://law.stackexchange.com/questions/9032/is-it-possible-to-sell-a-debt-that-has-been-ruled-by-a-court/9038#9038",
-        "author": "Dale M",
-        "author_url": "https://law.stackexchange.com/users/344/dale-m",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "3": {
-        "title": "Can my landlord double-dip rent after my month-to-month lease termination?",
-        "title_url": "https://law.stackexchange.com/questions/16508/can-my-landlord-double-dip-rent-after-my-month-to-month-lease-termination/16510#16510",
-        "author": "Cicero",
-        "author_url": "https://law.stackexchange.com/users/2609/cicero",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "4": {
-        "title": "Can a speeding ticket be legally amended by the court?",
-        "title_url": "https://law.stackexchange.com/questions/7665/can-a-speeding-ticket-be-legally-amended-by-the-court/16888#16888",
-        "author": "ohwilleke",
-        "author_url": "https://law.stackexchange.com/users/9517/ohwilleke",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "5": {
-        "title": "Can I sue my gym for over charging me?",
-        "title_url": "https://law.stackexchange.com/questions/5584/can-i-sue-my-gym-for-over-charging-me/17421#17421",
-        "author": "davidgo",
-        "author_url": "https://law.stackexchange.com/users/5558/davidgo",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "6": {
-        "title": "Would a one-way ticket to Mars be legal?",
-        "title_url": "https://law.stackexchange.com/questions/17339/would-a-one-way-ticket-to-mars-be-legal/18007#18007",
-        "author": "ohwilleke",
-        "author_url": "https://law.stackexchange.com/users/9517/ohwilleke",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "7": {
-        "title": "Canary Wharf - privately owned public space - is it possible to be banned from entering the area?",
-        "title_url": "https://law.stackexchange.com/questions/18465/canary-wharf-privately-owned-public-space-is-it-possible-to-be-banned-from-e/18468#18468",
-        "author": "Dale M",
-        "author_url": "https://law.stackexchange.com/users/344/dale-m",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "8": {
-        "title": "Is 7 days unpaid training legally right for a 17yr old?",
-        "title_url": "https://law.stackexchange.com/questions/21596/is-7-days-unpaid-training-legally-right-for-a-17yr-old/21597#21597",
-        "author": "Dale M",
-        "author_url": "https://law.stackexchange.com/users/344/dale-m",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "9": {
-        "title": "Paid to write software, contract not signed. Who owns the software?",
-        "title_url": "https://law.stackexchange.com/questions/21697/paid-to-write-software-contract-not-signed-who-owns-the-software/21698#21698",
-        "author": "Dale M",
-        "author_url": "https://law.stackexchange.com/users/344/dale-m",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "10": {
-        "title": "Ownership of items bought with credit card",
-        "title_url": "https://law.stackexchange.com/questions/6163/ownership-of-items-bought-with-credit-card/6169#6169",
-        "author": "Dale M",
-        "author_url": "https://law.stackexchange.com/users/344/dale-m",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "11": {
-        "title": "Can UPS really trademark the color brown?",
-        "title_url": "https://law.stackexchange.com/questions/6685/can-ups-really-trademark-the-color-brown/6689#6689",
-        "author": "Peteris",
-        "author_url": "https://law.stackexchange.com/users/302/peteris",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "12": {
-        "title": "Giving free tax advice to a friend. Can this get me in trouble?",
-        "title_url": "https://law.stackexchange.com/questions/8482/giving-free-tax-advice-to-a-friend-can-this-get-me-in-trouble/8491#8491",
-        "author": "Mohair",
-        "author_url": "https://law.stackexchange.com/users/2872/mohair",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "13": {
-        "title": "Search warrant against third party",
-        "title_url": "https://law.stackexchange.com/questions/11382/search-warrant-against-third-party/11383#11383",
-        "author": "Nicholas Psoras",
-        "author_url": "https://law.stackexchange.com/users/7180/nicholas-psoras",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "14": {
-        "title": "Why aren't all people with warrants arrested immediately?",
-        "title_url": "https://law.stackexchange.com/questions/11858/why-arent-all-people-with-warrants-arrested-immediately/11859#11859",
-        "author": "user4657",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "15": {
-        "title": "Recourse for damage to an item loaned to another?",
-        "title_url": "https://law.stackexchange.com/questions/13262/recourse-for-damage-to-an-item-loaned-to-another/13284#13284",
-        "author": "Libra",
-        "author_url": "https://law.stackexchange.com/users/80/libra",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "16": {
-        "title": "At which moment does the fraud happens during a fraudulent transaction?",
-        "title_url": "https://law.stackexchange.com/questions/13403/at-which-moment-does-the-fraud-happens-during-a-fraudulent-transaction/13451#13451",
-        "author": "gnasher729",
-        "author_url": "https://law.stackexchange.com/users/525/gnasher729",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "17": {
-        "title": "Why can't newspapers be held liable for publishing information given to them in violation of an NDA?",
-        "title_url": "https://law.stackexchange.com/questions/19754/why-cant-newspapers-be-held-liable-for-publishing-information-given-to-them-in/19759#19759",
-        "author": "DukeZhou",
-        "author_url": "https://law.stackexchange.com/users/12237/dukezhou",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "18": {
-        "title": "Who owns a video recording of a sporting event?",
-        "title_url": "https://law.stackexchange.com/questions/22403/who-owns-a-video-recording-of-a-sporting-event/22404#22404",
-        "author": "Dale M",
-        "author_url": "https://law.stackexchange.com/users/344/dale-m",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      },
-      "19": {
-        "title": "Consequences of contradicting one's sworn testimony in separate cases?",
-        "title_url": "https://law.stackexchange.com/questions/23073/consequences-of-contradicting-ones-sworn-testimony-in-separate-cases/23101#23101",
-        "author": "Libra",
-        "author_url": "https://law.stackexchange.com/users/80/libra",
-        "licence": "CC BY-SA 3.0, adapted",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
-      }
+      "0": [
+        {
+          "title": "Answer: If a resolution to a dispute may involve breaking a previous contract, what should be signed to agree not to take legal action?",
+          "title_url": "https://law.stackexchange.com/questions/8540/if-a-resolution-to-a-dispute-may-involve-breaking-a-previous-contract-what-shou/8543#8543",
+          "author": "jimsug",
+          "author_url": "https://law.stackexchange.com/users/58/jimsug",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: If a resolution to a dispute may involve breaking a previous contract, what should be signed to agree not to take legal action?",
+          "title_url": "https://law.stackexchange.com/questions/8540/if-a-resolution-to-a-dispute-may-involve-breaking-a-previous-contract-what-shou",
+          "author": "SamT",
+          "author_url": "https://law.stackexchange.com/users/3797/samt",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "1": [
+        {
+          "title": "Answer: Is it trespassing if you unlock a door to which you found the key?",
+          "title_url": "https://law.stackexchange.com/questions/8815/is-it-trespassing-if-you-unlock-a-door-to-which-you-found-the-key/8817#8817",
+          "author": "Dale M",
+          "author_url": "https://law.stackexchange.com/users/344/dale-m",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Is it trespassing if you unlock a door to which you found the key?",
+          "title_url": "https://law.stackexchange.com/questions/8815/is-it-trespassing-if-you-unlock-a-door-to-which-you-found-the-key",
+          "author": "Jullie W",
+          "author_url": "https://law.stackexchange.com/users/5360/jullie-w",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "2": [
+        {
+          "title": "Answer: Is it possible to sell a debt that has been ruled by a court",
+          "title_url": "https://law.stackexchange.com/questions/9032/is-it-possible-to-sell-a-debt-that-has-been-ruled-by-a-court/9038#9038",
+          "author": "Dale M",
+          "author_url": "https://law.stackexchange.com/users/344/dale-m",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Is it possible to sell a debt that has been ruled by a court",
+          "title_url": "https://law.stackexchange.com/questions/9032/is-it-possible-to-sell-a-debt-that-has-been-ruled-by-a-court",
+          "author": "rwolst",
+          "author_url": "https://law.stackexchange.com/users/3320/rwolst",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "3": [
+        {
+          "title": "Answer: Can my landlord double-dip rent after my month-to-month lease termination?",
+          "title_url": "https://law.stackexchange.com/questions/16508/can-my-landlord-double-dip-rent-after-my-month-to-month-lease-termination/16510#16510",
+          "author": "Cicero",
+          "author_url": "https://law.stackexchange.com/users/2609/cicero",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Can my landlord double-dip rent after my month-to-month lease termination?",
+          "title_url": "https://law.stackexchange.com/questions/16508/can-my-landlord-double-dip-rent-after-my-month-to-month-lease-termination",
+          "author": "stonk-overflow",
+          "author_url": "https://law.stackexchange.com/users/3155/stonk-overflow",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "4": [
+        {
+          "title": "Answer: Can a speeding ticket be legally amended by the court?",
+          "title_url": "https://law.stackexchange.com/questions/7665/can-a-speeding-ticket-be-legally-amended-by-the-court/16888#16888",
+          "author": "ohwilleke",
+          "author_url": "https://law.stackexchange.com/users/9517/ohwilleke",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Can a speeding ticket be legally amended by the court?",
+          "title_url": "https://law.stackexchange.com/questions/7665/can-a-speeding-ticket-be-legally-amended-by-the-court",
+          "author": "Hunter",
+          "author_url": "https://law.stackexchange.com/users/4696/hunter",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "5": [
+        {
+          "title": "Answer: Can I sue my gym for over charging me?",
+          "title_url": "https://law.stackexchange.com/questions/5584/can-i-sue-my-gym-for-over-charging-me/17421#17421",
+          "author": "davidgo",
+          "author_url": "https://law.stackexchange.com/users/5558/davidgo",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Can I sue my gym for over charging me?",
+          "title_url": "https://law.stackexchange.com/questions/5584/can-i-sue-my-gym-for-over-charging-me",
+          "author": "cade galt",
+          "author_url": "https://law.stackexchange.com/users/3646/cade-galt",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "6": [
+        {
+          "title": "Answer: Would a one-way ticket to Mars be legal?",
+          "title_url": "https://law.stackexchange.com/questions/17339/would-a-one-way-ticket-to-mars-be-legal/18007#18007",
+          "author": "ohwilleke",
+          "author_url": "https://law.stackexchange.com/users/9517/ohwilleke",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Would a one-way ticket to Mars be legal?",
+          "title_url": "https://law.stackexchange.com/questions/17339/would-a-one-way-ticket-to-mars-be-legal",
+          "author": "WBT",
+          "author_url": "https://law.stackexchange.com/users/427/wbt",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "7": [
+        {
+          "title": "Answer: Canary Wharf - privately owned public space - is it possible to be banned from entering the area?",
+          "title_url": "https://law.stackexchange.com/questions/18465/canary-wharf-privately-owned-public-space-is-it-possible-to-be-banned-from-e/18468#18468",
+          "author": "Dale M",
+          "author_url": "https://law.stackexchange.com/users/344/dale-m",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Canary Wharf - privately owned public space - is it possible to be banned from entering the area?",
+          "title_url": "https://law.stackexchange.com/questions/18465/canary-wharf-privately-owned-public-space-is-it-possible-to-be-banned-from-e",
+          "author": "Silly mistakes in the past",
+          "author_url": "https://law.stackexchange.com/users/2746/silly-mistakes-in-the-past",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "8": [
+        {
+          "title": "Answer: Is 7 days unpaid training legally right for a 17yr old?",
+          "title_url": "https://law.stackexchange.com/questions/21596/is-7-days-unpaid-training-legally-right-for-a-17yr-old/21597#21597",
+          "author": "Dale M",
+          "author_url": "https://law.stackexchange.com/users/344/dale-m",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Is 7 days unpaid training legally right for a 17yr old?",
+          "title_url": "https://law.stackexchange.com/questions/21596/is-7-days-unpaid-training-legally-right-for-a-17yr-old",
+          "author": "Mcxmelody",
+          "author_url": "https://law.stackexchange.com/users/12934/mcxmelody",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "9": [
+        {
+          "title": "Answer: Paid to write software, contract not signed. Who owns the software?",
+          "title_url": "https://law.stackexchange.com/questions/21697/paid-to-write-software-contract-not-signed-who-owns-the-software/21698#21698",
+          "author": "Dale M",
+          "author_url": "https://law.stackexchange.com/users/344/dale-m",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Paid to write software, contract not signed. Who owns the software?",
+          "title_url": "https://law.stackexchange.com/questions/21697/paid-to-write-software-contract-not-signed-who-owns-the-software",
+          "author": "Randy Minder",
+          "author_url": "https://law.stackexchange.com/users/845/randy-minder",
+          "licence": "CC BY-SA 4.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+        }
+      ],
+      "10": [
+        {
+          "title": "Answer: Ownership of items bought with credit card",
+          "title_url": "https://law.stackexchange.com/questions/6163/ownership-of-items-bought-with-credit-card/6169#6169",
+          "author": "Dale M",
+          "author_url": "https://law.stackexchange.com/users/344/dale-m",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Ownership of items bought with credit card",
+          "title_url": "https://law.stackexchange.com/questions/6163/ownership-of-items-bought-with-credit-card",
+          "author": "anondamide",
+          "author_url": "https://law.stackexchange.com/users/3921/anondamide",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "11": [
+        {
+          "title": "Answer: Can UPS really trademark the color brown?",
+          "title_url": "https://law.stackexchange.com/questions/6685/can-ups-really-trademark-the-color-brown/6689#6689",
+          "author": "Peteris",
+          "author_url": "https://law.stackexchange.com/users/302/peteris",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Can UPS really trademark the color brown?",
+          "title_url": "https://law.stackexchange.com/questions/6685/can-ups-really-trademark-the-color-brown",
+          "author": "Délisson Junio",
+          "author_url": "https://law.stackexchange.com/users/2978/d%c3%a9lisson-junio",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "12": [
+        {
+          "title": "Answer: Giving free tax advice to a friend. Can this get me in trouble?",
+          "title_url": "https://law.stackexchange.com/questions/8482/giving-free-tax-advice-to-a-friend-can-this-get-me-in-trouble/8491#8491",
+          "author": "Mohair",
+          "author_url": "https://law.stackexchange.com/users/2872/mohair",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Giving free tax advice to a friend. Can this get me in trouble?",
+          "title_url": "https://law.stackexchange.com/questions/8482/giving-free-tax-advice-to-a-friend-can-this-get-me-in-trouble",
+          "author": "john1234",
+          "author_url": "https://law.stackexchange.com/users/5194/john1234",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "13": [
+        {
+          "title": "Answer: Search warrant against third party",
+          "title_url": "https://law.stackexchange.com/questions/11382/search-warrant-against-third-party/11383#11383",
+          "author": "Nicholas Psoras",
+          "author_url": "https://law.stackexchange.com/users/7180/nicholas-psoras",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Search warrant against third party",
+          "title_url": "https://law.stackexchange.com/questions/11382/search-warrant-against-third-party",
+          "author": "gnasher729",
+          "author_url": "https://law.stackexchange.com/users/525/gnasher729",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "14": [
+        {
+          "title": "Answer: Why aren't all people with warrants arrested immediately?",
+          "title_url": "https://law.stackexchange.com/questions/11858/why-arent-all-people-with-warrants-arrested-immediately/11859#11859",
+          "author": "user4657",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Why aren't all people with warrants arrested immediately?",
+          "title_url": "https://law.stackexchange.com/questions/11858/why-arent-all-people-with-warrants-arrested-immediately",
+          "author": "Speldosa",
+          "author_url": "https://law.stackexchange.com/users/7456/speldosa",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "15": [
+        {
+          "title": "Answer: Recourse for damage to an item loaned to another?",
+          "title_url": "https://law.stackexchange.com/questions/13262/recourse-for-damage-to-an-item-loaned-to-another/13284#13284",
+          "author": "Libra",
+          "author_url": "https://law.stackexchange.com/users/80/libra",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Recourse for damage to an item loaned to another?",
+          "title_url": "https://law.stackexchange.com/questions/13262/recourse-for-damage-to-an-item-loaned-to-another",
+          "author": "Skhakhane Nomozi",
+          "author_url": "https://law.stackexchange.com/users/8709/skhakhane-nomozi",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "16": [
+        {
+          "title": "Answer: At which moment does the fraud happens during a fraudulent transaction?",
+          "title_url": "https://law.stackexchange.com/questions/13403/at-which-moment-does-the-fraud-happens-during-a-fraudulent-transaction/13451#13451",
+          "author": "gnasher729",
+          "author_url": "https://law.stackexchange.com/users/525/gnasher729",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: At which moment does the fraud happens during a fraudulent transaction?",
+          "title_url": "https://law.stackexchange.com/questions/13403/at-which-moment-does-the-fraud-happens-during-a-fraudulent-transaction",
+          "author": "Gabriel Diego",
+          "author_url": "https://law.stackexchange.com/users/177/gabriel-diego",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        }
+      ],
+      "17": [
+        {
+          "title": "Answer: Why can't newspapers be held liable for publishing information given to them in violation of an NDA?",
+          "title_url": "https://law.stackexchange.com/questions/19754/why-cant-newspapers-be-held-liable-for-publishing-information-given-to-them-in/19759#19759",
+          "author": "DukeZhou",
+          "author_url": "https://law.stackexchange.com/users/12237/dukezhou",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Why can't newspapers be held liable for publishing information given to them in violation of an NDA?",
+          "title_url": "https://law.stackexchange.com/questions/19754/why-cant-newspapers-be-held-liable-for-publishing-information-given-to-them-in",
+          "author": "Popo",
+          "author_url": "https://law.stackexchange.com/users/12448/popo",
+          "licence": "CC BY-SA 4.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+        }
+      ],
+      "18": [
+        {
+          "title": "Answer: Who owns a video recording of a sporting event?",
+          "title_url": "https://law.stackexchange.com/questions/22403/who-owns-a-video-recording-of-a-sporting-event/22404#22404",
+          "author": "Dale M",
+          "author_url": "https://law.stackexchange.com/users/344/dale-m",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Who owns a video recording of a sporting event?",
+          "title_url": "https://law.stackexchange.com/questions/22403/who-owns-a-video-recording-of-a-sporting-event",
+          "author": "M Evans",
+          "author_url": "https://law.stackexchange.com/users/13397/m-evans",
+          "licence": "CC BY-SA 4.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+        }
+      ],
+      "19": [
+        {
+          "title": "Answer: Consequences of contradicting one's sworn testimony in separate cases?",
+          "title_url": "https://law.stackexchange.com/questions/23073/consequences-of-contradicting-ones-sworn-testimony-in-separate-cases/23101#23101",
+          "author": "Libra",
+          "author_url": "https://law.stackexchange.com/users/80/libra",
+          "licence": "CC BY-SA 3.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        {
+          "title": "Question: Consequences of contradicting one's sworn testimony in separate cases?",
+          "title_url": "https://law.stackexchange.com/questions/23073/consequences-of-contradicting-ones-sworn-testimony-in-separate-cases",
+          "author": "Danial",
+          "author_url": "https://law.stackexchange.com/users/13718/danial",
+          "licence": "CC BY-SA 4.0, adapted",
+          "licence_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+        }
+      ]
     },
     "ai": {
       "0": {
-        "title": "If a resolution to a dispute may involve breaking a previous contract, what should be signed to agree not to take legal action?",
+        "title": "Question: If a resolution to a dispute may involve breaking a previous contract, what should be signed to agree not to take legal action?",
         "title_url": "https://law.stackexchange.com/questions/8540/if-a-resolution-to-a-dispute-may-involve-breaking-a-previous-contract-what-shou",
         "author": "SamT",
         "author_url": "https://law.stackexchange.com/users/3797/samt",
@@ -231,7 +431,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "1": {
-        "title": "Is it trespassing if you unlock a door to which you found the key?",
+        "title": "Question: Is it trespassing if you unlock a door to which you found the key?",
         "title_url": "https://law.stackexchange.com/questions/8815/is-it-trespassing-if-you-unlock-a-door-to-which-you-found-the-key",
         "author": "Jullie W",
         "author_url": "https://law.stackexchange.com/users/5360/jullie-w",
@@ -239,7 +439,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "2": {
-        "title": "Is it possible to sell a debt that has been ruled by a court",
+        "title": "Question: Is it possible to sell a debt that has been ruled by a court",
         "title_url": "https://law.stackexchange.com/questions/9032/is-it-possible-to-sell-a-debt-that-has-been-ruled-by-a-court",
         "author": "rwolst",
         "author_url": "https://law.stackexchange.com/users/3320/rwolst",
@@ -247,7 +447,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "3": {
-        "title": "Can my landlord double-dip rent after my month-to-month lease termination?",
+        "title": "Question: Can my landlord double-dip rent after my month-to-month lease termination?",
         "title_url": "https://law.stackexchange.com/questions/16508/can-my-landlord-double-dip-rent-after-my-month-to-month-lease-termination",
         "author": "stonk-overflow",
         "author_url": "https://law.stackexchange.com/users/3155/stonk-overflow",
@@ -255,7 +455,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "4": {
-        "title": "Can a speeding ticket be legally amended by the court?",
+        "title": "Question: Can a speeding ticket be legally amended by the court?",
         "title_url": "https://law.stackexchange.com/questions/7665/can-a-speeding-ticket-be-legally-amended-by-the-court",
         "author": "Hunter",
         "author_url": "https://law.stackexchange.com/users/4696/hunter",
@@ -263,7 +463,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "5": {
-        "title": "Can I sue my gym for over charging me?",
+        "title": "Question: Can I sue my gym for over charging me?",
         "title_url": "https://law.stackexchange.com/questions/5584/can-i-sue-my-gym-for-over-charging-me",
         "author": "cade galt",
         "author_url": "https://law.stackexchange.com/users/3646/cade-galt",
@@ -271,7 +471,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "6": {
-        "title": "Would a one-way ticket to Mars be legal?",
+        "title": "Question: Would a one-way ticket to Mars be legal?",
         "title_url": "https://law.stackexchange.com/questions/17339/would-a-one-way-ticket-to-mars-be-legal",
         "author": "WBT",
         "author_url": "https://law.stackexchange.com/users/427/wbt",
@@ -279,7 +479,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "7": {
-        "title": "Canary Wharf - privately owned public space - is it possible to be banned from entering the area?",
+        "title": "Question: Canary Wharf - privately owned public space - is it possible to be banned from entering the area?",
         "title_url": "https://law.stackexchange.com/questions/18465/canary-wharf-privately-owned-public-space-is-it-possible-to-be-banned-from-e",
         "author": "Silly mistakes in the past",
         "author_url": "https://law.stackexchange.com/users/2746/silly-mistakes-in-the-past",
@@ -287,7 +487,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "8": {
-        "title": "Is 7 days unpaid training legally right for a 17yr old?",
+        "title": "Question: Is 7 days unpaid training legally right for a 17yr old?",
         "title_url": "https://law.stackexchange.com/questions/21596/is-7-days-unpaid-training-legally-right-for-a-17yr-old",
         "author": "Mcxmelody",
         "author_url": "https://law.stackexchange.com/users/12934/mcxmelody",
@@ -295,7 +495,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "9": {
-        "title": "Paid to write software, contract not signed. Who owns the software?",
+        "title": "Question: Paid to write software, contract not signed. Who owns the software?",
         "title_url": "https://law.stackexchange.com/questions/21697/paid-to-write-software-contract-not-signed-who-owns-the-software",
         "author": "Randy Minder",
         "author_url": "https://law.stackexchange.com/users/845/randy-minder",
@@ -303,7 +503,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/4.0/"
       },
       "10": {
-        "title": "Ownership of items bought with credit card",
+        "title": "Question: Ownership of items bought with credit card",
         "title_url": "https://law.stackexchange.com/questions/6163/ownership-of-items-bought-with-credit-card",
         "author": "anondamide",
         "author_url": "https://law.stackexchange.com/users/3921/anondamide",
@@ -311,7 +511,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "11": {
-        "title": "Can UPS really trademark the color brown?",
+        "title": "Question: Can UPS really trademark the color brown?",
         "title_url": "https://law.stackexchange.com/questions/6685/can-ups-really-trademark-the-color-brown",
         "author": "Délisson Junio",
         "author_url": "https://law.stackexchange.com/users/2978/d%c3%a9lisson-junio",
@@ -319,7 +519,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "12": {
-        "title": "Giving free tax advice to a friend. Can this get me in trouble?",
+        "title": "Question: Giving free tax advice to a friend. Can this get me in trouble?",
         "title_url": "https://law.stackexchange.com/questions/8482/giving-free-tax-advice-to-a-friend-can-this-get-me-in-trouble",
         "author": "john1234",
         "author_url": "https://law.stackexchange.com/users/5194/john1234",
@@ -327,7 +527,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "13": {
-        "title": "Search warrant against third party",
+        "title": "Question: Search warrant against third party",
         "title_url": "https://law.stackexchange.com/questions/11382/search-warrant-against-third-party",
         "author": "gnasher729",
         "author_url": "https://law.stackexchange.com/users/525/gnasher729",
@@ -335,7 +535,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "14": {
-        "title": "Why aren't all people with warrants arrested immediately?",
+        "title": "Question: Why aren't all people with warrants arrested immediately?",
         "title_url": "https://law.stackexchange.com/questions/11858/why-arent-all-people-with-warrants-arrested-immediately",
         "author": "Speldosa",
         "author_url": "https://law.stackexchange.com/users/7456/speldosa",
@@ -343,7 +543,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "15": {
-        "title": "Recourse for damage to an item loaned to another?",
+        "title": "Question: Recourse for damage to an item loaned to another?",
         "title_url": "https://law.stackexchange.com/questions/13262/recourse-for-damage-to-an-item-loaned-to-another",
         "author": "Skhakhane Nomozi",
         "author_url": "https://law.stackexchange.com/users/8709/skhakhane-nomozi",
@@ -351,7 +551,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "16": {
-        "title": "At which moment does the fraud happens during a fraudulent transaction?",
+        "title": "Question: At which moment does the fraud happens during a fraudulent transaction?",
         "title_url": "https://law.stackexchange.com/questions/13403/at-which-moment-does-the-fraud-happens-during-a-fraudulent-transaction",
         "author": "Gabriel Diego",
         "author_url": "https://law.stackexchange.com/users/177/gabriel-diego",
@@ -359,7 +559,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
       },
       "17": {
-        "title": "Why can't newspapers be held liable for publishing information given to them in violation of an NDA?",
+        "title": "Question: Why can't newspapers be held liable for publishing information given to them in violation of an NDA?",
         "title_url": "https://law.stackexchange.com/questions/19754/why-cant-newspapers-be-held-liable-for-publishing-information-given-to-them-in",
         "author": "Popo",
         "author_url": "https://law.stackexchange.com/users/12448/popo",
@@ -367,7 +567,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/4.0/"
       },
       "18": {
-        "title": "Who owns a video recording of a sporting event?",
+        "title": "Question: Who owns a video recording of a sporting event?",
         "title_url": "https://law.stackexchange.com/questions/22403/who-owns-a-video-recording-of-a-sporting-event",
         "author": "M Evans",
         "author_url": "https://law.stackexchange.com/users/13397/m-evans",
@@ -375,7 +575,7 @@
         "licence_url": "https://creativecommons.org/licenses/by-sa/4.0/"
       },
       "19": {
-        "title": "Consequences of contradicting one's sworn testimony in separate cases?",
+        "title": "Question: Consequences of contradicting one's sworn testimony in separate cases?",
         "title_url": "https://law.stackexchange.com/questions/23073/consequences-of-contradicting-ones-sworn-testimony-in-separate-cases",
         "author": "Danial",
         "author_url": "https://law.stackexchange.com/users/13718/danial",

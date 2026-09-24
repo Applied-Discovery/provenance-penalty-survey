@@ -169,9 +169,17 @@ test('every artifact a committed manifest names is on disk', () => {
 const attributed = (attribution: unknown) => validateManifest({ ...base, attribution });
 test('accepts attribution entries and leaves an absent block empty', () => {
   const m = attributed({ human: { '0': { title: 'T', title_url: 'https://x.test/t', licence: 'CC BY 4.0' } } });
-  expect(m.attribution.human['0'].title).toBe('T');
+  expect(m.attribution.human['0']).toMatchObject({ title: 'T' });
   expect(m.attribution.ai).toEqual({});
   expect(validateManifest(base).attribution).toEqual({ human: {}, ai: {} });
+});
+test('an attribution may be a list of credits, one per source; an empty list or a bad entry in it is rejected', () => {
+  const two = [{ title: 'Answer', author: 'A' }, { title: 'Question', author: 'Q', licence: 'CC BY-SA 4.0' }];
+  expect(attributed({ human: { '0': two } }).attribution.human['0']).toEqual(two);
+  expect(() => attributed({ human: { '0': [] } })).toThrow();
+  expect(() => attributed({ human: { '0': [{ title: 'T' }, {}] } })).toThrow(/at least one/);
+  expect(() => attributed({ human: { '0': [{ title: 'T', title_url: 'javascript:alert(1)' }] } })).toThrow(/http\(s\)|url/);
+  expect(() => attributed({ human: { '9': two } })).toThrow(/attribution.*9/);
 });
 test('rejects an attribution key with no artifact', () => {
   expect(() => attributed({ ai: { '7': { title: 'T' } } })).toThrow(/attribution.*7/);

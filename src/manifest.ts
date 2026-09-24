@@ -60,8 +60,10 @@ const attributionEntry = z.object({
 }).strict().refine((e) => Object.values(e).some((v) => v !== undefined), 'an attribution entry must carry at least one field');
 export type AttributionEntry = z.infer<typeof attributionEntry>;
 
-/** Credits keyed by artifact index, exactly as the artifact maps are; an artifact with no entry is simply not credited. */
-const attributionMap = z.record(z.string(), attributionEntry);
+/** Credits keyed by artifact index, exactly as the artifact maps are; an artifact with no entry is simply not credited.
+ * An artifact built from several sources (a question and its answer, each with its own author and licence) takes a list,
+ * one credit line per source. */
+const attributionMap = z.record(z.string(), z.union([attributionEntry, z.array(attributionEntry).min(1)]));
 
 const artifactMap = z.record(z.string(), artifactPath).superRefine((obj, ctx) => {
   const rawKeys = Object.keys(obj);
