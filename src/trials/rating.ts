@@ -3,10 +3,11 @@ import type { LabeledItem, AttentionItem } from '../plan';
 import type { LoadedArtifact } from '../artifacts';
 import { renderArtifact, escapeHtml } from '../artifacts';
 import type { DomainManifest } from '../manifest';
-import { COPY, RATING_CHOICES, RATING_ANCHORS, ratingStem, humanLabel, AI_LABEL } from '../copy';
+import { COPY, RATING_CHOICES, RATING_ANCHORS, ratingStem, humanLabel, aiLabel } from '../copy';
 
 export function labelSentence(m: DomainManifest, author: 'human' | 'ai'): string {
-  return author === 'human' ? humanLabel(m.human_verb) : AI_LABEL;
+  const noun = m.label_noun ? m.stem_noun : undefined;
+  return author === 'human' ? humanLabel(m.human_verb, noun) : aiLabel(noun);
 }
 
 /** jsPsych 8 button_html callback: the number and its verbal anchor side by side, equally prominent (D17). */
