@@ -1,0 +1,241 @@
+{
+  "name": "legal",
+  "protocol_version": "protocol-v1",
+  "domain_version": "legal-v1",
+  "wave": 1,
+  "artifact_type": "text",
+  "evaluator_class": "lay",
+  "stem_noun": "answer",
+  "human_verb": "written",
+  "expected_minutes": "5-10",
+  "attention_checks": 1,
+  "labeled_artifacts_per_session": 4,
+  "unlabeled_per_session": 1,
+  "avoid_pairs": true,
+  "artifacts": {
+    "human": {
+      "0": "artifacts/dbc0ba72d57f43c4.md",
+      "1": "artifacts/db4964d63fcf5364.md",
+      "2": "artifacts/bcb928e8afbe2dd5.md",
+      "3": "artifacts/ab802c099513c116.md",
+      "4": "artifacts/ffa519ab2f91c481.md",
+      "5": "artifacts/6fefda20990e0f07.md",
+      "6": "artifacts/abac4daa9bb52be8.md",
+      "7": "artifacts/a33b21295f58375d.md",
+      "8": "artifacts/2fe5ba671340d205.md",
+      "9": "artifacts/17349386d0246948.md",
+      "10": "artifacts/80633ad9987ce321.md",
+      "11": "artifacts/1d27fe54a44b2123.md",
+      "12": "artifacts/a30cd32d51af2269.md",
+      "13": "artifacts/e7fb1acb6a3747a7.md",
+      "14": "artifacts/8b8a002fa32af301.md",
+      "15": "artifacts/e8f8ada25ff98b99.md",
+      "16": "artifacts/a5b71369ba3bfff3.md",
+      "17": "artifacts/9fe1566cf5666e5a.md",
+      "18": "artifacts/4c781eae899e29fd.md",
+      "19": "artifacts/4cabf67fbd61712c.md"
+    },
+    "ai": {
+      "0": "artifacts/25c76d1ae512ac5c.md",
+      "1": "artifacts/c3ef3857f02e30ce.md",
+      "2": "artifacts/e0e45921190d96d6.md",
+      "3": "artifacts/20bb24edacffd816.md",
+      "4": "artifacts/93e3cc4bb3860e81.md",
+      "5": "artifacts/7ed482fa2245b895.md",
+      "6": "artifacts/faf117023e7e2312.md",
+      "7": "artifacts/e38426f6bf94f672.md",
+      "8": "artifacts/eca47fff618e14bc.md",
+      "9": "artifacts/cc6eb288586f7ca3.md",
+      "10": "artifacts/bbcd48d4dd7e491d.md",
+      "11": "artifacts/0da39a86f6c3355d.md",
+      "12": "artifacts/522fb2ddb7a1be23.md",
+      "13": "artifacts/30c7f825103d5934.md",
+      "14": "artifacts/fcf6b2f89dc9ab8c.md",
+      "15": "artifacts/bd93717cce9d7cf7.md",
+      "16": "artifacts/0b4817a9b3cfc905.md",
+      "17": "artifacts/ea2a6f7a932e5b7b.md",
+      "18": "artifacts/b230f70db0b6e8c1.md",
+      "19": "artifacts/a78e4bb34e6fc0f7.md"
+    }
+  },
+  "attribution": {
+    "human": {
+      "0": {
+        "title": "If a resolution to a dispute may involve breaking a previous contract, what should be signed to agree not to take legal action?",
+        "title_url": "https://law.stackexchange.com/questions/8540/if-a-resolution-to-a-dispute-may-involve-breaking-a-previous-contract-what-shou/8543#8543",
+        "author": "jimsug",
+        "author_url": "https://law.stackexchange.com/users/58/jimsug",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "1": {
+        "title": "Is it trespassing if you unlock a door to which you found the key?",
+        "title_url": "https://law.stackexchange.com/questions/8815/is-it-trespassing-if-you-unlock-a-door-to-which-you-found-the-key/8817#8817",
+        "author": "Dale M",
+        "author_url": "https://law.stackexchange.com/users/344/dale-m",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "2": {
+        "title": "Is it possible to sell a debt that has been ruled by a court",
+        "title_url": "https://law.stackexchange.com/questions/9032/is-it-possible-to-sell-a-debt-that-has-been-ruled-by-a-court/9038#9038",
+        "author": "Dale M",
+        "author_url": "https://law.stackexchange.com/users/344/dale-m",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "3": {
+        "title": "Can my landlord double-dip rent after my month-to-month lease termination?",
+        "title_url": "https://law.stackexchange.com/questions/16508/can-my-landlord-double-dip-rent-after-my-month-to-month-lease-termination/16510#16510",
+        "author": "Cicero",
+        "author_url": "https://law.stackexchange.com/users/2609/cicero",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "4": {
+        "title": "Can a speeding ticket be legally amended by the court?",
+        "title_url": "https://law.stackexchange.com/questions/7665/can-a-speeding-ticket-be-legally-amended-by-the-court/16888#16888",
+        "author": "ohwilleke",
+        "author_url": "https://law.stackexchange.com/users/9517/ohwilleke",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "5": {
+        "title": "Can I sue my gym for over charging me?",
+        "title_url": "https://law.stackexchange.com/questions/5584/can-i-sue-my-gym-for-over-charging-me/17421#17421",
+        "author": "davidgo",
+        "author_url": "https://law.stackexchange.com/users/5558/davidgo",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "6": {
+        "title": "Would a one-way ticket to Mars be legal?",
+        "title_url": "https://law.stackexchange.com/questions/17339/would-a-one-way-ticket-to-mars-be-legal/18007#18007",
+        "author": "ohwilleke",
+        "author_url": "https://law.stackexchange.com/users/9517/ohwilleke",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "7": {
+        "title": "Canary Wharf - privately owned public space - is it possible to be banned from entering the area?",
+        "title_url": "https://law.stackexchange.com/questions/18465/canary-wharf-privately-owned-public-space-is-it-possible-to-be-banned-from-e/18468#18468",
+        "author": "Dale M",
+        "author_url": "https://law.stackexchange.com/users/344/dale-m",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "8": {
+        "title": "Is 7 days unpaid training legally right for a 17yr old?",
+        "title_url": "https://law.stackexchange.com/questions/21596/is-7-days-unpaid-training-legally-right-for-a-17yr-old/21597#21597",
+        "author": "Dale M",
+        "author_url": "https://law.stackexchange.com/users/344/dale-m",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "9": {
+        "title": "Paid to write software, contract not signed. Who owns the software?",
+        "title_url": "https://law.stackexchange.com/questions/21697/paid-to-write-software-contract-not-signed-who-owns-the-software/21698#21698",
+        "author": "Dale M",
+        "author_url": "https://law.stackexchange.com/users/344/dale-m",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "10": {
+        "title": "Ownership of items bought with credit card",
+        "title_url": "https://law.stackexchange.com/questions/6163/ownership-of-items-bought-with-credit-card/6169#6169",
+        "author": "Dale M",
+        "author_url": "https://law.stackexchange.com/users/344/dale-m",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "11": {
+        "title": "Can UPS really trademark the color brown?",
+        "title_url": "https://law.stackexchange.com/questions/6685/can-ups-really-trademark-the-color-brown/6689#6689",
+        "author": "Peteris",
+        "author_url": "https://law.stackexchange.com/users/302/peteris",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "12": {
+        "title": "Giving free tax advice to a friend. Can this get me in trouble?",
+        "title_url": "https://law.stackexchange.com/questions/8482/giving-free-tax-advice-to-a-friend-can-this-get-me-in-trouble/8491#8491",
+        "author": "Mohair",
+        "author_url": "https://law.stackexchange.com/users/2872/mohair",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "13": {
+        "title": "Search warrant against third party",
+        "title_url": "https://law.stackexchange.com/questions/11382/search-warrant-against-third-party/11383#11383",
+        "author": "Nicholas Psoras",
+        "author_url": "https://law.stackexchange.com/users/7180/nicholas-psoras",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "14": {
+        "title": "Why aren't all people with warrants arrested immediately?",
+        "title_url": "https://law.stackexchange.com/questions/11858/why-arent-all-people-with-warrants-arrested-immediately/11859#11859",
+        "author": "user4657",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "15": {
+        "title": "Recourse for damage to an item loaned to another?",
+        "title_url": "https://law.stackexchange.com/questions/13262/recourse-for-damage-to-an-item-loaned-to-another/13284#13284",
+        "author": "Libra",
+        "author_url": "https://law.stackexchange.com/users/80/libra",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "16": {
+        "title": "At which moment does the fraud happens during a fraudulent transaction?",
+        "title_url": "https://law.stackexchange.com/questions/13403/at-which-moment-does-the-fraud-happens-during-a-fraudulent-transaction/13451#13451",
+        "author": "gnasher729",
+        "author_url": "https://law.stackexchange.com/users/525/gnasher729",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "17": {
+        "title": "Why can't newspapers be held liable for publishing information given to them in violation of an NDA?",
+        "title_url": "https://law.stackexchange.com/questions/19754/why-cant-newspapers-be-held-liable-for-publishing-information-given-to-them-in/19759#19759",
+        "author": "DukeZhou",
+        "author_url": "https://law.stackexchange.com/users/12237/dukezhou",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "18": {
+        "title": "Who owns a video recording of a sporting event?",
+        "title_url": "https://law.stackexchange.com/questions/22403/who-owns-a-video-recording-of-a-sporting-event/22404#22404",
+        "author": "Dale M",
+        "author_url": "https://law.stackexchange.com/users/344/dale-m",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      },
+      "19": {
+        "title": "Consequences of contradicting one's sworn testimony in separate cases?",
+        "title_url": "https://law.stackexchange.com/questions/23073/consequences-of-contradicting-ones-sworn-testimony-in-separate-cases/23101#23101",
+        "author": "Libra",
+        "author_url": "https://law.stackexchange.com/users/80/libra",
+        "licence": "CC BY-SA 3.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0/"
+      }
+    },
+    "ai": {}
+  },
+  "demographics": [
+    {
+      "id": "ai_tool_use",
+      "question": "How often do you use AI tools (for example ChatGPT or the AI summaries in Google search)?",
+      "options": [
+        "Daily",
+        "Most days",
+        "A few times a week",
+        "A few times a month",
+        "Rarely or never"
+      ]
+    }
+  ],
+  "storage": "datapipe",
+  "curation_criteria": "curationCriteria.md",
+  "osf_study": "YYck4QlJbLxh"
+}
