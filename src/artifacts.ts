@@ -1,6 +1,7 @@
 import type { PlannedArtifact } from './plan';
 import type { DomainManifest } from './manifest';
 import { highlightCode, languageForPath } from './highlight';
+import { isMarkdownPath, renderMarkdown } from './markdown';
 export type ArtifactType = DomainManifest['artifact_type'];
 export interface LoadedArtifact { artifact: PlannedArtifact; content: string }
 
@@ -32,6 +33,9 @@ export function renderArtifact(loaded: LoadedArtifact, type: ArtifactType, alt: 
       const body = lang ? highlightCode(loaded.content, lang) : escapeHtml(loaded.content);
       return `<pre class="artifact artifact-code"><code class="hljs${lang ? ` language-${lang}` : ''}">${body}</code></pre>`;
     }
-    case 'text':  return `<div class="artifact artifact-text">${escapeHtml(loaded.content)}</div>`;   // whitespace rules: .artifact-text in style.css
+    case 'text':   // a .md artifact is rendered as Markdown; anything else keeps its whitespace (.artifact-text in style.css)
+      return isMarkdownPath(loaded.artifact.path)
+        ? `<div class="artifact artifact-markdown">${renderMarkdown(loaded.content)}</div>`
+        : `<div class="artifact artifact-text">${escapeHtml(loaded.content)}</div>`;
   }
 }

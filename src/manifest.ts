@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { CODE_EXTENSIONS, languageForPath } from './highlight';
+import { isMarkdownPath } from './markdown';
 
 export type Author = 'human' | 'ai';
 
@@ -110,6 +111,12 @@ export const manifestSchema = z.object({
     const unsupported = everyArtifact().filter((p) => !isSupportedImagePath(p));
     if (unsupported.length) ctx.addIssue({ code: 'custom', path: ['artifacts'], message:
       `every artifact of an image domain must be ${IMAGE_EXTENSIONS.join(', ')}; not a supported image format: ${unsupported.join(', ')}` });
+  }
+  if (m.artifact_type === 'text') {   // .md renders formatted and anything else raw, so a mixed pool would show the split
+    const pool = [...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai)];
+    const markdown = pool.filter(isMarkdownPath);
+    if (markdown.length && markdown.length < pool.length) ctx.addIssue({ code: 'custom', path: ['artifacts'], message:
+      `a text domain's artifacts must be all .md or none; not .md: ${pool.filter((p) => !isMarkdownPath(p)).join(', ')}` });
   }
   if (m.labeled_artifacts_per_session % 2 !== 0)
     ctx.addIssue({ code: 'custom', message: 'labeled_artifacts_per_session must be even' });

@@ -88,6 +88,16 @@ test('a code domain accepts a mixed-language pool and rejects an artifact whose 
   expect(() => validateManifest({ ...base, artifacts: bad.artifacts })).not.toThrow();   // a text domain does not care about extensions
 });
 
+test('a text domain is all .md or all not: a mixed pool is rejected, naming the odd ones out', () => {
+  const md = { human: { '0': 'artifacts/a.md', '1': 'artifacts/b.MD' }, ai: { '0': 'artifacts/c.md', '1': 'artifacts/d.md' } };
+  expect(() => validateManifest({ ...base, artifacts: md })).not.toThrow();
+  expect(() => validateManifest(base)).not.toThrow();   // all .txt
+  const mixed = { ...md, ai: { '0': 'artifacts/c.md', '1': 'artifacts/d.txt' } };
+  expect(() => validateManifest({ ...base, artifacts: mixed })).toThrow(/all \.md or none; not \.md: artifacts\/d\.txt/);
+  expect(() => validateManifest({ ...base, artifact_type: 'code', artifacts: { human: { '0': 'artifacts/a.py', '1': 'artifacts/b.py' },
+    ai: { '0': 'artifacts/c.py', '1': 'artifacts/d.txt' } } })).not.toThrow();   // the rule is a text-domain one
+});
+
 const prescreener = { artifact: 'artifacts/prescreen.py', question: 'What is the best name for this function?',
   options: ['factorial', 'fibonacci', 'triangular_number', 'sum_of_digits'], answer: 'fibonacci',
   redirect: 'https://app.prolific.com/submissions/complete?cc=SCREENOUT' };

@@ -23,10 +23,12 @@
     "@jspsych/plugin-survey-html-form": "2.1.0",
     "highlight.js": "^11.12.0",
     "jspsych": "8.3.0",
+    "markdown-it": "^14.3.2",
     "zod": "3.25.76"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
+    "@types/markdown-it": "^14.2.0",
     "@types/node": "24.13.3",
     "fast-check": "3.23.2",
     "jsdom": "^30.0.1",

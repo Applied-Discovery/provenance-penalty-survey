@@ -51,6 +51,18 @@ body { margin: 0; }
 /* Creative writing keeps the author's whitespace: line breaks, indentation, blank stanza gaps.
  * pre-wrap still wraps lines that exceed the column; overflow-wrap catches unbroken runs. */
 .artifact-text { white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 4; }
+/* Markdown artifacts (.md in a text domain): headings stay close to body size so a section title in an answer
+ * reads as part of the artifact, not as page chrome. */
+.artifact-markdown { overflow-wrap: anywhere; }
+.artifact-markdown > :first-child { margin-top: 0; }
+.artifact-markdown > :last-child { margin-bottom: 0; }
+.artifact-markdown h1, .artifact-markdown h2, .artifact-markdown h3,
+.artifact-markdown h4, .artifact-markdown h5, .artifact-markdown h6 { font-size: 1.05rem; margin: 1.25rem 0 0.5rem; }
+.artifact-markdown p, .artifact-markdown ul, .artifact-markdown ol, .artifact-markdown blockquote { margin: 0 0 0.75rem; }
+.artifact-markdown ul, .artifact-markdown ol { padding-left: 1.5rem; }
+.artifact-markdown blockquote { padding-left: 0.75rem; border-left: 3px solid #d0d7de; color: #444; }
+.artifact-markdown code { font-size: 0.9em; }
+.artifact-markdown pre { overflow-x: auto; padding: 0.6rem 0.8rem; background: #f6f8fa; border-radius: 6px; }
 .label { font-weight: bold; }
 .stem { margin: 1.5rem 0 0.75rem; font-size: 1.05rem; }
 
