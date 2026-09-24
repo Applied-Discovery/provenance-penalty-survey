@@ -238,5 +238,6 @@
   ],
   "storage": "datapipe",
   "curation_criteria": "curationCriteria.md",
-  "osf_study": "YYck4QlJbLxh"
+  "osf_study": "YYck4QlJbLxh",
+  "completion_redirect": "https://app.prolific.com/submissions/complete?cc=C1MXSSZ4"
 }
