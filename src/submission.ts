@@ -3,7 +3,8 @@ import type { SessionContext } from './session';
 export type { Author };
 export interface Rating          { id: string; actual_author: Author; stated_author: Author; survey_pos: number; rating: number; time_spent: number }
 export interface UnlabeledRating { id: string; actual_author: Author; predicted_author: Author; survey_pos: number; rating: number; rating_time_spent: number; belief_time_spent: number }
-export interface DemographicAnswer { id: string; answer: string }   // the option text chosen for manifest question `id`
+// The option text chosen for manifest question `id`; a per-artifact question has one answer per rated artifact, naming it.
+export interface DemographicAnswer { id: string; artifact_id?: string; answer: string }
 export interface PrescreenResult { answer: string; passed: boolean }   // chosen option text; passed when it is the manifest's answer
 export interface SubmissionData  { attention_expected: number[]; attention_answer: number[]; withdrawn: boolean; ratings: Rating[]; unlabeled_ratings: UnlabeledRating[]; demographics: DemographicAnswer[]; prescreen?: PrescreenResult }
 export interface Submission {
@@ -52,13 +53,16 @@ export function buildSubmission(
   }
   const screenedOut = prescreen !== undefined && !prescreen.passed;   // the session ended at the screen: nothing after it was asked
 
-  const answered = new Map(of('demographic').map((t) => [String(t.question_id), t]));
-  const demographics: DemographicAnswer[] = screenedOut ? [] : m.demographics.map((q) => {
-    const t = answered.get(q.id);
+  // Keyed by question, and by artifact for a per-artifact question. Every rated artifact must have its answer.
+  const key = (question: unknown, artifact?: unknown) => (artifact === undefined ? String(question) : `${question} ${artifact}`);
+  const answered = new Map(of('demographic').map((t) => [key(t.question_id, t.artifact_id), t]));
+  const rated = [...ratings.map((r) => r.id), ...unlabeled_ratings.map((r) => r.id)];
+  const demographics: DemographicAnswer[] = screenedOut ? [] : m.demographics.flatMap((q) => (q.per_artifact ? rated : [undefined]).map((artifact_id) => {
+    const t = answered.get(key(q.id, artifact_id));
     const answer = t ? q.options[Number(t.response)] : undefined;
-    if (answer === undefined) throw new Error(`Missing or out-of-range answer for demographic question ${q.id}`);
-    return { id: q.id, answer };
-  });
+    if (answer === undefined) throw new Error(`Missing or out-of-range answer for demographic question ${q.id}${artifact_id ? ` on ${artifact_id}` : ''}`);
+    return artifact_id ? { id: q.id, artifact_id, answer } : { id: q.id, answer };
+  }));
 
   return {
     domain: m.name, submission_time: now(), start_time: ctx.start_time, session_id: ctx.session_id, study_id: ctx.study_id,

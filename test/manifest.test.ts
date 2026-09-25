@@ -73,11 +73,49 @@ test('demographics default to none', () => {
 });
 test('demographics: single-choice questions with snake_case ids, at least two options, ids unique', () => {
   const q = { id: 'ai_use', question: 'How often do you use AI coding assistants?', options: ['Never', 'Monthly', 'Weekly', 'Daily'] };
-  expect(validateManifest({ ...base, demographics: [q] }).demographics).toEqual([q]);
+  expect(validateManifest({ ...base, demographics: [q] }).demographics).toEqual([{ ...q, per_artifact: false }]);
   expect(() => validateManifest({ ...base, demographics: [{ ...q, id: 'AI use' }] })).toThrow(/snake_case/);
   expect(() => validateManifest({ ...base, demographics: [{ ...q, options: ['Only one'] }] })).toThrow(/options/);
   expect(() => validateManifest({ ...base, demographics: [{ ...q, extra: 1 }] })).toThrow(/extra/);
   expect(() => validateManifest({ ...base, demographics: [q, { ...q, question: 'Again?' }] })).toThrow(/duplicate demographic question id "ai_use"/);
+});
+
+// Per-artifact questions: asked once per seen artifact, with {{title}} filled from the artifact's manifest entry.
+const titled = { human: { '0': { path: 'artifacts/a.txt', title: 'Cats' }, '1': { path: 'artifacts/b.txt', title: 'Dogs' } },
+  ai: { '0': { path: 'artifacts/c.txt', title: 'Cats' }, '1': { path: 'artifacts/d.txt', title: 'Dogs' } } };
+const agree = { id: 'agree', question: 'How much do you agree that {{title}}?', options: ['Disagree', 'Agree'], per_artifact: true };
+test('an artifact entry is a path or { path, title }, and either way comes out as { path, title? }', () => {
+  expect(validateManifest(base).artifacts.human['0']).toEqual({ path: 'artifacts/a.txt' });
+  expect(validateManifest({ ...base, artifacts: titled }).artifacts.ai['1']).toEqual({ path: 'artifacts/d.txt', title: 'Dogs' });
+  const mixed = { ...titled, ai: { '0': 'artifacts/c.txt', '1': { path: 'artifacts/d.txt' } } };
+  expect(validateManifest({ ...base, artifacts: mixed }).artifacts.ai).toEqual({ '0': { path: 'artifacts/c.txt' }, '1': { path: 'artifacts/d.txt' } });
+});
+test('validating a validated manifest gives it back unchanged', () => {
+  const once = validateManifest({ ...base, artifacts: titled, demographics: [agree] });
+  expect(validateManifest(once)).toEqual(once);
+});
+test('an artifact entry object is checked: safe path, non-empty title, no other keys', () => {
+  const withAi0 = (e: unknown) => ({ ...base, artifacts: { ...titled, ai: { ...titled.ai, '0': e } } });
+  expect(() => validateManifest(withAi0({ path: '../x.txt', title: 'T' }))).toThrow(/artifact path/);
+  expect(() => validateManifest(withAi0({ path: 'artifacts/c.txt', title: '' }))).toThrow(/title/);
+  expect(() => validateManifest(withAi0({ path: 'artifacts/c.txt', title: 'T', topic: 'x' }))).toThrow(/topic/);
+  expect(() => validateManifest(withAi0({ title: 'T' }))).toThrow(/path/);
+});
+test('per_artifact defaults to false', () => {
+  const q = { id: 'ai_use', question: 'How often?', options: ['Never', 'Daily'] };
+  expect(validateManifest({ ...base, demographics: [q] }).demographics[0].per_artifact).toBe(false);
+});
+test('a per_artifact question needs {{title}} in its text, and a plain question must not have it', () => {
+  expect(validateManifest({ ...base, artifacts: titled, demographics: [agree] }).demographics[0].per_artifact).toBe(true);
+  expect(() => validateManifest({ ...base, artifacts: titled, demographics: [{ ...agree, question: 'Do you agree?' }] }))
+    .toThrow(/"agree".*\{\{title\}\}/);
+  expect(() => validateManifest({ ...base, artifacts: titled, demographics: [{ ...agree, per_artifact: false }] }))
+    .toThrow(/"agree".*per_artifact/);
+});
+test('a per_artifact question needs a title on every pool artifact, naming the ones without', () => {
+  const missing = { ...titled, human: { ...titled.human, '1': 'artifacts/b.txt' }, ai: { ...titled.ai, '0': { path: 'artifacts/c.txt' } } };
+  expect(() => validateManifest({ ...base, artifacts: missing, demographics: [agree] })).toThrow(/title.*human 1, ai 0/);
+  expect(() => validateManifest({ ...base, artifacts: missing })).not.toThrow();   // titles are optional when nothing asks for them
 });
 const code = { ...base, name: 'code', artifact_type: 'code', stem_noun: 'function',
   artifacts: { human: { '0': 'artifacts/a.py', '1': 'artifacts/b.c' }, ai: { '0': 'artifacts/c.ts', '1': 'artifacts/d.java' } } };
@@ -160,7 +198,7 @@ test('every artifact a committed manifest names is on disk', () => {
   for (const d of domains) {
     const dir = join(__dirname, '../domains', d);
     const m = validateManifest(JSON.parse(readFileSync(join(dir, 'domainManifest.json'), 'utf8')));
-    for (const p of [...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai), ...(m.prescreener ? [m.prescreener.artifact] : [])])
+    for (const p of [...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai)].map((e) => e.path).concat(m.prescreener ? [m.prescreener.artifact] : []))
       expect(existsSync(join(dir, p)), `${d}/${p}`).toBe(true);
   }
 });

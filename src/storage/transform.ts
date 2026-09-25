@@ -31,19 +31,25 @@ export function toSessionRow(s: Submission, meta: BrowserMeta, m: DomainManifest
     min_time_spent: times.length ? Math.min(...times) : null, median_time_spent: median(times),
     browser: meta.browser, jspsych_version: meta.jspsych_version, viewport_width: meta.viewport_width, viewport_height: meta.viewport_height,
     ...(s.data.prescreen ? { prescreen_answer: s.data.prescreen.answer, prescreen_passed: s.data.prescreen.passed } : {}),   // expert domains only
-    ...Object.fromEntries(s.data.demographics.map((d) => [`demo_${d.id}`, d.answer])),   // one column per manifest question, last so the fixed columns keep their places
+    ...demoColumns(s, undefined),   // one column per manifest question, last so the fixed columns keep their places
   };
+}
+
+/** The `demo_<id>` columns for one row: the session-level answers when `artifactId` is undefined, else the per-artifact
+ * answers about that artifact. Each goes last in its row so the fixed columns keep their places across domains. */
+function demoColumns(s: Submission, artifactId: string | undefined): Row {
+  return Object.fromEntries(s.data.demographics.filter((d) => d.artifact_id === artifactId).map((d) => [`demo_${d.id}`, d.answer]));
 }
 
 export function toLabeledRows(s: Submission): Row[] {
   const base = runColumns(s);
   return s.data.ratings.map((r): Row => ({ ...base, artifact_id: r.id, actual_author: r.actual_author,
-    stated_author: r.stated_author, survey_pos: r.survey_pos, rating: r.rating, time_spent: r.time_spent }));
+    stated_author: r.stated_author, survey_pos: r.survey_pos, rating: r.rating, time_spent: r.time_spent, ...demoColumns(s, r.id) }));
 }
 
 export function toUnlabeledRows(s: Submission): Row[] {
   const base = runColumns(s);
   return s.data.unlabeled_ratings.map((r): Row => ({ ...base, artifact_id: r.id, actual_author: r.actual_author,
     predicted_author: r.predicted_author, survey_pos: r.survey_pos, rating: r.rating,
-    rating_time_spent: r.rating_time_spent, belief_time_spent: r.belief_time_spent }));
+    rating_time_spent: r.rating_time_spent, belief_time_spent: r.belief_time_spent, ...demoColumns(s, r.id) }));
 }
