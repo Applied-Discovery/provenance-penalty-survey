@@ -29,7 +29,7 @@ export function attributionHtml(m: DomainManifest, plan: SessionPlan): string {
     const entry = m.attribution[a.author][String(a.index)];
     if (!entry || seen.has(a.id)) return [];
     seen.add(a.id);
-    return [creditLine(entry)];
+    return [entry].flat().map(creditLine);   // an artifact with several sources gets one line per source, in manifest order
   }).filter(Boolean);
   if (!lines.length) return '';
   return `<div class="attribution"><h2>${escapeHtml(COPY.attributionTitle)}</h2><ul>${lines.map((l) => `<li>${l}</li>`).join('')}</ul></div>`;

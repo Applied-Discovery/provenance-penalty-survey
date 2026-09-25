@@ -38,6 +38,17 @@ test('lists one source per session artifact that has attribution, in session ord
   expect(html.match(/<li>/g)).toHaveLength(2);
 });
 
+test('an artifact with a list of credits gets one line per source, in manifest order, in its place in the session', () => {
+  const m = withAttribution({ human: { '0': [{ ...full, title: 'The answer' }, { title: 'The question', author: 'Q. Poster', licence: 'CC BY-SA 3.0' }],
+    '1': { title: 'Second' } } });
+  const html = attributionHtml(m, plan);
+  expect(html.match(/<li>/g)).toHaveLength(3);
+  const order = ['The answer', 'The question', 'Second'].map((t) => html.indexOf(t));
+  expect(order.every((i) => i >= 0)).toBe(true);
+  expect(order).toEqual([...order].sort((a, b) => a - b));
+  expect(html).toContain('<li>The question by Q. Poster · CC BY-SA 3.0</li>');
+});
+
 test('a full entry reads title by author, licence', () => {
   const html = attributionHtml(withAttribution({ human: { '0': full } }), plan);
   expect(html).toContain('>Winter Trees</a> by <a');

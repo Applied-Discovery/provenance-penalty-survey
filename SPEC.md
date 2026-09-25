@@ -45,7 +45,8 @@ has the following structure
     },
     attribution?: { // default {}. Source credits, keyed by artifact index exactly as `artifacts` is; an artifact with no entry is not credited
         human: {
-            "0": { title?: "", title_url?: "", author?: "", author_url?: "", licence?: "", licence_url?: "" } // every field optional, at least one required
+            "0": { title?: "", title_url?: "", author?: "", author_url?: "", licence?: "", licence_url?: "" }, // every field optional, at least one required
+            "1": [{ ... }, { ... }] // or a non-empty list, one credit per source, for an artifact built from several (a question and its answer)
         },
         ai: {}
     },
@@ -109,7 +110,7 @@ A title page ("We will now ask some questions about you.", trial kind `demograph
 Shows a disclosure with a withdrawal checkbox and a submit button.
 
 Below the submit button, the source credits of the artifacts this session showed, in the order they were shown: one
-line per artifact the manifest's `attribution` block credits, reading title by author, licence, with each field and its
+line per source the manifest's `attribution` block credits (one per artifact, or one per list entry), reading title by author, licence, with each field and its
 separator dropped when the entry has neither its text nor its URL, and a `*_url` rendering as a link on the URL itself
 when its text is missing. Only the session's own artifacts are listed - the licences owe attribution for what was used,
 and the credits are shown after every rating is made, so naming the shown human-made artifacts cannot affect the data.
