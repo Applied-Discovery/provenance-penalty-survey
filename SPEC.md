@@ -118,7 +118,7 @@ Shows a disclosure with a withdrawal checkbox and a submit button.
 Below the submit button, the source credits of the artifacts this session showed, in the order they were shown: one
 line per source the manifest's `attribution` block credits (one per artifact, or one per list entry), reading title by author, licence, with each field and its
 separator dropped when the entry has neither its text nor its URL, and a `*_url` rendering as a link on the URL itself
-when its text is missing. Only the session's own artifacts are listed - the licences owe attribution for what was used,
+when its text is missing. A line credited by several shown artifacts is listed once, where it first appears. Only the session's own artifacts are listed - the licences owe attribution for what was used,
 and the credits are shown after every rating is made, so naming the shown human-made artifacts cannot affect the data.
 Links open in a new tab: nothing has been submitted yet at this point, and following a source in the same tab would
 lose the session. Nothing is rendered when no artifact of the session carries a credit.
