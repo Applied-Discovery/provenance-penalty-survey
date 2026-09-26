@@ -180,326 +180,166 @@
   },
   "attribution": {
     "human": {
-      "0": [
-        {
-          "title": "Advertisements Do More Harm Than Good",
-          "title_url": "https://debatewise.org/debates/2938-advertisements-do-more-harm-than-good/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "1": [
-        {
-          "title": "Antarctic Exploitation",
-          "title_url": "https://debatewise.org/debates/2722-antarctic-exploitation/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "2": [
-        {
-          "title": "Basic income tax should be abolished",
-          "title_url": "https://debatewise.org/debates/74-basic-income-tax-should-be-abolished/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "3": [
-        {
-          "title": "Biofuels",
-          "title_url": "https://debatewise.org/debates/2922-biofuels/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "4": [
-        {
-          "title": "Classics (Latin and Ancient Greek), should be taught in schools",
-          "title_url": "https://debatewise.org/debates/2867-classics-latin-and-ancient-greek-should-be-taught-in-schools/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "5": [
-        {
-          "title": "Everyone Should Automatically Be Opted into an Organ Donation Scheme",
-          "title_url": "https://debatewise.org/debates/95-everyone-should-automatically-be-opted-into-an-organ-donation-scheme/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "6": [
-        {
-          "title": "It's Dangerous to Teach History in Schools",
-          "title_url": "https://debatewise.org/debates/2850-history-dangers-of-teaching-in-schools/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "7": [
-        {
-          "title": "This House would make fines relative to income",
-          "title_url": "https://idebate.org/debatabase/law-punishment/house-would-make-fines-relative-income",
-          "author": "idebate.org",
-          "author_url": "https://idebate.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "8": [
-        {
-          "title": "Museums Should Be Free",
-          "title_url": "https://debatewise.org/debates/2609-museums-entrance-fees-to/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "9": [
-        {
-          "title": "NASA, Government funding for",
-          "title_url": "https://debatewise.org/debates/2957-nasa-government-funding-for/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "10": [
-        {
-          "title": "Pre-Nuptial Agreements Should Be Banned",
-          "title_url": "https://debatewise.org/debates/2997-pre-nuptial-agreements-ban/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "11": [
-        {
-          "title": "Reality Television Has Negative Effects on Society",
-          "title_url": "https://debatewise.org/debates/2970-reality-television/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "12": [
-        {
-          "title": "School Uniforms Should Be Mandatory",
-          "title_url": "https://debatewise.org/debates/3367-school-uniforms-should-be-mandatory/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "13": [
-        {
-          "title": "School-Leaving Age Should Be Raised",
-          "title_url": "https://debatewise.org/debates/2767-school-leaving-age-raising-of/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "14": [
-        {
-          "title": "Speed Cameras",
-          "title_url": "https://debatewise.org/debates/2723-speed-cameras/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "15": [
-        {
-          "title": "English language spelling reform",
-          "title_url": "https://debatewise.org/debates/2960-english-language-spelling-reform/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "16": [
-        {
-          "title": "Homework Should Be Banned",
-          "title_url": "https://debatewise.org/debates/2959-homework-ban/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "17": [
-        {
-          "title": "This House believes in Santa Claus (Junior)",
-          "title_url": "https://idebate.org/debatabase/culture/house-believes-santa-claus-junior",
-          "author": "idebate.org",
-          "author_url": "https://idebate.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "18": [
-        {
-          "title": "National Lotteries",
-          "title_url": "https://debatewise.org/debates/2551-national-lotteries/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ],
-      "19": [
-        {
-          "title": "Summer Holidays Should Be Shortened",
-          "title_url": "https://debatewise.org/debates/2309-summer-holidays-should-be-shortened/",
-          "author": "DebateWise",
-          "author_url": "https://debatewise.org/"
-        },
-        {
-          "title": "args.me corpus",
-          "title_url": "https://doi.org/10.5281/zenodo.4139439",
-          "author": "Webis",
-          "author_url": "https://webis.de/",
-          "licence": "CC BY 4.0, adapted",
-          "licence_url": "https://creativecommons.org/licenses/by/4.0/"
-        }
-      ]
+      "0": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "1": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "2": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "3": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "4": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "5": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "6": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "7": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "8": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "9": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "10": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "11": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "12": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "13": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "14": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "15": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "16": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "17": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "18": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "19": {
+        "title": "args.me corpus",
+        "title_url": "https://doi.org/10.5281/zenodo.4139439",
+        "author": "Webis",
+        "author_url": "https://webis.de/",
+        "licence": "CC BY 4.0, adapted",
+        "licence_url": "https://creativecommons.org/licenses/by/4.0/"
+      }
     }
   },
   "demographics": [

@@ -21,16 +21,14 @@ export function creditLine(e: AttributionEntry): string {
 
 /** The sources block for the artifacts this session actually showed, in the order they were shown; empty when none of
  * them carries a credit. Pool artifacts the participant never saw are not listed: the licences owe attribution for
- * what was used, and a full-pool list would credit work this session never displayed. */
+ * what was used, and a full-pool list would credit work this session never displayed. A source credited by several
+ * shown artifacts (a shared corpus, or an artifact shown twice) is listed once, where it first appears. */
 export function attributionHtml(m: DomainManifest, plan: SessionPlan): string {
   const shown = [...plan.labeled.map((it) => it.artifact), ...plan.unlabeled.map((it) => it.artifact)];
-  const seen = new Set<string>();
-  const lines = shown.flatMap((a) => {
+  const lines = [...new Set(shown.flatMap((a) => {
     const entry = m.attribution[a.author][String(a.index)];
-    if (!entry || seen.has(a.id)) return [];
-    seen.add(a.id);
-    return [entry].flat().map(creditLine);   // an artifact with several sources gets one line per source, in manifest order
-  }).filter(Boolean);
+    return entry ? [entry].flat().map(creditLine) : [];   // an artifact with several sources gets one line per source, in manifest order
+  }).filter(Boolean))];
   if (!lines.length) return '';
   return `<div class="attribution"><h2>${escapeHtml(COPY.attributionTitle)}</h2><ul>${lines.map((l) => `<li>${l}</li>`).join('')}</ul></div>`;
 }

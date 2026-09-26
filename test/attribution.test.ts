@@ -49,6 +49,16 @@ test('an artifact with a list of credits gets one line per source, in manifest o
   expect(html).toContain('<li>The question by Q. Poster · CC BY-SA 3.0</li>');
 });
 
+test('a source credited by several shown artifacts is listed once, where it first appears', () => {
+  const corpus = { title: 'The corpus', licence: 'CC BY 4.0' };
+  const m = withAttribution({ human: { '0': [{ title: 'Page one' }, corpus], '1': [{ title: 'Page two' }, { ...corpus }] }, ai: { '1': corpus } });
+  const html = attributionHtml(m, plan);
+  expect(html.match(/The corpus/g)).toHaveLength(1);
+  expect(html.match(/<li>/g)).toHaveLength(3);
+  const order = ['Page one', 'The corpus', 'Page two'].map((t) => html.indexOf(t));
+  expect(order).toEqual([...order].sort((a, b) => a - b));
+});
+
 test('a full entry reads title by author, licence', () => {
   const html = attributionHtml(withAttribution({ human: { '0': full } }), plan);
   expect(html).toContain('>Winter Trees</a> by <a');
