@@ -133,10 +133,13 @@ question and answer before collection and record them in the run log; the
 registration's pass mark is one out of one. `domains/test/` and
 `domains/code/` carry examples.
 
-`attention_redirect`, also optional, is where a session that answered any
-attention check wrongly ends instead of `completion_redirect`: on Prolific, a
+`attention_redirect`, also optional, is where a session that failed at least
+two attention checks ends instead of `completion_redirect`: on Prolific, a
 second completion code for failed attention checks, so those submissions arrive
-already sorted. The data are stored the same way either way
+already sorted. Two is Prolific's threshold for rejecting on attention in a
+study of 5 minutes or longer, so it needs `attention_checks` of 2 or more, and a
+session that fails only one goes to `completion_redirect` as usual (it is still
+excluded from the analysis). The data are stored the same way either way
 (`attention_passed` in the session row); only the destination differs. A
 failed prescreen takes precedence, since such a session saw no checks.
 

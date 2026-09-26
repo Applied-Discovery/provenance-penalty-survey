@@ -303,12 +303,24 @@ test('a manifest that credits nothing shows no sources block', async ({ page }) 
   await expect(page.locator('.attribution')).toHaveCount(0);
 });
 
-test('a failed attention check follows attention_redirect instead of the completion redirect', async ({ page }) => {
+// Two checks need five artifacts: the Markdown example's pool of eight, with pairs allowed to share a session.
+const twoCheckRedirects = { attention_checks: 2, avoid_pairs: false, completion_redirect: 'https://app.prolific.com/submissions/complete?cc=DONE',
+  attention_redirect: 'https://app.prolific.com/submissions/complete?cc=ATTN' };
+test('failing both attention checks follows attention_redirect instead of the completion redirect', async ({ page }) => {
   const dp = await interceptDataPipe(page);
-  await patchManifest(page, { completion_redirect: 'https://app.prolific.com/submissions/complete?cc=DONE', attention_redirect: 'https://app.prolific.com/submissions/complete?cc=ATTN' });
+  await patchManifest(page, twoCheckRedirects);
   await page.route('https://app.prolific.com/**', (route) => route.fulfill({ status: 200, contentType: 'text/html', body: '<h1>prolific</h1>' }));
-  await page.goto(`${EXAMPLE}?SESSION_ID=e2e-attn`);
-  await runSession(page, { ...happy, attentionCorrect: false });
+  await page.goto('/domains/example_markdown/?SESSION_ID=e2e-attn');
+  const clicked = await runSession(page, { ...happy, attentionCorrect: false });
+  expect(clicked.attention).toHaveLength(2);
   await page.waitForURL(/cc=ATTN/);
   expect(file(dp.posts, 'session_')[0].attention_passed).toBe('false');   // the data are unchanged; only the redirect differs
+});
+test('passing both attention checks follows the completion redirect', async ({ page }) => {
+  await interceptDataPipe(page);
+  await patchManifest(page, twoCheckRedirects);
+  await page.route('https://app.prolific.com/**', (route) => route.fulfill({ status: 200, contentType: 'text/html', body: '<h1>prolific</h1>' }));
+  await page.goto('/domains/example_markdown/?SESSION_ID=e2e-attn-pass');
+  await runSession(page, happy);
+  await page.waitForURL(/cc=DONE/);
 });
