@@ -3,6 +3,7 @@ import { buildSessionPlan } from '../src/plan';
 import { validateManifest } from '../src/manifest';
 import { Rng } from '../src/rng';
 import { COPY } from '../src/copy';
+import { escapeHtml } from '../src/artifacts';
 
 vi.mock('jspsych', () => ({ initJsPsych: vi.fn() }));
 const m = validateManifest({ name: 'd', protocol_version: 'v0', domain_version: 'v0', wave: 1, artifact_type: 'text', evaluator_class: 'lay',
@@ -32,6 +33,29 @@ test('demographic questions come after the last rating and before the disclosure
   expect(first.data.question_id).toBe('ai_use');
   expect(first.choices).toEqual(['Never', 'Daily']);
   expect(first.stimulus).toContain(q.question);
+});
+// Per-artifact question: one trial per rated artifact, labeled then unlabeled in the order shown, attention checks skipped.
+const titledPool = (p: string) => Object.fromEntries(['a', 'b', 'c', 'd'].map((x, i) => [String(i), { path: `${p}${x}`, title: `<${p}${i}> & co` }]));
+const agree = { id: 'agree', question: 'Do you agree that {{title}}?', options: ['No', 'Yes'], per_artifact: true };
+const ai_use = { id: 'ai_use', question: 'How often do you use AI?', options: ['Never', 'Daily'] };
+const mt = validateManifest({ ...m, artifacts: { human: titledPool('h'), ai: titledPool('a') }, demographics: [ai_use, agree] } as any);
+const tplan = buildSessionPlan(mt, new Rng(1));
+const tloaded = new Map([...tplan.labeled.map((i) => i.artifact), ...tplan.unlabeled.map((i) => i.artifact)].map((a) => [a.id, { artifact: a, content: 'body' }]));
+test('a per_artifact question is asked once per rated artifact, in the order shown, after the questions before it', () => {
+  const trials = (buildTimeline(mt, tplan, tloaded, ctx, async () => true) as any[]).filter((t) => t.data.trial_kind === 'demographic');
+  const seen = [...tplan.labeled.filter((i) => i.kind === 'labeled'), ...tplan.unlabeled].map((i) => i.artifact);
+  expect(seen).toHaveLength(6);   // 4 labeled + 2 unlabeled; the 2 attention artifacts are not asked about
+  expect(trials.map((t) => [t.data.question_id, t.data.artifact_id])).toEqual([['ai_use', undefined], ...seen.map((a) => ['agree', a.id])]);
+  trials.slice(1).forEach((t, i) => {
+    expect(t.stimulus).toContain(`Do you agree that ${escapeHtml(seen[i].title!)}?`);   // the title is escaped as it goes in
+    expect(t.stimulus).not.toContain('{{title}}');
+    expect(t.choices).toEqual(['No', 'Yes']);
+  });
+  expect(trials[1].stimulus).not.toContain('<h');
+});
+test('a plain question records no artifact id', () => {
+  const trials = (buildTimeline(mt, tplan, tloaded, ctx, async () => true) as any[]).filter((t) => t.data.trial_kind === 'demographic');
+  expect(trials[0].data).not.toHaveProperty('artifact_id');
 });
 test('no demographics title when the manifest asks no demographic questions', () => {
   const md = validateManifest({ ...m, demographics: [] } as any);

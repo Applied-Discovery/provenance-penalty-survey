@@ -35,11 +35,13 @@ has the following structure
     unlabeled_per_session: 1, // default 1
     avoid_pairs?: false, // default false. When true, human i and ai i never appear in the same session (labeled, attention or unlabeled)
     demographics?: [ // default []. Single-choice questions asked after the last rating, before the debrief
-        { id: "ai_use", question: "How often do you use AI coding assistants?", options: ["Never", "Monthly", "Weekly", "Daily"] }
+        { id: "ai_use", question: "How often do you use AI coding assistants?", options: ["Never", "Monthly", "Weekly", "Daily"] },
+        { id: "agreement", question: "How much do you agree? \"{{title}}\"", options: ["Disagree", "Agree"], per_artifact: true } // per_artifact: default false. Asked once per rated artifact, {{title}} replaced by its title
     ],
     artifacts: {
         human: {
             id: "paths/to/artifacts" // ids are 0-indexed integers, unique within human/ai. Important they remain stable
+            // or { path: "paths/to/artifacts", title?: "..." }; the title is used only by per_artifact questions
         },
         ai: {}
     },
@@ -69,7 +71,9 @@ Validation rules:
 | with `avoid_pairs`: `labeled_artifacts_per_session + attention_checks + unlabeled_per_session <= artifacts.human.length` | Each pair can supply at most one artifact to a session |
 | every key of `attribution.human` / `attribution.ai` names an artifact of that pool | A credit keyed to a missing index is a typo that would silently drop the source |
 | `artifacts.human` and `artifacts.ai` must have keys 0, 1, ... N-1 | We want easily indexable artifacts. Are using a dict so the keys are stable. |
-| `demographics[].id` snake_case and unique; `options` has at least two entries | Each id becomes a session-row column `demo_<id>` |
+| `demographics[].id` snake_case and unique; `options` has at least two entries | Each id becomes a column `demo_<id>`: in the session row, or in the rating rows for a `per_artifact` question |
+| a `per_artifact` question contains `{{title}}`, and no other question does | The placeholder is how a per-artifact question names its artifact; anywhere else it would be shown literally |
+| with any `per_artifact` question: every pool artifact has a `title` | Any artifact may be drawn, so every one needs something to be asked about by |
 | with `artifact_type == "code"`: every artifact path has an extension registered in `src/highlight.ts` | The highlighting grammar comes from the file name, never auto-detected from the content, so colouring cannot differ between the human and AI halves of a pair |
 | with `artifact_type == "image"`: every artifact path ends in `.jpg`, `.jpeg` or `.png` | The artifact is shown as it is in an `<img>`. A format the browser cannot decode renders the alt text instead, which on a labeled trial is the provenance sentence |
 | with `artifact_type == "text"`: either every study artifact path ends in `.md` or none does | A `.md` artifact is rendered as Markdown and any other is shown raw, so a mixed pool would show the rater which half an artifact came from |
@@ -105,6 +109,8 @@ Then, jsPsych should, for each run, generate a timeline that:
 **Demographics**
 
 A title page ("We will now ask some questions about you.", trial kind `demographics_title`) followed by one trial per `demographics` question, in manifest order, each a stacked single-choice list like the belief question. They come after the unlabeled block so that domains asking different questions (e.g. AI coding assistant use in the code domain) stay comparable on the ratings themselves, and before the disclosure so they are in the submission. A domain that asks nothing skips the block.
+
+A `per_artifact` question is asked once for each artifact the participant rated (labeled, then unlabeled, in the order shown; attention-check artifacts are skipped), with `{{title}}` in its text replaced by that artifact's manifest title, HTML-escaped. Its trial records the `artifact_id`. The title is never shown alongside the artifact itself.
 
 **Disclosure**
 Shows a disclosure with a withdrawal checkbox and a submit button.
@@ -170,7 +176,7 @@ The data JSON will contain
 | `withdrawn` | True/False |
 | `ratings` | JSON `[{"id": artifact id, "actual_author": human|ai, "stated_author": human|ai, "survey_pos": int, "rating": int, time_spent: ms}]` |
 | `unlabeled_ratings` | JSON `[{id, actual_author, predicted_author, survey_pos, rating, rating_time_spent, belief_time_spent}]
-| `demographics` | JSON `[{id, answer}]`, one per manifest question in manifest order; `answer` is the chosen option text |
+| `demographics` | JSON `[{id, artifact_id?, answer}]`, in manifest order: one per plain question, and one per rated artifact (in the order shown, carrying its `artifact_id`) for a `per_artifact` question; `answer` is the chosen option text |
 
 Note:
 - Artifact ids are constructed as `"{domain}_{domain version}_{author}_{index}"`
@@ -180,9 +186,9 @@ Note:
 ### Storage layer
 
 The data is split into three and transformed accordingly:
-- Session Data: All metadata. Withdrawals, attention expected/responses (semicolon separated), avg rating, min time spent, median time spent. This data contains all we need to potentially disqualify data. Additional browser metadata is also collected and added: browser, jsPsych version, viewport. Demographic answers follow as the last columns, `demo_<id>` per manifest question, so the fixed columns keep their places across domains.
-- Labeled Responses: one row per rating. Session id, and all rating information
-- Unlabeled Responses: one row per rating. Session id, and all rating information
+- Session Data: All metadata. Withdrawals, attention expected/responses (semicolon separated), avg rating, min time spent, median time spent. This data contains all we need to potentially disqualify data. Additional browser metadata is also collected and added: browser, jsPsych version, viewport. Demographic answers follow as the last columns, `demo_<id>` per plain manifest question, so the fixed columns keep their places across domains.
+- Labeled Responses: one row per rating. Session id, and all rating information, then `demo_<id>` for each `per_artifact` question: the answer about that row's artifact
+- Unlabeled Responses: one row per rating. Session id, and all rating information, then `demo_<id>` per `per_artifact` question as above
 
 Note that User id is intentionally not saved. This data can be recovered by joining by the session id in prolific.
 

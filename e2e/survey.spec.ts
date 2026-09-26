@@ -52,6 +52,26 @@ test('demographic questions from the manifest are asked after the ratings and la
   expect(file(dp.posts, 'labeled_')[0]).not.toHaveProperty('demo_ai_use');
 });
 
+test('opinion example: agreement is asked once per rated argument by its title, and lands on that argument\'s rating row', async ({ page }) => {
+  const dp = await interceptDataPipe(page);
+  await page.goto('/domains/example_opinion/?SESSION_ID=e2e-opinion');
+  const clicked = await runSession(page, { ...happy, demographicOption: 3 });
+  const manifest = await (await page.request.get('/domains/example_opinion/domainManifest.json')).json();
+  const titleOf = (id: string) => { const [, , author, index] = id.match(/^(.*)_(human|ai)_(\d+)$/)!; return manifest.artifacts[author][index].title; };
+
+  const labeled = file(dp.posts, 'labeled_'), unlabeled = file(dp.posts, 'unlabeled_');
+  const rated = [...labeled, ...unlabeled].sort((a, b) => Number(a.survey_pos) - Number(b.survey_pos));
+  expect(clicked.demographicStems).toHaveLength(1 + rated.length);   // the plain question, then one per rated argument
+  expect(clicked.demographicStems.slice(1)).toEqual(rated.map((r) => `How much do you agree with the following statement? "${titleOf(r.artifact_id)}"`));
+  expect(clicked.demographics.slice(1)).toEqual(Array(rated.length).fill('Agree'));
+
+  expect(rated.every((r) => r.demo_agreement === 'Agree')).toBe(true);
+  const [session] = file(dp.posts, 'session_');
+  expect(session.demo_ai_tool_use).toBe('Weekly');
+  expect(session).not.toHaveProperty('demo_agreement');
+  expect(labeled[0]).not.toHaveProperty('demo_ai_tool_use');
+});
+
 test('failed attention check and withdrawal are recorded', async ({ page }) => {
   const dp = await interceptDataPipe(page);
   await page.goto(`${EXAMPLE}?SESSION_ID=e2e-2`);

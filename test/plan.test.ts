@@ -149,3 +149,17 @@ test('property: plan invariants hold for any valid manifest and seed', () => {
       && JSON.stringify(p) === JSON.stringify(buildSessionPlan(m, new Rng(seed))); // deterministic
   }), { numRuns: 300 });
 });
+test('a planned artifact carries its manifest title, and has none when the entry gives none', () => {
+  const titled = (n: number, p: string) => Object.fromEntries(Array.from({ length: n }, (_, i) => [String(i), { path: `${p}${i}.txt`, title: `${p} title ${i}` }]));
+  const p = buildSessionPlan(manifest({ artifacts: { human: titled(20, 'h'), ai: pool(20, 'a') } }), new Rng(4));
+  for (const a of [...p.labeled, ...p.unlabeled].map((i) => i.artifact)) {
+    if (a.author === 'human') expect(a).toMatchObject({ path: `h${a.index}.txt`, title: `h title ${a.index}` });
+    else expect(a).not.toHaveProperty('title');
+  }
+});
+test('titles do not change the draw', () => {
+  const titled = (n: number, p: string) => Object.fromEntries(Array.from({ length: n }, (_, i) => [String(i), { path: `${p}${i}.txt`, title: 'T' }]));
+  const strip = (p: ReturnType<typeof buildSessionPlan>) => JSON.stringify(p, (k, v) => (k === 'title' ? undefined : v));
+  expect(strip(buildSessionPlan(manifest({ artifacts: { human: titled(20, 'h'), ai: titled(20, 'a') } }), new Rng(9))))
+    .toBe(strip(buildSessionPlan(manifest(), new Rng(9))));
+});

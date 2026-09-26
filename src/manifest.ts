@@ -22,15 +22,27 @@ export function isSafeArtifactPath(p: string): boolean {
     && !p.split('/').some((seg) => seg === '..' || seg === '');
 }
 
-/** A single-choice question asked after the ratings; its answer lands in the session row as `demo_<id>`. */
+/** Stands in for the artifact's manifest title in the text of a `per_artifact` question. */
+export const TITLE_PLACEHOLDER = '{{title}}';
+
+/** A single-choice question asked after the ratings; its answer lands in the session row as `demo_<id>`. A
+ * `per_artifact` question is asked once for each artifact the participant rated, with TITLE_PLACEHOLDER in its text
+ * replaced by that artifact's title, and each answer lands as `demo_<id>` on that artifact's rating row instead. */
 const demographicQuestion = z.object({
   id: z.string().regex(/^[a-z][a-z0-9_]*$/, 'demographic question id must be snake_case'),
   question: z.string().min(1),
   options: z.array(z.string().min(1)).min(2),
+  per_artifact: z.boolean().default(false),
 }).strict();
 export type DemographicQuestion = z.infer<typeof demographicQuestion>;
 
 const artifactPath = z.string().refine(isSafeArtifactPath, 'artifact path must be relative to the domain folder, with no scheme, leading slash or ".."');
+
+/** An artifact is its path, or `{ path, title }` when a `per_artifact` question needs something to call it by; either
+ * way it comes out as `{ path, title? }`. The title is never shown alongside the artifact, only in those questions. */
+const artifactEntry = z.preprocess((e) => (typeof e === 'string' ? { path: e } : e),
+  z.object({ path: artifactPath, title: z.string().min(1).optional() }).strict());
+export type ArtifactEntry = z.infer<typeof artifactEntry>;
 const httpUrl = z.string().url().refine((u) => /^https?:$/.test(new URL(u).protocol), 'must be an http(s) URL');
 
 /** One single-choice competence question shown right after consent (registration: expertise screen for expert domains).
@@ -65,7 +77,7 @@ export type AttributionEntry = z.infer<typeof attributionEntry>;
  * one credit line per source. */
 const attributionMap = z.record(z.string(), z.union([attributionEntry, z.array(attributionEntry).min(1)]));
 
-const artifactMap = z.record(z.string(), artifactPath).superRefine((obj, ctx) => {
+const artifactMap = z.record(z.string(), artifactEntry).superRefine((obj, ctx) => {
   const rawKeys = Object.keys(obj);
   if (!rawKeys.every((k) => /^(0|[1-9]\d*)$/.test(k))) {
     ctx.addIssue({ code: 'custom', message: 'artifact keys must be exactly 0..N-1' });
@@ -99,7 +111,8 @@ export const manifestSchema = z.object({
   completion_redirect: httpUrl.optional(),
   osf_study: z.string().min(1),                 // DataPipe experiment id
 }).strict().superRefine((m, ctx) => {
-  const everyArtifact = () => [...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai), ...(m.prescreener ? [m.prescreener.artifact] : [])];
+  const poolPaths = () => [...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai)].map((e) => e.path);
+  const everyArtifact = () => [...poolPaths(), ...(m.prescreener ? [m.prescreener.artifact] : [])];
   for (const author of ['human', 'ai'] as const) {   // a credit for an index the pool does not have is a typo that would silently drop the source
     const stray = Object.keys(m.attribution[author]).filter((k) => !(k in m.artifacts[author]));
     if (stray.length) ctx.addIssue({ code: 'custom', path: ['attribution', author], message:
@@ -116,7 +129,7 @@ export const manifestSchema = z.object({
       `every artifact of an image domain must be ${IMAGE_EXTENSIONS.join(', ')}; not a supported image format: ${unsupported.join(', ')}` });
   }
   if (m.artifact_type === 'text') {   // .md renders formatted and anything else raw, so a mixed pool would show the split
-    const pool = [...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai)];
+    const pool = poolPaths();
     const markdown = pool.filter(isMarkdownPath);
     if (markdown.length && markdown.length < pool.length) ctx.addIssue({ code: 'custom', path: ['artifacts'], message:
       `a text domain's artifacts must be all .md or none; not .md: ${pool.filter((p) => !isMarkdownPath(p)).join(', ')}` });
@@ -131,6 +144,18 @@ export const manifestSchema = z.object({
   } else if (need > human + ai) ctx.addIssue({ code: 'custom', message: `session needs ${need} artifacts, pool has ${human + ai}` });
   const ids = m.demographics.map((q) => q.id), dup = ids.find((id, i) => ids.indexOf(id) !== i);
   if (dup) ctx.addIssue({ code: 'custom', path: ['demographics'], message: `duplicate demographic question id "${dup}"` });
+  for (const q of m.demographics) {   // the placeholder is how a per-artifact question names its artifact, and means nothing anywhere else
+    const has = q.question.includes(TITLE_PLACEHOLDER);
+    if (q.per_artifact && !has) ctx.addIssue({ code: 'custom', path: ['demographics'], message:
+      `per_artifact question "${q.id}" must name its artifact with ${TITLE_PLACEHOLDER}` });
+    if (!q.per_artifact && has) ctx.addIssue({ code: 'custom', path: ['demographics'], message:
+      `question "${q.id}" uses ${TITLE_PLACEHOLDER} but is not per_artifact` });
+  }
+  if (m.demographics.some((q) => q.per_artifact)) {   // any artifact may be drawn, so every one needs a title to ask about
+    const untitled = (['human', 'ai'] as const).flatMap((a) => Object.entries(m.artifacts[a]).filter(([, e]) => !e.title).map(([k]) => `${a} ${k}`));
+    if (untitled.length) ctx.addIssue({ code: 'custom', path: ['artifacts'], message:
+      `a per_artifact question needs a title on every artifact; no title: ${untitled.join(', ')}` });
+  }
 });
 
 export type DomainManifest = z.infer<typeof manifestSchema>;

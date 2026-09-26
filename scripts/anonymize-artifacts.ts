@@ -4,14 +4,18 @@ import { resolve, dirname, extname, join, basename } from 'node:path';
 import { parseArgs } from 'node:util';
 import { checkName, curationRoot, CURATION_OPTION, domainsDir } from './curation';
 
-export interface RawManifest { artifacts: { human: Record<string, string>; ai: Record<string, string> }; [k: string]: unknown }
+/** An artifact as the manifest file writes it: a bare path, or `{ path, title }` for a domain with per-artifact questions. */
+export type RawArtifact = string | { path: string; [k: string]: unknown };
+export interface RawManifest { artifacts: { human: Record<string, RawArtifact>; ai: Record<string, RawArtifact> }; [k: string]: unknown }
+const pathOf = (a: RawArtifact) => (typeof a === 'string' ? a : a.path);
 
 export function anonymizePlan(manifest: RawManifest, random: () => string = () => randomBytes(8).toString('hex')) {
   const renames: { from: string; to: string }[] = [];
   const used = new Set<string>();
   const out: RawManifest = { ...manifest, artifacts: { human: {}, ai: {} } };
   for (const author of ['human', 'ai'] as const) {
-    for (const [id, from] of Object.entries(manifest.artifacts[author])) {
+    for (const [id, entry] of Object.entries(manifest.artifacts[author])) {
+      const from = pathOf(entry);
       let to: string;
       let attempts = 0;
       do {
@@ -24,7 +28,7 @@ export function anonymizePlan(manifest: RawManifest, random: () => string = () =
         attempts += 1;
       } while (used.has(to));
       used.add(to);
-      out.artifacts[author][id] = to;
+      out.artifacts[author][id] = typeof entry === 'string' ? to : { ...entry, path: to };   // a title stays with its artifact
       renames.push({ from, to });
     }
   }
@@ -95,7 +99,7 @@ export function anonymizeDomain(domainDir: string, curationDir: string): { from:
   const raw = JSON.parse(readFileSync(manifestPath, 'utf8')) as RawManifest;
   const mapPath = resolve(curationDir, MAP_FILE);
   if (existsSync(mapPath)) throw new Error(`${mapPath} already exists; ${domainDir} looks anonymised already`);
-  const named = [...Object.values(raw.artifacts.human), ...Object.values(raw.artifacts.ai)];
+  const named = [...Object.values(raw.artifacts.human), ...Object.values(raw.artifacts.ai)].map(pathOf);
   const bare = named.filter((p) => !/^(human|ai)_/.test(basename(p)));
   if (bare.length) throw new Error(`artifacts already anonymised (no human_/ai_ prefix): ${bare.join(', ')}`);
   const { manifest, renames } = anonymizePlan(raw);

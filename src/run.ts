@@ -4,13 +4,13 @@ import preload from '@jspsych/plugin-preload';
 import { validateManifest, type DomainManifest } from './manifest';
 import { Rng, hashSeed } from './rng';
 import { readSessionContext, type SessionContext } from './session';
-import { buildSessionPlan, type SessionPlan } from './plan';
+import { buildSessionPlan, ratedArtifacts, type SessionPlan } from './plan';
 import { loadArtifacts, escapeHtml, type LoadedArtifact } from './artifacts';
 import { COPY } from './copy';
 import { consentTrial } from './trials/consent';
 import { labeledRatingTrial, attentionTrial } from './trials/rating';
 import { unlabeledTitleTrial, unlabeledRatingTrial, beliefTrial } from './trials/unlabeled';
-import { demographicsTitleTrial, demographicTrial } from './trials/demographics';
+import { demographicsTitleTrial, demographicTrials } from './trials/demographics';
 import { prescreenTrial, screenOutTrial } from './trials/prescreen';
 import { disclosureTrial, thankYouTrial, showSavingPage } from './trials/disclosure';
 import { attributionHtml } from './attribution';
@@ -53,7 +53,7 @@ export function buildTimeline(m: DomainManifest, plan: SessionPlan, loaded: Map<
     ...plan.labeled.map((it) => (it.kind === 'attention' ? attentionTrial(it, get(it.artifact.id), m) : labeledRatingTrial(it, get(it.artifact.id), m))),
     unlabeledTitleTrial(),
     ...plan.unlabeled.flatMap((it) => [unlabeledRatingTrial(it, get(it.artifact.id), m), beliefTrial(it, get(it.artifact.id), m)]),
-    ...(m.demographics.length > 0 ? [demographicsTitleTrial(), ...m.demographics.map(demographicTrial)] : []),
+    ...(m.demographics.length > 0 ? [demographicsTitleTrial(), ...demographicTrials(m.demographics, ratedArtifacts(plan))] : []),
     disclosureTrial(ctx.platform_session, attributionHtml(m, plan)),
     submitTrial,
     thankYouTrial(ctx.redirect, ctx.session_id, () => submitted),

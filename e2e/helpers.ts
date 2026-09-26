@@ -43,12 +43,12 @@ const rate = (page: Page, n: number) =>
   page.locator('button.rating-btn').filter({ has: page.locator('.rating-n', { hasText: new RegExp(`^${n}$`) }) }).click();
 
 export interface Choices { attentionCorrect: boolean; withdraw: boolean; labeledRating: number; unlabeledRating: number; demographicOption?: number; prescreenOption?: number; stopAtDisclosure?: boolean }
-export interface Clicked { labeled: number; unlabeled: number; beliefs: number; attention: { expected: number; picked: number }[]; demographics: string[]; prescreen?: string }
+export interface Clicked { labeled: number; unlabeled: number; beliefs: number; attention: { expected: number; picked: number }[]; demographics: string[]; demographicStems: string[]; prescreen?: string }
 
 /** Drive one session from consent to the thank-you page by reacting to whatever is on screen, or to the disclosure
  * page with `stopAtDisclosure`. */
 export async function runSession(page: Page, c: Choices): Promise<Clicked> {
-  const clicked: Clicked = { labeled: 0, unlabeled: 0, beliefs: 0, attention: [], demographics: [] };
+  const clicked: Clicked = { labeled: 0, unlabeled: 0, beliefs: 0, attention: [], demographics: [], demographicStems: [] };
   for (let step = 0; step < 200; step++) {
     if (await page.getByRole('heading', { name: 'Thank you' }).isVisible()) return clicked;   // debrief body also says "Thank you", so match the heading
     if (await page.getByRole('button', { name: 'I agree' }).isVisible()) { await page.getByRole('button', { name: 'I agree' }).click(); continue; }
@@ -67,6 +67,7 @@ export async function runSession(page: Page, c: Choices): Promise<Clicked> {
     if (await page.locator('button.rating-btn').first().isVisible()) { clicked.unlabeled++; await rate(page, c.unlabeledRating); continue; }
     if (await page.locator('.demographic').isVisible()) {
       const btn = page.locator('#jspsych-html-button-response-btngroup button').nth(c.demographicOption ?? 0);
+      clicked.demographicStems.push(await page.locator('.demographic').innerText());
       clicked.demographics.push(await btn.innerText()); await btn.click(); continue;
     }
     if (await page.getByRole('button', { name: 'Submit' }).isVisible()) {
