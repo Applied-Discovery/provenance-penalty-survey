@@ -231,3 +231,14 @@ test('rejects an empty attribution entry', () => {
 test('attribution urls must be http(s), so a credit cannot carry a javascript: link', () => {
   expect(() => attributed({ human: { '0': { title: 'T', title_url: 'javascript:alert(1)' } } })).toThrow(/http\(s\)|url/);
 });
+
+const twoChecks = { ...base, attention_checks: 2, unlabeled_per_session: 0 };   // 2 labeled + 2 checks = the pool of 4
+test('attention_redirect is optional and must be an http(s) URL', () => {
+  expect(validateManifest(base).attention_redirect).toBeUndefined();
+  expect(validateManifest({ ...twoChecks, attention_redirect: 'https://app.prolific.com/submissions/complete?cc=ATTN' }).attention_redirect).toBe('https://app.prolific.com/submissions/complete?cc=ATTN');
+  expect(() => validateManifest({ ...twoChecks, attention_redirect: 'javascript:alert(1)' })).toThrow(/attention_redirect/);
+});
+test('attention_redirect needs at least two attention checks, since it fires only when two fail', () => {
+  expect(() => validateManifest({ ...base, attention_redirect: 'https://p.test/attn' })).toThrow(/attention_redirect.*at least 2 attention checks/);
+  expect(() => validateManifest({ ...base, attention_checks: 0, unlabeled_per_session: 0, attention_redirect: 'https://p.test/attn' })).toThrow(/at least 2/);
+});

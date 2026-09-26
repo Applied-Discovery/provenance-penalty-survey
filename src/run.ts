@@ -1,7 +1,7 @@
 import { initJsPsych } from 'jspsych';
 import callFunction from '@jspsych/plugin-call-function';
 import preload from '@jspsych/plugin-preload';
-import { validateManifest, type DomainManifest } from './manifest';
+import { validateManifest, ATTENTION_REJECT_FAILURES, type DomainManifest } from './manifest';
 import { Rng, hashSeed } from './rng';
 import { readSessionContext, type SessionContext } from './session';
 import { buildSessionPlan, ratedArtifacts, type SessionPlan } from './plan';
@@ -74,11 +74,17 @@ export function buildTimeline(m: DomainManifest, plan: SessionPlan, loaded: Map<
   ];
 }
 
-/** Where the page goes when the timeline ends: the platform's screen-out URL after a failed prescreen, else the
- * manifest's completion redirect (none in either case when the manifest sets none). */
+/** Where the page goes when the timeline ends: the platform's screen-out URL after a failed prescreen, else its
+ * failed-attention URL when at least ATTENTION_REJECT_FAILURES checks were answered wrongly, else the manifest's
+ * completion redirect (none when the manifest sets none). A single failed check still excludes the session from the
+ * analysis, but is not a rejection ground on Prolific, so it goes to the completion redirect like any other session.
+ * Only the destination changes; every session's data are stored the same way. */
 export function finalRedirect(m: DomainManifest, ctx: SessionContext, trials: TrialRecord[]): string | undefined {
   const screenedOut = trials.some((t) => t.trial_kind === 'prescreen' && t.passed === false);
-  return screenedOut && m.prescreener ? m.prescreener.redirect : ctx.redirect;
+  if (screenedOut && m.prescreener) return m.prescreener.redirect;
+  const failedChecks = trials.filter((t) => t.trial_kind === 'attention' && Number(t.response) + 1 !== Number(t.expected)).length;
+  if (failedChecks >= ATTENTION_REJECT_FAILURES && m.attention_redirect) return m.attention_redirect;
+  return ctx.redirect;
 }
 
 /** One retry after a pause, so a transient network blip is not retried in the same instant it failed. */

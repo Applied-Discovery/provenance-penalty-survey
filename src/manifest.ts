@@ -87,6 +87,10 @@ const artifactMap = z.record(z.string(), artifactEntry).superRefine((obj, ctx) =
   if (!keys.every((k, i) => k === i)) ctx.addIssue({ code: 'custom', message: 'artifact keys must be exactly 0..N-1' });
 });
 
+/** Failed attention checks after which a session goes to `attention_redirect`. Prolific allows rejecting on attention
+ * only after two failed checks in a study of 5 minutes or longer, so a single failure must never reach that code. */
+export const ATTENTION_REJECT_FAILURES = 2;
+
 export const manifestSchema = z.object({
   name: z.string().regex(/^[a-z0-9_]+$/, 'name must be snake_case'),
   protocol_version: z.string().min(1),
@@ -109,6 +113,7 @@ export const manifestSchema = z.object({
   storage: z.enum(['datapipe']).default('datapipe'),
   curation_criteria: z.string().min(1),
   completion_redirect: httpUrl.optional(),
+  attention_redirect: httpUrl.optional(),      // where a session that failed ATTENTION_REJECT_FAILURES checks ends instead: the platform's separate completion code
   osf_study: z.string().min(1),                 // DataPipe experiment id
 }).strict().superRefine((m, ctx) => {
   const poolPaths = () => [...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai)].map((e) => e.path);
@@ -134,6 +139,9 @@ export const manifestSchema = z.object({
     if (markdown.length && markdown.length < pool.length) ctx.addIssue({ code: 'custom', path: ['artifacts'], message:
       `a text domain's artifacts must be all .md or none; not .md: ${pool.filter((p) => !isMarkdownPath(p)).join(', ')}` });
   }
+  if (m.attention_redirect && m.attention_checks < ATTENTION_REJECT_FAILURES)   // it could never fire
+    ctx.addIssue({ code: 'custom', path: ['attention_redirect'], message:
+      `attention_redirect needs at least ${ATTENTION_REJECT_FAILURES} attention checks, since it fires only when that many fail (got ${m.attention_checks})` });
   if (m.labeled_artifacts_per_session % 2 !== 0)
     ctx.addIssue({ code: 'custom', message: 'labeled_artifacts_per_session must be even' });
   const human = Object.keys(m.artifacts.human).length, ai = Object.keys(m.artifacts.ai).length;

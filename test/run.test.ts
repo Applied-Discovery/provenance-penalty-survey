@@ -206,3 +206,27 @@ test('the disclosure trial credits the sources of the artifacts this session sho
   t.on_load();
   expect(document.getElementById('jspsych-content')!.innerHTML).toContain('A shown source');
 });
+
+// Failed attention checks: the platform's separate completion code, when the manifest names one, but only once two
+// checks have failed - Prolific's threshold for rejecting on attention in a study of 5 minutes or longer.
+const ma = validateManifest({ ...m, attention_redirect: 'https://p.test/attn' } as any);
+const passedCheck = { trial_kind: 'attention', expected: 7, response: 6 };   // response is the zero-based button index: 6 -> rating 7
+const failedCheck = { trial_kind: 'attention', expected: 7, response: 7 };
+test('finalRedirect: the attention URL once two checks have failed, else the completion redirect', () => {
+  const c = { ...ctx, redirect: 'https://p.test/done' };
+  expect(finalRedirect(ma, c, [failedCheck, failedCheck])).toBe('https://p.test/attn');
+  expect(finalRedirect(ma, c, [passedCheck, failedCheck])).toBe('https://p.test/done');   // one failure is not a rejection ground
+  expect(finalRedirect(ma, c, [failedCheck, passedCheck])).toBe('https://p.test/done');
+  expect(finalRedirect(ma, c, [passedCheck, passedCheck])).toBe('https://p.test/done');
+  expect(finalRedirect(m, c, [failedCheck, failedCheck])).toBe('https://p.test/done');   // no attention_redirect: as before
+  expect(finalRedirect(ma, ctx, [failedCheck, failedCheck])).toBe('https://p.test/attn');   // even without a completion redirect
+});
+test('finalRedirect: with three checks, any two failures are enough', () => {
+  const m3 = validateManifest({ ...m, attention_checks: 3, unlabeled_per_session: 1, attention_redirect: 'https://p.test/attn' } as any);
+  expect(finalRedirect(m3, ctx, [failedCheck, passedCheck, failedCheck])).toBe('https://p.test/attn');
+  expect(finalRedirect(m3, ctx, [passedCheck, failedCheck, passedCheck])).toBeUndefined();
+});
+test('finalRedirect: a failed prescreen wins over the attention URL (the checks were never shown)', () => {
+  const both = validateManifest({ ...mp, attention_redirect: 'https://p.test/attn' } as any);
+  expect(finalRedirect(both, ctx, [{ trial_kind: 'prescreen', passed: false }])).toBe('https://p.test/out');
+});
