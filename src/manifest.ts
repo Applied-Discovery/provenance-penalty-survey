@@ -89,7 +89,9 @@ const artifactMap = z.record(z.string(), artifactEntry).superRefine((obj, ctx) =
 
 /** Failed attention checks after which a session goes to `attention_redirect`. Prolific allows rejecting on attention
  * only after two failed checks in a study of 5 minutes or longer, so a single failure must never reach that code. */
-export const ATTENTION_REJECT_FAILURES = 2;
+// Setting to 1 for now as surveys are <5 minutes.
+// TODO: Move this into the domain manifest so that each study can decide for itself.
+export const ATTENTION_REJECT_FAILURES = 1;
 
 export const manifestSchema = z.object({
   name: z.string().regex(/^[a-z0-9_]+$/, 'name must be snake_case'),
