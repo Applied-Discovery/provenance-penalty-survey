@@ -8,7 +8,7 @@
   "stem_noun": "argument",
   "human_verb": "written",
   "expected_minutes": "5-10",
-  "attention_checks": 1,
+  "attention_checks": 2,
   "labeled_artifacts_per_session": 4,
   "unlabeled_per_session": 1,
   "avoid_pairs": true,
@@ -369,5 +369,7 @@
   ],
   "storage": "datapipe",
   "curation_criteria": "curationCriteria.md",
-  "osf_study": "EUPgdWbtismq"
+  "osf_study": "EUPgdWbtismq",
+  "completion_redirect": "https://app.prolific.com/submissions/complete?cc=C1MXSSZ4",
+  "attention_redirect": "https://app.prolific.com/submissions/complete?cc=C1F6JBU1"
 }
