@@ -13,28 +13,64 @@
   "avoid_pairs": true,
   "artifacts": {
     "human": {
-      "0": { "path": "artifacts/h0.txt", "title": "Cities should ban cars from their centres." },
-      "1": { "path": "artifacts/h1.txt", "title": "Primary school children should not be given homework." },
-      "2": { "path": "artifacts/h2.txt", "title": "Museums should be free to enter." },
-      "3": { "path": "artifacts/h3.txt", "title": "Cooking should be taught to every child at school." }
+      "0": {
+        "path": "artifacts/h0.txt",
+        "title": "1. Cities should ban cars from their centres."
+      },
+      "1": {
+        "path": "artifacts/h1.txt",
+        "title": "2. Primary school children should not be given homework."
+      },
+      "2": {
+        "path": "artifacts/h2.txt",
+        "title": "3. Museums should be free to enter."
+      },
+      "3": {
+        "path": "artifacts/h3.txt",
+        "title": "4. Cooking should be taught to every child at school."
+      }
     },
     "ai": {
-      "0": { "path": "artifacts/a0.txt", "title": "Cities should ban cars from their centres." },
-      "1": { "path": "artifacts/a1.txt", "title": "Primary school children should not be given homework." },
-      "2": { "path": "artifacts/a2.txt", "title": "Museums should be free to enter." },
-      "3": { "path": "artifacts/a3.txt", "title": "Cooking should be taught to every child at school." }
+      "0": {
+        "path": "artifacts/a0.txt",
+        "title": "5. Cities should ban cars from their centres."
+      },
+      "1": {
+        "path": "artifacts/a1.txt",
+        "title": "6. Primary school children should not be given homework."
+      },
+      "2": {
+        "path": "artifacts/a2.txt",
+        "title": "7. Museums should be free to enter."
+      },
+      "3": {
+        "path": "artifacts/a3.txt",
+        "title": "8. Cooking should be taught to every child at school."
+      }
     }
   },
   "demographics": [
     {
       "id": "ai_tool_use",
       "question": "How often do you use AI tools (for example ChatGPT or the AI summaries in Google search)?",
-      "options": ["Never", "Less than once a month", "Monthly", "Weekly", "Daily", "Prefer not to say"]
+      "options": [
+        "Daily",
+        "Most days",
+        "A few times a week",
+        "A few times a month",
+        "Rarely or never"
+      ]
     },
     {
       "id": "agreement",
-      "question": "How much do you agree with the following statement? \"{{title}}\"",
-      "options": ["Strongly disagree", "Disagree", "Neither agree nor disagree", "Agree", "Strongly agree"],
+      "question": "Do you agree with this statement? \"{{title}}\"",
+      "options": [
+        "Strongly disagree",
+        "Disagree",
+        "Neither agree nor disagree",
+        "Agree",
+        "Strongly agree"
+      ],
       "per_artifact": true
     }
   ],
