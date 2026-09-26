@@ -8,7 +8,7 @@
   "stem_noun": "solution",
   "human_verb": "written",
   "expected_minutes": "5-10",
-  "attention_checks": 1,
+  "attention_checks": 2,
   "labeled_artifacts_per_session": 4,
   "unlabeled_per_session": 1,
   "avoid_pairs": true,
@@ -96,6 +96,7 @@
   },
   "storage": "datapipe",
   "curation_criteria": "curationCriteria.md",
-  "osf_study": "kMJDgIUCj6ZN",
-  "completion_redirect": "https://app.prolific.com/submissions/complete?cc=CSGNR47H"
+  "osf_study": "yjp1XmpDHRGK",
+  "completion_redirect": "https://app.prolific.com/submissions/complete?cc=CSGNR47H",
+  "attention_redirect": "https://app.prolific.com/submissions/complete?cc=COTDBD6E"
 }
