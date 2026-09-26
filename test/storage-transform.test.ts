@@ -90,3 +90,18 @@ test('storeSubmission of a screened-out session writes the session file only', a
   await storeSubmission(s, meta, m, new DataPipeSink({ experimentId: 'EXP', fetchFn: fetchFn as any, startTime: 'T1' }));
   expect(posted).toEqual(['session_S_T1.csv']);
 });
+
+// Per-artifact answers go on the rating rows of their artifact, not the session row.
+const perArtifact = { ...sub, data: { ...sub.data, demographics: [{ id: 'ai_use', answer: 'Daily' },
+  { id: 'agree', artifact_id: 'a', answer: 'Agree' }, { id: 'agree', artifact_id: 'b', answer: 'Neutral' }, { id: 'agree', artifact_id: 'c', answer: 'Disagree' }] } };
+test('a per-artifact answer lands as demo_<id> on its own rating row, last, and never in the session row', () => {
+  const session = toSessionRow(perArtifact, meta, m);
+  expect(Object.keys(session).slice(-1)).toEqual(['demo_ai_use']);
+  expect(session).not.toHaveProperty('demo_agree');
+  const labeled = toLabeledRows(perArtifact), unlabeled = toUnlabeledRows(perArtifact);
+  expect(labeled.map((r) => r.demo_agree)).toEqual(['Agree', 'Neutral']);
+  expect(unlabeled[0].demo_agree).toBe('Disagree');
+  expect(Object.keys(labeled[0]).slice(-1)).toEqual(['demo_agree']);
+  expect(Object.keys(unlabeled[0]).slice(-1)).toEqual(['demo_agree']);
+  expect(labeled[0]).not.toHaveProperty('demo_ai_use');
+});

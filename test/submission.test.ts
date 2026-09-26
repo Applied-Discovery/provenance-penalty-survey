@@ -92,3 +92,29 @@ test('throws when the manifest has a prescreener but the question was not answer
 test('a passed prescreen still requires the demographic answers', () => {
   expect(() => buildSubmission(mScreen, ctx, [trials[0], { trial_kind: 'prescreen', response: 1, rt: 1 }, ...trials.slice(1)])).toThrow(/ai_use|role/);
 });
+
+// Per-artifact questions: one answer per rated artifact, carrying its artifact id.
+const titled = (ps: string[]) => Object.fromEntries(ps.map((p, i) => [String(i), { path: p, title: `T${p}` }]));
+const agree = { id: 'agree', question: 'Agree that {{title}}?', options: ['No', 'Maybe', 'Yes'], per_artifact: true };
+const mAgree = validateManifest({ ...m, artifacts: { human: titled(['a', 'b', 'e']), ai: titled(['c', 'd', 'f']) }, demographics: [q1, agree] } as any);
+const agreeTrial = (artifact_id: string, response: number) => ({ trial_kind: 'demographic', question_id: 'agree', artifact_id, response, rt: 1 });
+const agreeAnswers = [agreeTrial('d_v1_ai_0', 0), agreeTrial('d_v1_human_0', 2), agreeTrial('d_v1_ai_1', 1)];   // any trial order
+test('per-artifact answers carry the artifact id, one per rated artifact in the order rated, after the manifest questions before them', () => {
+  const s = buildSubmission(mAgree, ctx, [...trials, { trial_kind: 'demographic', question_id: 'ai_use', response: 1, rt: 1 }, ...agreeAnswers]);
+  expect(s.data.demographics).toEqual([
+    { id: 'ai_use', answer: 'Weekly' },
+    { id: 'agree', artifact_id: 'd_v1_human_0', answer: 'Yes' },
+    { id: 'agree', artifact_id: 'd_v1_ai_1', answer: 'Maybe' },
+    { id: 'agree', artifact_id: 'd_v1_ai_0', answer: 'No' },
+  ]);
+  expect(s.data.demographics.map((d) => d.artifact_id)).not.toContain('d_v1_human_1');   // attention artifacts are not asked about
+});
+test('throws if a rated artifact has no per-artifact answer, naming both', () => {
+  const t = [...trials, { trial_kind: 'demographic', question_id: 'ai_use', response: 1, rt: 1 }, ...agreeAnswers.slice(0, 2)];
+  expect(() => buildSubmission(mAgree, ctx, t)).toThrow(/agree.*d_v1_ai_1/);
+  expect(() => buildSubmission(mAgree, ctx, [...t, agreeTrial('d_v1_ai_1', 3)])).toThrow(/agree.*d_v1_ai_1/);   // out of range
+});
+test('a screened-out session has no per-artifact answers either', () => {
+  const mS = validateManifest({ ...mAgree, prescreener } as any);
+  expect(buildSubmission(mS, ctx, [trials[0], { trial_kind: 'prescreen', response: 2, rt: 1 }]).data.demographics).toEqual([]);
+});

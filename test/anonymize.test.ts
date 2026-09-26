@@ -124,3 +124,11 @@ test('applyPlan rolls back the renames when the manifest cannot be replaced', ()
     rmSync(dir, { recursive: true, force: true });
   }
 });
+test('an artifact given as { path, title } keeps its title and gets its path renamed', () => {
+  const titled = { name: 'd', artifacts: { human: { '0': { path: 'artifacts/human_1.md', title: 'Cats are better' } }, ai: { '0': 'artifacts/ai_1.md' } } };
+  let i = 0;
+  const { manifest, renames } = anonymizePlan(titled, () => `${i++}`.padStart(16, '0'));
+  expect(manifest.artifacts.human['0']).toEqual({ path: 'artifacts/0000000000000000.md', title: 'Cats are better' });
+  expect(manifest.artifacts.ai['0']).toBe('artifacts/0000000000000001.md');
+  expect(renames).toEqual([{ from: 'artifacts/human_1.md', to: 'artifacts/0000000000000000.md' }, { from: 'artifacts/ai_1.md', to: 'artifacts/0000000000000001.md' }]);
+});

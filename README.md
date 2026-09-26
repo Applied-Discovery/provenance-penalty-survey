@@ -116,6 +116,16 @@ domain, cannot prime the ratings, and each answer lands in the session row as
 `demo_<id>` holding the chosen option text. Add a "Prefer not to say" option
 where the question warrants one. `domains/test/` carries an example.
 
+A question with `"per_artifact": true` is asked once for each artifact the
+participant rated (not the attention checks), in the order shown, with
+`{{title}}` in its text replaced by that artifact's title; each answer lands as
+`demo_<id>` on that artifact's labeled or unlabeled rating row instead of the
+session row. Give every artifact a title by writing its entry as
+`{ "path": "artifacts/x.txt", "title": "..." }` rather than the bare path. The
+title is only ever shown in these questions, so it must not give away who wrote
+the artifact. `domains/example_opinion/` asks how much the participant agrees
+with each argument they rated.
+
 For an expert domain, `prescreener` adds a one-question expertise screen right
 after consent: `{ artifact, question, options, answer, redirect }`. The
 artifact (a file in the domain folder, rendered like the study artifacts; it

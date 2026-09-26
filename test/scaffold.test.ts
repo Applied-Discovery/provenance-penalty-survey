@@ -46,7 +46,7 @@ test('scaffold copies the pool and writes a manifest whose pools run 0..N-1 in n
   expect(n).toMatchObject({ human: 5, ai: 5 });
   expect(n.written).toHaveLength(11);
   const m = validateManifest(manifestOf('haiku'));
-  expect(Object.values(m.artifacts.human)).toEqual(['artifacts/human_1.txt', 'artifacts/human_2.txt', 'artifacts/human_3.txt', 'artifacts/human_4.txt', 'artifacts/human_10.txt']);
+  expect(Object.values(m.artifacts.human).map((e) => e.path)).toEqual(['artifacts/human_1.txt', 'artifacts/human_2.txt', 'artifacts/human_3.txt', 'artifacts/human_4.txt', 'artifacts/human_10.txt']);
   expect(readFileSync(join(domains, 'haiku', 'artifacts', 'ai_10.txt'), 'utf8')).toBe('body of ai_10.txt');
   expect(manifestOf('haiku')).toMatchObject({ name: 'haiku', artifact_type: 'text', stem_noun: 'haiku', human_verb: 'written',
     evaluator_class: 'lay', attention_checks: 1, osf_study: 'REPLACE_WITH_DATAPIPE_EXPERIMENT_ID' });
@@ -92,7 +92,7 @@ test('anonymize renames the scaffolded artifacts, saves the map in the curation 
   const names = readdirSync(join(domains, 'haiku', 'artifacts'));
   expect(names.every((f) => /^[0-9a-f]{16}\.txt$/.test(f))).toBe(true);
   const m = validateManifest(manifestOf('haiku'));
-  expect(new Set(Object.values(m.artifacts.human).concat(Object.values(m.artifacts.ai)))).toEqual(new Set(names.map((f) => `artifacts/${f}`)));
+  expect(new Set([...Object.values(m.artifacts.human), ...Object.values(m.artifacts.ai)].map((e) => e.path))).toEqual(new Set(names.map((f) => `artifacts/${f}`)));
   const map = JSON.parse(readFileSync(join(curation, 'haiku', MAP_FILE), 'utf8'));
   expect(map).toEqual(renames);
   expect(readFileSync(join(domains, 'haiku', map.find((r: { from: string }) => r.from === 'artifacts/ai_10.txt').to), 'utf8')).toBe('body of ai_10.txt');

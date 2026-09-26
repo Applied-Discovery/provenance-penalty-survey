@@ -1,16 +1,16 @@
 import { DomainManifest, Author, artifactId } from './manifest';
 import { Rng } from './rng';
 
-export interface PlannedArtifact { id: string; author: Author; index: number; path: string }
+export interface PlannedArtifact { id: string; author: Author; index: number; path: string; title?: string }
 export interface LabeledItem   { kind: 'labeled';   artifact: PlannedArtifact; stated_author: Author; survey_pos: number }
 export interface AttentionItem { kind: 'attention'; check_index: number; expected: number; artifact: PlannedArtifact }
 export interface UnlabeledItem { kind: 'unlabeled'; artifact: PlannedArtifact; survey_pos: number }
 export interface SessionPlan { labeled: (LabeledItem | AttentionItem)[]; unlabeled: UnlabeledItem[] }
 
 function pool(m: DomainManifest, author: Author): PlannedArtifact[] {
-  return Object.entries(m.artifacts[author]).map(([k, path]) => {
+  return Object.entries(m.artifacts[author]).map(([k, { path, title }]) => {
     const index = Number(k);
-    return { id: artifactId(m, author, index), author, index, path };
+    return { id: artifactId(m, author, index), author, index, path, ...(title ? { title } : {}) };
   });
 }
 
@@ -86,4 +86,9 @@ export function buildSessionPlan(m: DomainManifest, rng: Rng): SessionPlan {
 
   const unlabeled = unlabeledArts.map((artifact, i): UnlabeledItem => ({ kind: 'unlabeled', artifact, survey_pos: L + i + 1 }));
   return { labeled, unlabeled };
+}
+
+/** The artifacts the participant rated, in the order shown: labeled, then unlabeled. Attention checks are left out. */
+export function ratedArtifacts(plan: SessionPlan): PlannedArtifact[] {
+  return [...plan.labeled.flatMap((it) => (it.kind === 'labeled' ? [it.artifact] : [])), ...plan.unlabeled.map((it) => it.artifact)];
 }

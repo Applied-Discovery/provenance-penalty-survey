@@ -1,0 +1,44 @@
+{
+  "name": "example_opinion",
+  "protocol_version": "v0.1",
+  "domain_version": "v0.1",
+  "wave": 1,
+  "artifact_type": "text",
+  "evaluator_class": "lay",
+  "stem_noun": "argument",
+  "human_verb": "written",
+  "attention_checks": 1,
+  "labeled_artifacts_per_session": 2,
+  "unlabeled_per_session": 1,
+  "avoid_pairs": true,
+  "artifacts": {
+    "human": {
+      "0": { "path": "artifacts/h0.txt", "title": "Cities should ban cars from their centres." },
+      "1": { "path": "artifacts/h1.txt", "title": "Primary school children should not be given homework." },
+      "2": { "path": "artifacts/h2.txt", "title": "Museums should be free to enter." },
+      "3": { "path": "artifacts/h3.txt", "title": "Cooking should be taught to every child at school." }
+    },
+    "ai": {
+      "0": { "path": "artifacts/a0.txt", "title": "Cities should ban cars from their centres." },
+      "1": { "path": "artifacts/a1.txt", "title": "Primary school children should not be given homework." },
+      "2": { "path": "artifacts/a2.txt", "title": "Museums should be free to enter." },
+      "3": { "path": "artifacts/a3.txt", "title": "Cooking should be taught to every child at school." }
+    }
+  },
+  "demographics": [
+    {
+      "id": "ai_tool_use",
+      "question": "How often do you use AI tools (for example ChatGPT or the AI summaries in Google search)?",
+      "options": ["Never", "Less than once a month", "Monthly", "Weekly", "Daily", "Prefer not to say"]
+    },
+    {
+      "id": "agreement",
+      "question": "How much do you agree with the following statement? \"{{title}}\"",
+      "options": ["Strongly disagree", "Disagree", "Neither agree nor disagree", "Agree", "Strongly agree"],
+      "per_artifact": true
+    }
+  ],
+  "storage": "datapipe",
+  "curation_criteria": "curationCriteria.md",
+  "osf_study": "REPLACE_WITH_DATAPIPE_EXPERIMENT_ID"
+}
