@@ -16,6 +16,7 @@ test('applies defaults', () => {
   expect(m.human_verb).toBe('created');
   expect(m.expected_minutes).toBe('5-10');
   expect(m.attention_checks).toBe(1);
+  expect(m.attention_reject_failures).toBe(2);
   expect(m.unlabeled_per_session).toBe(1);
   expect(m.storage).toBe('datapipe');
 });
@@ -238,7 +239,13 @@ test('attention_redirect is optional and must be an http(s) URL', () => {
   expect(validateManifest({ ...twoChecks, attention_redirect: 'https://app.prolific.com/submissions/complete?cc=ATTN' }).attention_redirect).toBe('https://app.prolific.com/submissions/complete?cc=ATTN');
   expect(() => validateManifest({ ...twoChecks, attention_redirect: 'javascript:alert(1)' })).toThrow(/attention_redirect/);
 });
-test('attention_redirect needs at least two attention checks, since it fires only when two fail', () => {
+test('attention_redirect needs at least attention_reject_failures checks, since it fires only when that many fail', () => {
   expect(() => validateManifest({ ...base, attention_redirect: 'https://p.test/attn' })).toThrow(/attention_redirect.*at least 2 attention checks/);
   expect(() => validateManifest({ ...base, attention_checks: 0, unlabeled_per_session: 0, attention_redirect: 'https://p.test/attn' })).toThrow(/at least 2/);
+  expect(validateManifest({ ...base, attention_reject_failures: 1, attention_redirect: 'https://p.test/attn' }).attention_redirect).toBe('https://p.test/attn');
+  expect(() => validateManifest({ ...base, attention_checks: 0, unlabeled_per_session: 0, attention_reject_failures: 1, attention_redirect: 'https://p.test/attn' })).toThrow(/at least 1/);
+});
+test('attention_reject_failures is a positive integer', () => {
+  expect(() => validateManifest({ ...base, attention_reject_failures: 0 })).toThrow(/attention_reject_failures/);
+  expect(() => validateManifest({ ...base, attention_reject_failures: 1.5 })).toThrow(/attention_reject_failures/);
 });
