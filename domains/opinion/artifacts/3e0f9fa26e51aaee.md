@@ -1,0 +1,3 @@
+# Public money should be raised through taxation rather than national lotteries.
+
+Lotteries are in effect a regressive form of taxation, played much more by the poorer members of society than by the rich. It would be far fairer if the revenues raised by a lottery were obtained through general taxation, e.g. income tax, which is much more progressive. This argument becomes even more important if the proceeds of a lottery are spent on things which fail to benefit the poor - the millions received from Britain’s National Lottery by the Royal Opera House represent a considerable redistribution of wealth from the poor to the rich.
