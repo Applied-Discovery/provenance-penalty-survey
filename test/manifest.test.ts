@@ -238,7 +238,7 @@ test('attention_redirect is optional and must be an http(s) URL', () => {
   expect(validateManifest({ ...twoChecks, attention_redirect: 'https://app.prolific.com/submissions/complete?cc=ATTN' }).attention_redirect).toBe('https://app.prolific.com/submissions/complete?cc=ATTN');
   expect(() => validateManifest({ ...twoChecks, attention_redirect: 'javascript:alert(1)' })).toThrow(/attention_redirect/);
 });
-test('attention_redirect needs at least two attention checks, since it fires only when two fail', () => {
-  expect(() => validateManifest({ ...base, attention_redirect: 'https://p.test/attn' })).toThrow(/attention_redirect.*at least 2 attention checks/);
-  expect(() => validateManifest({ ...base, attention_checks: 0, unlabeled_per_session: 0, attention_redirect: 'https://p.test/attn' })).toThrow(/at least 2/);
+test('attention_redirect needs at least one attention check, since it fires only when one fails', () => {
+  expect(validateManifest({ ...base, attention_redirect: 'https://p.test/attn' }).attention_redirect).toBe('https://p.test/attn');
+  expect(() => validateManifest({ ...base, attention_checks: 0, unlabeled_per_session: 0, attention_redirect: 'https://p.test/attn' })).toThrow(/attention_redirect.*at least 1 attention checks/);
 });
